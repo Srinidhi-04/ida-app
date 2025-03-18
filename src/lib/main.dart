@@ -28,7 +28,7 @@ void main() {
           black: TextTheme(
             headlineLarge: TextStyle(fontSize: 26, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.black),
             headlineMedium: TextStyle(fontSize: 24, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.black),
-            headlineSmall: TextStyle(fontSize: 20, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.black),
+            headlineSmall: TextStyle(fontSize: 22, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.black),
             titleLarge: TextStyle(fontSize: 26, fontFamily: GoogleFonts.montserrat().fontFamily, color: Colors.black),
             titleMedium: TextStyle(fontSize: 24, fontFamily: GoogleFonts.montserrat().fontFamily, color: Colors.black),
             titleSmall: TextStyle(fontSize: 22, fontFamily: GoogleFonts.montserrat().fontFamily, color: Colors.black),
@@ -42,7 +42,7 @@ void main() {
           white: TextTheme(
             headlineLarge: TextStyle(fontSize: 26, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.white),
             headlineMedium: TextStyle(fontSize: 24, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.white),
-            headlineSmall: TextStyle(fontSize: 20, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.white),
+            headlineSmall: TextStyle(fontSize: 22, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.white),
             titleLarge: TextStyle(fontSize: 26, fontFamily: GoogleFonts.montserrat().fontFamily, color: Colors.white),
             titleMedium: TextStyle(fontSize: 24, fontFamily: GoogleFonts.montserrat().fontFamily, color: Colors.white),
             titleSmall: TextStyle(fontSize: 22, fontFamily: GoogleFonts.montserrat().fontFamily, color: Colors.white),
