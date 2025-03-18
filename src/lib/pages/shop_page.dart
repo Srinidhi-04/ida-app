@@ -18,7 +18,7 @@ class _ShopPageState extends State<ShopPage> {
       width: MediaQuery.of(context).size.width,
       height: 170,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        padding: const EdgeInsets.fromLTRB(10, 0, 20, 10),
         child: Card(
           elevation: 5,
           color: Colors.white,
@@ -39,7 +39,7 @@ class _ShopPageState extends State<ShopPage> {
               Padding(
                 padding: const EdgeInsets.only(left: 20),
                 child: Container(
-                  width: 0.6 * MediaQuery.of(context).size.width - 10,
+                  width: 0.6 * MediaQuery.of(context).size.width,
                   child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.end,
@@ -67,7 +67,7 @@ class _ShopPageState extends State<ShopPage> {
                                   style: Theme.of(context)
                                       .typography
                                       .black
-                                      .labelMedium!
+                                      .bodyMedium!
                                       .apply(
                                           color: Theme.of(context)
                                               .primaryColorDark),
@@ -141,13 +141,17 @@ class _ShopPageState extends State<ShopPage> {
                     kToolbarHeight -
                     kBottomNavigationBarHeight,
                 minWidth: MediaQuery.of(context).size.width),
-            child: Column(
-              children: [
-                ShopItem(0, "Centennial Plaza Brick", 250,
-                    "https://i.imgur.com/UGnaS5X.jpeg"),
-                ShopItem(1, "Centennial Plaza Brick", 250,
-                    "https://i.imgur.com/UGnaS5X.jpeg"),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.only(top: 10.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ShopItem(0, "Centennial Plaza Brick", 250,
+                      "https://i.imgur.com/UGnaS5X.jpeg"),
+                  ShopItem(1, "Centennial Plaza Brick", 250,
+                      "https://i.imgur.com/UGnaS5X.jpeg"),
+                ],
+              ),
             ),
           ),
         ),

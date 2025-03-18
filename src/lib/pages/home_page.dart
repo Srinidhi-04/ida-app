@@ -134,171 +134,169 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.search,
+              size: 28,
+            )),
+        title: Image(
+            image: NetworkImage("https://i.imgur.com/0FHQKN4.png"),
+            height: 40),
+        actions: [
+          IconButton(
               onPressed: () {},
               icon: Icon(
-                Icons.search,
+                Icons.shopping_cart_outlined,
                 size: 28,
-              )),
-          title: Image(
-              image: NetworkImage("https://i.imgur.com/0FHQKN4.png"),
-              height: 40),
-          actions: [
-            IconButton(
-                onPressed: () {},
-                icon: Icon(
-                  Icons.shopping_cart_outlined,
-                  size: 28,
-                ))
-          ],
-          centerTitle: true,
-        ),
-        body: RefreshIndicator(
-          onRefresh: () async {},
-          color: Theme.of(context).primaryColorLight,
-          backgroundColor: Colors.white,
-          child: SingleChildScrollView(
-            physics: AlwaysScrollableScrollPhysics(),
-            child: Container(
-              constraints: BoxConstraints(
-                  minHeight: MediaQuery.of(context).size.height -
-                      kToolbarHeight -
-                      kBottomNavigationBarHeight,
-                  minWidth: MediaQuery.of(context).size.width),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Stack(
-                    alignment: Alignment.bottomCenter,
+              ))
+        ],
+        centerTitle: true,
+      ),
+      body: RefreshIndicator(
+        onRefresh: () async {},
+        color: Theme.of(context).primaryColorLight,
+        backgroundColor: Colors.white,
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Container(
+            constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height -
+                    kToolbarHeight -
+                    kBottomNavigationBarHeight,
+                minWidth: MediaQuery.of(context).size.width),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Column(
+                      children: [
+                        Image(
+                            width: MediaQuery.of(context).size.width,
+                            image: NetworkImage(
+                                "https://i.imgur.com/JE2eR3M.png")),
+                        SizedBox(
+                          height: 20,
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        MainButton(Theme.of(context).primaryColorDark,
+                            "Subscribe", "/subscribe"),
+                        MainButton(Theme.of(context).primaryColorLight,
+                            "Donate", "/donate"),
+                        MainButton(Theme.of(context).primaryColorDark, "Shop",
+                            "/shop"),
+                      ],
+                    )
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        children: [
-                          Image(
-                              width: MediaQuery.of(context).size.width,
-                              image: NetworkImage(
-                                  "https://i.imgur.com/JE2eR3M.png")),
-                          SizedBox(
-                            height: 20,
-                          )
-                        ],
+                      Text(
+                        "Upcoming Events",
+                        style: Theme.of(context).typography.black.headlineMedium,
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          MainButton(Theme.of(context).primaryColorDark,
-                              "Subscribe", "/subscribe"),
-                          MainButton(Theme.of(context).primaryColorLight,
-                              "Donate", "/donate"),
-                          MainButton(Theme.of(context).primaryColorDark, "Shop",
-                              "/shop"),
-                        ],
+                      TextButton.icon(
+                        onPressed: () {},
+                        label: Text(
+                          "See All",
+                          style: Theme.of(context)
+                              .typography
+                              .black
+                              .labelLarge!
+                              .apply(color: Theme.of(context).primaryColor),
+                        ),
+                        icon: Icon(Icons.arrow_right_rounded),
+                        iconAlignment: IconAlignment.end,
+                        style: ButtonStyle(
+                          backgroundColor:
+                              WidgetStatePropertyAll(Colors.transparent),
+                          foregroundColor: WidgetStatePropertyAll(
+                              Theme.of(context).primaryColor),
+                        ),
                       )
                     ],
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                ),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      EventCard(DateTime.now(), "Keep Calm and Ask A Dad",
+                          "CIF Room 3025"),
+                      EventCard(DateTime.now(), "UIUC vs Purdue Basketball",
+                          "State Farm Center"),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Stack(
+                      alignment: Alignment.center,
                       children: [
-                        Text(
-                          "Upcoming Events",
-                          style: Theme.of(context).typography.black.headlineMedium,
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image(
+                            image: NetworkImage("https://i.imgur.com/UGnaS5X.jpeg"),
+                            color: Color(0x88000000),
+                            colorBlendMode: BlendMode.darken,
+                          ),
                         ),
-                        TextButton.icon(
-                          onPressed: () {},
-                          label: Text(
-                            "See All",
-                            style: Theme.of(context)
-                                .typography
-                                .black
-                                .labelLarge!
-                                .apply(color: Theme.of(context).primaryColor),
-                          ),
-                          icon: Icon(Icons.arrow_right_rounded),
-                          iconAlignment: IconAlignment.end,
-                          style: ButtonStyle(
-                            backgroundColor:
-                                WidgetStatePropertyAll(Colors.transparent),
-                            foregroundColor: WidgetStatePropertyAll(
-                                Theme.of(context).primaryColor),
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              children: [
+                                Text(
+                                  "DADS PLAZA",
+                                  style: Theme.of(context).typography.white.headlineMedium!.apply(color: Theme.of(context).primaryColorLight),
+                                ),
+                                SizedBox(height: 20,),
+                                TextButton(
+                                  onPressed: () {}, 
+                                  child: Text("Learn More", style: Theme.of(context).typography.white.bodyMedium,),
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColorLight),
+                                    shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))
+                                  ),
+                                )
+                              ]
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width/2.5,
+                              child: Text(
+                                "Illini Dads Centennial Plaza honors the role and impact that father figures have in the lives of their Illini students",
+                                style: Theme.of(context).typography.white.bodyLarge,
+                                textAlign: TextAlign.justify,
+                              ),
+                            )
+                          ],
                         )
                       ],
                     ),
                   ),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        EventCard(DateTime.now(), "Keep Calm and Ask A Dad",
-                            "CIF Room 3025"),
-                        EventCard(DateTime.now(), "UIUC vs Purdue Basketball",
-                            "State Farm Center"),
-                      ],
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: Image(
-                              image: NetworkImage("https://i.imgur.com/UGnaS5X.jpeg"),
-                              color: Color(0x88000000),
-                              colorBlendMode: BlendMode.darken,
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    "DADS PLAZA",
-                                    style: Theme.of(context).typography.white.headlineMedium!.apply(color: Theme.of(context).primaryColorLight),
-                                  ),
-                                  SizedBox(height: 20,),
-                                  TextButton(
-                                    onPressed: () {}, 
-                                    child: Text("Learn More", style: Theme.of(context).typography.white.bodyMedium,),
-                                    style: ButtonStyle(
-                                      backgroundColor: WidgetStatePropertyAll(Theme.of(context).primaryColorLight),
-                                      shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))
-                                    ),
-                                  )
-                                ]
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width/2.5,
-                                child: Text(
-                                  "Illini Dads Centennial Plaza honors the role and impact that father figures have in the lives of their Illini students",
-                                  style: Theme.of(context).typography.white.bodyLarge,
-                                  textAlign: TextAlign.justify,
-                                ),
-                              )
-                            ],
-                          )
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                )
+              ],
             ),
           ),
         ),
-        bottomNavigationBar: Navigation(selected: 0),
       ),
+      bottomNavigationBar: Navigation(selected: 0),
     );
   }
 }

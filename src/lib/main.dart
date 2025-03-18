@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:src/pages/events_page.dart';
 import 'package:src/pages/home_page.dart';
 import 'package:src/pages/shop_page.dart';
 import 'package:src/pages/splash_page.dart';
@@ -11,10 +12,11 @@ void main() {
       routes: {
         "/": (context) => SplashPage(),
         "/home": (context) => HomePage(),
-        "/shop": (context) => ShopPage()
+        "/shop": (context) => ShopPage(),
+        "/events": (context) => EventsPage()
       },
       theme: ThemeData(
-        textButtonTheme: TextButtonThemeData(style: ButtonStyle(overlayColor: WidgetStatePropertyAll(Color(0x3313294B)))),
+        textButtonTheme: TextButtonThemeData(style: ButtonStyle(overlayColor: WidgetStatePropertyAll(Color(0x3313294B)), textStyle: WidgetStatePropertyAll(TextStyle(fontWeight: FontWeight.normal)))),
         primaryColor: Color(0xFF9C9A9D),
         primaryColorLight: Color(0xFFFF5F05),
         primaryColorDark: Color(0xFF13294B),
