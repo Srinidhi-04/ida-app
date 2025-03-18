@@ -14,7 +14,10 @@ class _NavigationState extends State<Navigation> {
 
   Widget NavigationButton(int index, Icon icon, String route) {
     return IconButton(
-      onPressed: () => Navigator.popAndPushNamed(context, route), 
+      onPressed: () {
+        if (index == 0 || index == 2) Navigator.popAndPushNamed(context, route);
+        else Navigator.pushNamed(context, route);
+      }, 
       icon: icon,
       style: ButtonStyle(
         foregroundColor: WidgetStatePropertyAll((widget.selected != index) ? Color(0xFFC8C6C7) : Theme.of(context).primaryColorDark),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:src/pages/home_page.dart';
+import 'package:src/pages/shop_page.dart';
 import 'package:src/pages/splash_page.dart';
 
 void main() {
@@ -9,9 +10,11 @@ void main() {
     MaterialApp(
       routes: {
         "/": (context) => SplashPage(),
-        "/home": (context) => HomePage()
+        "/home": (context) => HomePage(),
+        "/shop": (context) => ShopPage()
       },
       theme: ThemeData(
+        textButtonTheme: TextButtonThemeData(style: ButtonStyle(overlayColor: WidgetStatePropertyAll(Color(0x3313294B)))),
         primaryColor: Color(0xFF9C9A9D),
         primaryColorLight: Color(0xFFFF5F05),
         primaryColorDark: Color(0xFF13294B),
@@ -25,7 +28,7 @@ void main() {
           black: TextTheme(
             headlineLarge: TextStyle(fontSize: 26, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.black),
             headlineMedium: TextStyle(fontSize: 24, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.black),
-            headlineSmall: TextStyle(fontSize: 22, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.black),
+            headlineSmall: TextStyle(fontSize: 20, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.black),
             titleLarge: TextStyle(fontSize: 26, fontFamily: GoogleFonts.montserrat().fontFamily, color: Colors.black),
             titleMedium: TextStyle(fontSize: 24, fontFamily: GoogleFonts.montserrat().fontFamily, color: Colors.black),
             titleSmall: TextStyle(fontSize: 22, fontFamily: GoogleFonts.montserrat().fontFamily, color: Colors.black),
@@ -39,7 +42,7 @@ void main() {
           white: TextTheme(
             headlineLarge: TextStyle(fontSize: 26, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.white),
             headlineMedium: TextStyle(fontSize: 24, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.white),
-            headlineSmall: TextStyle(fontSize: 22, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.white),
+            headlineSmall: TextStyle(fontSize: 20, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.bold, color: Colors.white),
             titleLarge: TextStyle(fontSize: 26, fontFamily: GoogleFonts.montserrat().fontFamily, color: Colors.white),
             titleMedium: TextStyle(fontSize: 24, fontFamily: GoogleFonts.montserrat().fontFamily, color: Colors.white),
             titleSmall: TextStyle(fontSize: 22, fontFamily: GoogleFonts.montserrat().fontFamily, color: Colors.white),

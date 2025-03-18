@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:src/widgets/navigation.dart';
 
 class HomePage extends StatefulWidget {
@@ -39,91 +38,94 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget EventCard(DateTime date, String title, String location) {
-    return Container(
-      width: 240,
-      height: 300,
-      child: Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Stack(
-                alignment: Alignment.topLeft,
-                children: [
-                  Container(
-                    width: 220,
-                    height: 160,
-                    decoration: BoxDecoration(
-                        color: Color(0xFFFFCD6C),
-                        borderRadius: BorderRadius.circular(10)),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Container(
-                      width: 45,
-                      height: 45,
+    return Padding(
+      padding: const EdgeInsets.only(right: 20),
+      child: Container(
+        width: 240,
+        height: 300,
+        child: Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Stack(
+                  alignment: Alignment.topLeft,
+                  children: [
+                    Container(
+                      width: 220,
+                      height: 160,
                       decoration: BoxDecoration(
-                          color: Color(0xBBFFFFFF),
+                          color: Color(0xFFFFCD6C),
                           borderRadius: BorderRadius.circular(10)),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(
-                            date.day.toString(),
-                            style: Theme.of(context)
-                                .typography
-                                .white
-                                .bodyLarge!
-                                .apply(color: Color(0xFFFF6007)),
-                          ),
-                          Text(
-                            months[date.month - 1],
-                            style: Theme.of(context)
-                                .typography
-                                .white
-                                .bodySmall!
-                                .apply(color: Color(0xFFFF6007)),
-                          ),
-                        ],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        width: 45,
+                        height: 45,
+                        decoration: BoxDecoration(
+                            color: Color(0xBBFFFFFF),
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(
+                              date.day.toString(),
+                              style: Theme.of(context)
+                                  .typography
+                                  .white
+                                  .bodyLarge!
+                                  .apply(color: Color(0xFFFF6007)),
+                            ),
+                            Text(
+                              months[date.month - 1],
+                              style: Theme.of(context)
+                                  .typography
+                                  .white
+                                  .bodySmall!
+                                  .apply(color: Color(0xFFFF6007)),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        title,
-                        style: Theme.of(context).typography.black.headlineSmall,
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.location_on_rounded,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          Text(
-                            location,
-                            style: Theme.of(context)
-                                .typography
-                                .black
-                                .bodyMedium!
-                                .apply(color: Theme.of(context).primaryColor),
-                          )
-                        ],
-                      )
-                    ],
+                  ],
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          title,
+                          style: Theme.of(context).typography.black.headlineSmall,
+                        ),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.location_on_rounded,
+                              color: Theme.of(context).primaryColor,
+                            ),
+                            Text(
+                              location,
+                              style: Theme.of(context)
+                                  .typography
+                                  .black
+                                  .bodyMedium!
+                                  .apply(color: Theme.of(context).primaryColor),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -157,6 +159,7 @@ class _HomePageState extends State<HomePage> {
         body: RefreshIndicator(
           onRefresh: () async {},
           color: Theme.of(context).primaryColorLight,
+          backgroundColor: Colors.white,
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
             child: Container(
@@ -251,7 +254,7 @@ class _HomePageState extends State<HomePage> {
                             borderRadius: BorderRadius.circular(20),
                             child: Image(
                               image: NetworkImage("https://i.imgur.com/UGnaS5X.jpeg"),
-                              color: Color.fromRGBO(0, 0, 0, 0.5),
+                              color: Color(0x88000000),
                               colorBlendMode: BlendMode.darken,
                             ),
                           ),
