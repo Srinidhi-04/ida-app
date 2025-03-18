@@ -25,6 +25,7 @@ class _EventsPageState extends State<EventsPage> {
     "Dec"
   ];
   List<String> days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  List<Map> events = [{"name": "Keep Calm and Ask A Dad", "location": "CIF Room 3025", "date": DateTime.now(), "image": "https://i.imgur.com/UGnaS5X.jpeg"}, {"name": "UIUC vs Purdue Basketball", "location": "State Farm Center", "date": DateTime.now(), "image": "https://i.imgur.com/UGnaS5X.jpeg"}];
 
   Widget SwitchOption(int index, String text) {
     return Padding(
@@ -208,10 +209,10 @@ class _EventsPageState extends State<EventsPage> {
                         ),
                       ),
                     ),
-                    EventCard("Keep Calm and Ask A Dad", "CIF Room 3025",
-                        DateTime.now(), "https://i.imgur.com/UGnaS5X.jpeg"),
-                    EventCard("UIUC vs Purdue Basketball", "State Farm Center",
-                        DateTime.now(), "https://i.imgur.com/UGnaS5X.jpeg"),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: events.map((e) => EventCard(e["name"], e["location"], e["date"], e["image"])).toList(),
+                    ),
                   ],
                 ),
               ),

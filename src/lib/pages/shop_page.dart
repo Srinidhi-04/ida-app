@@ -13,6 +13,8 @@ class ShopPage extends StatefulWidget {
 class _ShopPageState extends State<ShopPage> {
   Map<int, int> quantity = {};
 
+  List<Map> items = [{"id": 0, "name": "Centennial Plaza Brick", "price": 250.0, "image": "https://i.imgur.com/UGnaS5X.jpeg"}, {"id": 1, "name": "Centennial Plaza Brick", "price": 250.0, "image": "https://i.imgur.com/UGnaS5X.jpeg"}];
+
   Widget ShopItem(int id, String name, double price, String image) {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -145,12 +147,7 @@ class _ShopPageState extends State<ShopPage> {
               padding: const EdgeInsets.only(top: 10.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: [
-                  ShopItem(0, "Centennial Plaza Brick", 250,
-                      "https://i.imgur.com/UGnaS5X.jpeg"),
-                  ShopItem(1, "Centennial Plaza Brick", 250,
-                      "https://i.imgur.com/UGnaS5X.jpeg"),
-                ],
+                children: items.map((e) => ShopItem(e["id"], e["name"], e["price"], e["image"])).toList()
               ),
             ),
           ),

@@ -24,6 +24,8 @@ class _HomePageState extends State<HomePage> {
     "DEC"
   ];
 
+  List<Map> events = [{"date": DateTime.now(), "title": "Keep Calm and Ask A Dad", "location": "CIF Room 3025"}, {"date": DateTime.now(), "title": "UIUC vs Purdue Basketball", "location": "State Farm Center"}];
+
   Widget MainButton(Color color, String text, String route) {
     return TextButton(
       onPressed: () {},
@@ -231,12 +233,7 @@ class _HomePageState extends State<HomePage> {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
-                    children: [
-                      EventCard(DateTime.now(), "Keep Calm and Ask A Dad",
-                          "CIF Room 3025"),
-                      EventCard(DateTime.now(), "UIUC vs Purdue Basketball",
-                          "State Farm Center"),
-                    ],
+                    children: events.map((e) => EventCard(e["date"], e["title"], e["location"])).toList()
                   ),
                 ),
                 Padding(
