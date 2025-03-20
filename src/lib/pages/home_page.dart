@@ -209,7 +209,9 @@ class _HomePageState extends State<HomePage> {
                         style: Theme.of(context).typography.black.headlineMedium,
                       ),
                       TextButton.icon(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.pushNamed(context, "/events");
+                        },
                         label: Text(
                           "See All",
                           style: Theme.of(context)

@@ -25,7 +25,8 @@ class _EventsPageState extends State<EventsPage> {
     "Dec"
   ];
   List<String> days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-  List<Map> events = [{"name": "Keep Calm and Ask A Dad", "location": "CIF Room 3025", "date": DateTime.now(), "image": "https://i.imgur.com/UGnaS5X.jpeg"}, {"name": "UIUC vs Purdue Basketball", "location": "State Farm Center", "date": DateTime.now(), "image": "https://i.imgur.com/UGnaS5X.jpeg"}];
+  List<Map> upcoming = [{"name": "Keep Calm and Ask A Dad", "location": "CIF Room 3025", "date": DateTime.now(), "image": "https://i.imgur.com/Z3X6IMd.png", "body": "Calling all University of Illinois students! Join us for the Illini Dads Association's \"Ask A Dad\" Q&A session—a unique opportunity to connect with experienced Illini dads and gain valuable insights into life after campus/jump starting your careers. Don't miss this chance to ask questions and build!"}];
+  List<Map> past = [{"name": "UIUC vs Purdue Basketball", "location": "State Farm Center", "date": DateTime.now(), "image": "https://i.imgur.com/UGnaS5X.jpeg", "body": "Calling all University of Illinois students! Join us for the Illini Dads Association's \"Ask A Dad\" Q&A session—a unique opportunity to connect with experienced Illini dads and gain valuable insights into life after campus/jump starting your careers. Don't miss this chance to ask questions and build! Calling all University of Illinois students! Join us for the Illini Dads Association's \"Ask A Dad\" Q&A session—a unique opportunity to connect with experienced Illini dads and gain valuable insights into life after campus/jump starting your careers. Don't miss this chance to ask questions and build! Calling all University of Illinois students! Join us for the Illini Dads Association's \"Ask A Dad\" Q&A session—a unique opportunity to connect with experienced Illini dads and gain valuable insights into life after campus/jump starting your careers. Don't miss this chance to ask questions and build!!"}];
 
   Widget SwitchOption(int index, String text) {
     return Padding(
@@ -57,7 +58,7 @@ class _EventsPageState extends State<EventsPage> {
     );
   }
 
-  Widget EventCard(String name, String location, DateTime date, String image) {
+  Widget EventCard(String name, String location, DateTime date, String image, String body) {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 170,
@@ -69,7 +70,9 @@ class _EventsPageState extends State<EventsPage> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: TextButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.pushNamed(context, "/event", arguments: {"image": image, "date": date, "location": location, "title": name, "body": body});
+            },
             style: ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.zero), tapTargetSize: MaterialTapTargetSize.shrinkWrap, shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
@@ -211,7 +214,13 @@ class _EventsPageState extends State<EventsPage> {
                     ),
                     Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: events.map((e) => EventCard(e["name"], e["location"], e["date"], e["image"])).toList(),
+                      children: (selected == 0) ? ((upcoming.isEmpty) ? [Center(child: Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Text("No upcoming events", style: Theme.of(context).typography.black.headlineLarge,),
+                      ))] : upcoming.map((e) => EventCard(e["name"], e["location"], e["date"], e["image"], e["body"])).toList()) : ((past.isEmpty) ? [Center(child: Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Text("No past events", style: Theme.of(context).typography.black.headlineLarge,),
+                      ))] : past.map((e) => EventCard(e["name"], e["location"], e["date"], e["image"], e["body"])).toList()),
                     ),
                   ],
                 ),
