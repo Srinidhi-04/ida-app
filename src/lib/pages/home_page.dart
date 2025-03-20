@@ -109,7 +109,7 @@ class _HomePageState extends State<HomePage> {
                         Row(
                           children: [
                             Icon(
-                              Icons.location_on_rounded,
+                              Icons.location_on,
                               color: Theme.of(context).primaryColor,
                             ),
                             Text(

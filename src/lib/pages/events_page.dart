@@ -120,7 +120,7 @@ class _EventsPageState extends State<EventsPage> {
                               Row(
                                 children: [
                                   Icon(
-                                    Icons.location_on_rounded,
+                                    Icons.location_on,
                                     color: Theme.of(context).primaryColor,
                                   ),
                                   Container(
