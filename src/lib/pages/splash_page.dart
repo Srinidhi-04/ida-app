@@ -12,6 +12,7 @@ class CirclePainter extends CustomPainter {
     Paint paint = Paint();
     paint.strokeWidth = 2;
     paint.color = color;
+    paint.shader = RadialGradient(colors: [color, Colors.white]).createShader(Rect.fromCircle(center: location, radius: size.width/2));
     canvas.drawCircle(location, size.width/2, paint);
   }
 
@@ -52,7 +53,7 @@ class _SplashPageState extends State<SplashPage> {
               painter: CirclePainter(color: Theme.of(context).primaryColorLight, location: Offset(MediaQuery.of(context).size.width, 0)),
             ),
             Container(
-              color: Color(0xDDFFFFFF),
+              color: Color(0x77FFFFFF),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
               child: Center(child: Image(image: NetworkImage("https://i.imgur.com/0FHQKN4.png")),)),
