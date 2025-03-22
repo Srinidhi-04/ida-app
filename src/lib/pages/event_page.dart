@@ -86,7 +86,7 @@ class EventPage extends StatelessWidget {
                                           ),
                                         ),
                                         Text(
-                                          "${date.day} ${months[date.month]}, ${date.year}",
+                                          "${date.day} ${months[date.month-1]}, ${date.year}",
                                           style: Theme.of(context)
                                               .typography
                                               .white

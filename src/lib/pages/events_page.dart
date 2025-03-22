@@ -24,7 +24,7 @@ class _EventsPageState extends State<EventsPage> {
     "Nov",
     "Dec"
   ];
-  List<String> days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  List<String> days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   List<Map> upcoming = [{"name": "Keep Calm and Ask A Dad", "location": "CIF Room 3025", "date": DateTime.now(), "image": "https://i.imgur.com/Z3X6IMd.png", "body": "Calling all University of Illinois students! Join us for the Illini Dads Association's \"Ask A Dad\" Q&A session—a unique opportunity to connect with experienced Illini dads and gain valuable insights into life after campus/jump starting your careers. Don't miss this chance to ask questions and build!"}];
   List<Map> past = [{"name": "UIUC vs Purdue Basketball", "location": "State Farm Center", "date": DateTime.now(), "image": "https://i.imgur.com/UGnaS5X.jpeg", "body": "Calling all University of Illinois students! Join us for the Illini Dads Association's \"Ask A Dad\" Q&A session—a unique opportunity to connect with experienced Illini dads and gain valuable insights into life after campus/jump starting your careers. Don't miss this chance to ask questions and build! Calling all University of Illinois students! Join us for the Illini Dads Association's \"Ask A Dad\" Q&A session—a unique opportunity to connect with experienced Illini dads and gain valuable insights into life after campus/jump starting your careers. Don't miss this chance to ask questions and build! Calling all University of Illinois students! Join us for the Illini Dads Association's \"Ask A Dad\" Q&A session—a unique opportunity to connect with experienced Illini dads and gain valuable insights into life after campus/jump starting your careers. Don't miss this chance to ask questions and build!!"}];
 
@@ -95,7 +95,7 @@ class _EventsPageState extends State<EventsPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "${days[date.weekday]}, ${months[date.month]} ${date.day} • ${date.hour % 12 == 0 ? 12 : date.hour % 12}:${date.minute} ${(date.hour >= 12) ? "PM" : "AM"}",
+                            "${days[date.weekday-1]}, ${months[date.month-1]} ${date.day} • ${date.hour % 12 == 0 ? 12 : date.hour % 12}:${date.minute} ${(date.hour >= 12) ? "PM" : "AM"}",
                             style: Theme.of(context)
                                 .typography
                                 .white
