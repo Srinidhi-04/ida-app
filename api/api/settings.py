@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import firebase_admin
 import os
 from dotenv import load_dotenv
 
@@ -35,8 +36,11 @@ SECRET_KEY = 'django-insecure-1zg5oajrf+$+gk4=_l$w5#%+65%5)n5uq9hox$s5!rxw4y&^wr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["4411-130-126-255-165.ngrok-free.app", "127.0.0.1"]
+ALLOWED_HOSTS = ["8472-223-185-129-163.ngrok-free.app", "127.0.0.1"]
 
+cred_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+cred = firebase_admin.credentials.Certificate(cred_path)
+firebase_admin.initialize_app(cred)
 
 # Application definition
 
@@ -47,8 +51,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_apscheduler',
     'ida_app'
 ]
+
+APScheduler_DATETIME_FORMAT = "N j, Y, f:s a"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

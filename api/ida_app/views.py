@@ -1,8 +1,7 @@
 import datetime
-import time
 from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.contrib.auth import authenticate
-from django.views.decorators.csrf import csrf_exempt
+from ida_app.tasks import *
 from ida_app.models import *
 
 def index(request: HttpRequest):
@@ -82,10 +81,13 @@ def add_event(request: HttpRequest):
         return JsonResponse({"error": "'location' field is required"}, status = 400)
     
     try:
-        event = Events(name = name, date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S"), location = location, latitude = latitude, longitude = longitude, image = image, essential = essential)
+        event_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        event = Events(name = name, date = event_date, location = location, latitude = latitude, longitude = longitude, image = image, essential = essential)
         event.save()
     except:
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
+    
+    schedule_topic_notification(topic="ida-app-default", title="Event starting soon!", body=f"{name} is starting soon in {location} at {event_date}", run_time=event_date)
 
     return JsonResponse({"message": "Event successfully added", "event_id": event.event_id})
 

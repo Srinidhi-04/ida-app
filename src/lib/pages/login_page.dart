@@ -37,7 +37,7 @@ class _LoginPageState extends State<LoginPage> {
   String password = "";
   String error = "";
 
-  String baseUrl = "https://4411-130-126-255-165.ngrok-free.app/ida-app";
+  String baseUrl = "https://8472-223-185-129-163.ngrok-free.app/ida-app";
 
   Future<bool> login() async {
     var response = await post(Uri.parse(baseUrl + "/login/"), body: {"email": email, "password": password});

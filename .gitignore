@@ -12,7 +12,9 @@
 .swiftpm/
 migrate_working_dir/
 .env
-**/.venv/
+.venv
+__pycache__
+firebase_key.json
 
 # IntelliJ related
 *.iml

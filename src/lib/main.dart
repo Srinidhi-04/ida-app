@@ -10,9 +10,62 @@ import 'package:src/pages/settings_page.dart';
 import 'package:src/pages/shop_page.dart';
 import 'package:src/pages/signup_page.dart';
 import 'package:src/pages/splash_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'firebase_options.dart';
 
-void main() {
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
+}
+
+void setupInteractedMessage() {
+  FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    RemoteNotification? notification = message.notification;
+
+    if (notification != null) {
+      flutterLocalNotificationsPlugin.show(
+        notification.hashCode,
+        notification.title,
+        notification.body,
+        NotificationDetails(
+          android: AndroidNotificationDetails(
+            'high_importance_channel',
+            'Important Notifications',
+            importance: Importance.max,
+            priority: Priority.high,
+          ),
+          iOS: DarwinNotificationDetails(),
+        ),
+      );
+    }
+  });
+}
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
+
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+
+  const AndroidInitializationSettings androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+  final DarwinInitializationSettings iosInit = DarwinInitializationSettings();
+
+  await flutterLocalNotificationsPlugin.initialize(
+    InitializationSettings(android: androidInit, iOS: iosInit),
+  );
+
+  setupInteractedMessage();
+
+  await FirebaseMessaging.instance.subscribeToTopic("ida-app-default");
+
   runApp(
     MaterialApp(
       routes: {
