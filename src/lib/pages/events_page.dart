@@ -38,7 +38,7 @@ class _EventsPageState extends State<EventsPage> {
   List<Map> past = [];
   List notifs = [];
 
-  String baseUrl = "https://8472-223-185-129-163.ngrok-free.app/ida-app";
+  String baseUrl = "https://7b82-223-185-129-163.ngrok-free.app/ida-app";
 
   Widget SwitchOption(int index, String text) {
     return Padding(

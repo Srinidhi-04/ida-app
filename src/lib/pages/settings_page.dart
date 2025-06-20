@@ -41,7 +41,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   bool changed = false;
 
-  String baseUrl = "https://8472-223-185-129-163.ngrok-free.app/ida-app";
+  String baseUrl = "https://7b82-223-185-129-163.ngrok-free.app/ida-app";
 
   Widget NotificationOption(String name) {
     return Row(
