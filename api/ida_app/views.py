@@ -55,6 +55,7 @@ def add_event(request: HttpRequest):
     name = request.POST.get("name")
     date = request.POST.get("date")
     location = request.POST.get("location")
+    body = request.POST.get("body")
 
     try:
         latitude = float(request.POST.get("latitude"))
@@ -67,6 +68,9 @@ def add_event(request: HttpRequest):
         return JsonResponse({"error": "'longitude' field is required as a float"}, status = 400)
     
     image = request.POST.get("image")
+    if not image or image == "":
+        image = "https://i.imgur.com/Mw85Kfp.png"
+
     essential = request.POST.get("essential")
     if not essential:
         essential = False
@@ -79,15 +83,17 @@ def add_event(request: HttpRequest):
         return JsonResponse({"error": "'date' field is required"}, status = 400)
     if not location:
         return JsonResponse({"error": "'location' field is required"}, status = 400)
+    if not body:
+        return JsonResponse({"error": "'body' field is required"}, status = 400)
     
     try:
         event_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
-        event = Events(name = name, date = event_date, location = location, latitude = latitude, longitude = longitude, image = image, essential = essential)
+        event = Events(name = name, date = event_date, location = location, latitude = latitude, longitude = longitude, image = image, essential = essential, body = body)
         event.save()
     except:
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
     
-    schedule_topic_notification(topic="ida-app-default", title="Event starting soon!", body=f"{name} is starting soon in {location} at {event_date}", run_time=event_date)
+    schedule_topic_notification(topic=f"ida-event-{event.event_id}", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.time()}", run_time=event_date)
 
     return JsonResponse({"message": "Event successfully added", "event_id": event.event_id})
 

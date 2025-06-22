@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
@@ -16,6 +17,7 @@ class EventsPage extends StatefulWidget {
 
 class _EventsPageState extends State<EventsPage> {
   late int user_id;
+  late bool admin;
   List<bool> loaded = [false, false];
 
   int selected = 0;
@@ -38,7 +40,7 @@ class _EventsPageState extends State<EventsPage> {
   List<Map> past = [];
   List notifs = [];
 
-  String baseUrl = "https://7b82-223-185-129-163.ngrok-free.app/ida-app";
+  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
 
   Widget SwitchOption(int index, String text) {
     return Padding(
@@ -85,7 +87,7 @@ class _EventsPageState extends State<EventsPage> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           child: TextButton(
             onPressed: () {
-              Navigator.pushNamed(context, "/event", arguments: {"image": image, "date": date, "location": location, "title": name, "body": body});
+              Navigator.pushNamed(context, "/event", arguments: {"image": image, "date": date, "location": location, "title": name, "body": body, "event_id": event_id});
             },
             style: ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.zero), tapTargetSize: MaterialTapTargetSize.shrinkWrap, shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))),
             child: Padding(
@@ -132,6 +134,10 @@ class _EventsPageState extends State<EventsPage> {
                                       if (notifs.contains(event_id)) notifs.remove(event_id);
                                       else notifs.add(event_id);
                                     });
+
+                                    if (notifs.contains(event_id)) await FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}");
+                                    
+                                    else await FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}");
 
                                     await post(Uri.parse(baseUrl + "/toggle-notification/"), body: {"user_id": user_id.toString(), "event_id": event_id.toString()});
                                     await getNotifications();
@@ -259,6 +265,7 @@ class _EventsPageState extends State<EventsPage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
+      admin = bool.parse(info["admin"]!);
     });
     await getNotifications();
   }
@@ -348,6 +355,7 @@ class _EventsPageState extends State<EventsPage> {
               ),
             )
           ),
+          floatingActionButton: (admin) ? FloatingActionButton(onPressed: () {Navigator.of(context).pushNamed("/create");}, child: Icon(Icons.add), backgroundColor: Theme.of(context).primaryColorDark, foregroundColor: Theme.of(context).primaryColorLight, shape: CircleBorder(),) : null,
           bottomNavigationBar: Navigation(selected: 1),
         );
   }

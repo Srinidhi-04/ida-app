@@ -37,7 +37,7 @@ class _SignupPageState extends State<SignupPage> {
   String password = "";
   String error = "";
 
-  String baseUrl = "https://7b82-223-185-129-163.ngrok-free.app/ida-app";
+  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
 
   Future<bool> signup() async {
     var response = await post(Uri.parse(baseUrl + "/signup/"), body: {"email": email, "password": password});

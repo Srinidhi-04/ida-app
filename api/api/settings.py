@@ -36,7 +36,7 @@ SECRET_KEY = 'django-insecure-1zg5oajrf+$+gk4=_l$w5#%+65%5)n5uq9hox$s5!rxw4y&^wr
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["7b82-223-185-129-163.ngrok-free.app", "127.0.0.1"]
+ALLOWED_HOSTS = ["0112-223-185-130-192.ngrok-free.app", "127.0.0.1"]
 
 cred_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 cred = firebase_admin.credentials.Certificate(cred_path)

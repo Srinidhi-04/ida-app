@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:src/pages/create_event_page.dart';
 import 'package:src/pages/event_page.dart';
 import 'package:src/pages/events_page.dart';
 import 'package:src/pages/home_page.dart';
@@ -15,12 +16,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'firebase_options.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 }
 
 void setupInteractedMessage() {
@@ -49,13 +49,12 @@ void setupInteractedMessage() {
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-  const AndroidInitializationSettings androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
+  const AndroidInitializationSettings androidInit =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
   final DarwinInitializationSettings iosInit = DarwinInitializationSettings();
 
   await flutterLocalNotificationsPlugin.initialize(
@@ -78,11 +77,21 @@ void main() async {
         "/event": (context) => EventPage(),
         "/map": (context) => MapPage(),
         "/profile": (context) => ProfilePage(),
-        "/settings": (context) => SettingsPage()
+        "/settings": (context) => SettingsPage(),
+        "/create": (context) => CreateEventPage(),
       },
       theme: ThemeData(
-        textButtonTheme: TextButtonThemeData(style: ButtonStyle(overlayColor: WidgetStatePropertyAll(Color(0x3313294B)), textStyle: WidgetStatePropertyAll(TextStyle(fontWeight: FontWeight.normal)))),
-        bottomSheetTheme: BottomSheetThemeData(backgroundColor: Colors.transparent),
+        textButtonTheme: TextButtonThemeData(
+          style: ButtonStyle(
+            overlayColor: WidgetStatePropertyAll(Color(0x3313294B)),
+            textStyle: WidgetStatePropertyAll(
+              TextStyle(fontWeight: FontWeight.normal),
+            ),
+          ),
+        ),
+        bottomSheetTheme: BottomSheetThemeData(
+          backgroundColor: Colors.transparent,
+        ),
         primaryColor: Color(0xFF9C9A9D),
         primaryColorLight: Color(0xFFFF5F05),
         primaryColorDark: Color(0xFF13294B),
@@ -90,39 +99,159 @@ void main() async {
         appBarTheme: AppBarTheme(
           backgroundColor: Colors.white,
           foregroundColor: Color(0xFF13294B),
-          surfaceTintColor: Colors.transparent
+          surfaceTintColor: Colors.transparent,
         ),
         typography: Typography(
           black: TextTheme(
-            headlineLarge: TextStyle(fontSize: 26, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.normal, color: Colors.black),
-            headlineMedium: TextStyle(fontSize: 24, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.normal, color: Colors.black),
-            headlineSmall: TextStyle(fontSize: 22, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.normal, color: Colors.black),
-            titleLarge: TextStyle(fontSize: 26, fontFamily: GoogleFonts.sourceSans3().fontFamily, fontWeight: FontWeight.normal, color: Colors.black),
-            titleMedium: TextStyle(fontSize: 24, fontFamily: GoogleFonts.sourceSans3().fontFamily, fontWeight: FontWeight.normal, color: Colors.black),
-            titleSmall: TextStyle(fontSize: 22, fontFamily: GoogleFonts.sourceSans3().fontFamily, fontWeight: FontWeight.normal, color: Colors.black),
-            bodyLarge: TextStyle(fontSize: 18, fontFamily: GoogleFonts.sourceSans3().fontFamily, fontWeight: FontWeight.normal, color: Colors.black),
-            bodyMedium: TextStyle(fontSize: 14, fontFamily: GoogleFonts.sourceSans3().fontFamily, fontWeight: FontWeight.normal, color: Colors.black),
-            bodySmall: TextStyle(fontSize: 12, fontFamily: GoogleFonts.sourceSans3().fontFamily, fontWeight: FontWeight.normal, color: Colors.black),
-            labelLarge: TextStyle(fontSize: 18, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.normal, color: Colors.black),
-            labelMedium: TextStyle(fontSize: 14, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.normal, color: Colors.black),
-            labelSmall: TextStyle(fontSize: 12, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.normal, color: Colors.black), 
+            headlineLarge: TextStyle(
+              fontSize: 26,
+              fontFamily: GoogleFonts.montserrat().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+            headlineMedium: TextStyle(
+              fontSize: 24,
+              fontFamily: GoogleFonts.montserrat().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+            headlineSmall: TextStyle(
+              fontSize: 22,
+              fontFamily: GoogleFonts.montserrat().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+            titleLarge: TextStyle(
+              fontSize: 26,
+              fontFamily: GoogleFonts.sourceSans3().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+            titleMedium: TextStyle(
+              fontSize: 24,
+              fontFamily: GoogleFonts.sourceSans3().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+            titleSmall: TextStyle(
+              fontSize: 22,
+              fontFamily: GoogleFonts.sourceSans3().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+            bodyLarge: TextStyle(
+              fontSize: 18,
+              fontFamily: GoogleFonts.sourceSans3().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+            bodyMedium: TextStyle(
+              fontSize: 14,
+              fontFamily: GoogleFonts.sourceSans3().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+            bodySmall: TextStyle(
+              fontSize: 12,
+              fontFamily: GoogleFonts.sourceSans3().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+            labelLarge: TextStyle(
+              fontSize: 18,
+              fontFamily: GoogleFonts.montserrat().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+            labelMedium: TextStyle(
+              fontSize: 14,
+              fontFamily: GoogleFonts.montserrat().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
+            labelSmall: TextStyle(
+              fontSize: 12,
+              fontFamily: GoogleFonts.montserrat().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.black,
+            ),
           ),
           white: TextTheme(
-            headlineLarge: TextStyle(fontSize: 26, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.normal, color: Colors.white),
-            headlineMedium: TextStyle(fontSize: 24, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.normal, color: Colors.white),
-            headlineSmall: TextStyle(fontSize: 22, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.normal, color: Colors.white),
-            titleLarge: TextStyle(fontSize: 26, fontFamily: GoogleFonts.sourceSans3().fontFamily, fontWeight: FontWeight.normal, color: Colors.white),
-            titleMedium: TextStyle(fontSize: 24, fontFamily: GoogleFonts.sourceSans3().fontFamily, fontWeight: FontWeight.normal, color: Colors.white),
-            titleSmall: TextStyle(fontSize: 22, fontFamily: GoogleFonts.sourceSans3().fontFamily, fontWeight: FontWeight.normal, color: Colors.white),
-            bodyLarge: TextStyle(fontSize: 18, fontFamily: GoogleFonts.sourceSans3().fontFamily, fontWeight: FontWeight.normal, color: Colors.white),
-            bodyMedium: TextStyle(fontSize: 14, fontFamily: GoogleFonts.sourceSans3().fontFamily, fontWeight: FontWeight.normal, color: Colors.white),
-            bodySmall: TextStyle(fontSize: 12, fontFamily: GoogleFonts.sourceSans3().fontFamily, fontWeight: FontWeight.normal, color: Colors.white),
-            labelLarge: TextStyle(fontSize: 18, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.normal, color: Colors.white),
-            labelMedium: TextStyle(fontSize: 14, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.normal, color: Colors.white),
-            labelSmall: TextStyle(fontSize: 12, fontFamily: GoogleFonts.montserrat().fontFamily, fontWeight: FontWeight.normal, color: Colors.white), 
+            headlineLarge: TextStyle(
+              fontSize: 26,
+              fontFamily: GoogleFonts.montserrat().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
+            headlineMedium: TextStyle(
+              fontSize: 24,
+              fontFamily: GoogleFonts.montserrat().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
+            headlineSmall: TextStyle(
+              fontSize: 22,
+              fontFamily: GoogleFonts.montserrat().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
+            titleLarge: TextStyle(
+              fontSize: 26,
+              fontFamily: GoogleFonts.sourceSans3().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
+            titleMedium: TextStyle(
+              fontSize: 24,
+              fontFamily: GoogleFonts.sourceSans3().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
+            titleSmall: TextStyle(
+              fontSize: 22,
+              fontFamily: GoogleFonts.sourceSans3().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
+            bodyLarge: TextStyle(
+              fontSize: 18,
+              fontFamily: GoogleFonts.sourceSans3().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
+            bodyMedium: TextStyle(
+              fontSize: 14,
+              fontFamily: GoogleFonts.sourceSans3().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
+            bodySmall: TextStyle(
+              fontSize: 12,
+              fontFamily: GoogleFonts.sourceSans3().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
+            labelLarge: TextStyle(
+              fontSize: 18,
+              fontFamily: GoogleFonts.montserrat().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
+            labelMedium: TextStyle(
+              fontSize: 14,
+              fontFamily: GoogleFonts.montserrat().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
+            labelSmall: TextStyle(
+              fontSize: 12,
+              fontFamily: GoogleFonts.montserrat().fontFamily,
+              fontWeight: FontWeight.normal,
+              color: Colors.white,
+            ),
           ),
-        )
+        ),
       ),
-    )
+    ),
   );
 }

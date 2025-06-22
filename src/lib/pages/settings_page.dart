@@ -41,9 +41,9 @@ class _SettingsPageState extends State<SettingsPage> {
 
   bool changed = false;
 
-  String baseUrl = "https://7b82-223-185-129-163.ngrok-free.app/ida-app";
+  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
 
-  Widget NotificationOption(String name) {
+  Widget notificationOption(String name) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -151,7 +151,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children:
-                        notifs.keys.map((e) => NotificationOption(e)).toList(),
+                        notifs.keys.map((e) => notificationOption(e)).toList(),
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,

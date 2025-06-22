@@ -34,4 +34,6 @@ def schedule_topic_notification(topic: str, title: str, body: str, run_time: dat
 
     if not scheduler.running:
         start_scheduler()
+    
+    print(f"Successfully scheduled notification to topic '{topic}'")
 
