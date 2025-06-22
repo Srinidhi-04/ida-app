@@ -11,6 +11,7 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  bool reloaded = false;
 
   LatLng? center;
   Set<Marker> markers = {};
@@ -27,12 +28,33 @@ class _MapPageState extends State<MapPage> {
     "Sep",
     "Oct",
     "Nov",
-    "Dec"
+    "Dec",
   ];
   List<String> days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  List<Map> events = [{"name": "Keep Calm and Ask A Dad", "location": "CIF Room 3025", "date": DateTime.now(), "image": "https://i.imgur.com/Z3X6IMd.png", "coordinates": LatLng(40.112866138760154, -88.22778400452617)}, {"name": "UIUC vs Purdue Basketball", "location": "State Farm Center", "date": DateTime.now(), "image": "https://i.imgur.com/UGnaS5X.jpeg", "coordinates": LatLng(40.09659366812142, -88.23489569343018)}];
+  List<Map> events = [
+    {
+      "name": "Keep Calm and Ask A Dad",
+      "location": "CIF Room 3025",
+      "date": DateTime.now(),
+      "image": "https://i.imgur.com/Z3X6IMd.png",
+      "coordinates": LatLng(40.112866138760154, -88.22778400452617),
+    },
+    {
+      "name": "UIUC vs Purdue Basketball",
+      "location": "State Farm Center",
+      "date": DateTime.now(),
+      "image": "https://i.imgur.com/UGnaS5X.jpeg",
+      "coordinates": LatLng(40.09659366812142, -88.23489569343018),
+    },
+  ];
 
-  Widget EventCard(String name, String location, DateTime date, String image, LatLng coordinates) {
+  Widget eventCard(
+    String name,
+    String location,
+    DateTime date,
+    String image,
+    LatLng coordinates,
+  ) {
     return Container(
       width: 0.8 * MediaQuery.of(context).size.width,
       height: 170,
@@ -42,56 +64,67 @@ class _MapPageState extends State<MapPage> {
         child: Card(
           elevation: 5,
           color: Colors.white,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: TextButton(
             onPressed: () {
               setState(() {
                 markers = {
                   Marker(markerId: MarkerId("My location"), position: center!),
-                  Marker(markerId: MarkerId("Event location"), position: coordinates)
+                  Marker(
+                    markerId: MarkerId("Event location"),
+                    position: coordinates,
+                  ),
                 };
+
+                reloaded = true;
               });
             },
-            style: ButtonStyle(padding: WidgetStatePropertyAll(EdgeInsets.zero), tapTargetSize: MaterialTapTargetSize.shrinkWrap, shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)))),
+            style: ButtonStyle(
+              padding: WidgetStatePropertyAll(EdgeInsets.zero),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              shape: WidgetStatePropertyAll(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              ),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: Image(
-                    width: MediaQuery.of(context).size.width / 5,
-                    height: 170,
-                    image: NetworkImage(image),
-                    fit: BoxFit.cover,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image(
+                      width: MediaQuery.of(context).size.width / 5,
+                      height: 170,
+                      image: NetworkImage(image),
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: Container(
-                    width: 0.4 * MediaQuery.of(context).size.width,
-                    child: Column(
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Container(
+                      width: 0.4 * MediaQuery.of(context).size.width,
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "${days[date.weekday-1]}, ${months[date.month-1]} ${date.day} • ${date.hour % 12 == 0 ? 12 : date.hour % 12}:${date.minute} ${(date.hour >= 12) ? "PM" : "AM"}",
-                            style: Theme.of(context)
-                                .typography
-                                .white
-                                .labelSmall!
-                                .apply(
-                                  color: Theme.of(context).primaryColorLight,
-                                ),
+                            "${days[date.weekday - 1]}, ${months[date.month - 1]} ${date.day} • ${date.hour % 12 == 0 ? 12 : date.hour % 12}:${date.minute} ${(date.hour >= 12) ? "PM" : "AM"}",
+                            style: Theme.of(
+                              context,
+                            ).typography.white.labelSmall!.apply(
+                              color: Theme.of(context).primaryColorLight,
+                            ),
                           ),
                           Text(
                             name,
-                            style: Theme.of(context)
-                                .typography
-                                .black
-                                .labelMedium!
-                                .apply(
-                                    color: Theme.of(context).primaryColorDark),
+                            style: Theme.of(
+                              context,
+                            ).typography.black.labelMedium!.apply(
+                              color: Theme.of(context).primaryColorDark,
+                            ),
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -104,27 +137,29 @@ class _MapPageState extends State<MapPage> {
                                   ),
                                   Container(
                                     constraints: BoxConstraints(
-                                        maxWidth: 0.3 *
-                                            MediaQuery.of(context).size.width),
+                                      maxWidth:
+                                          0.3 *
+                                          MediaQuery.of(context).size.width,
+                                    ),
                                     child: Text(
                                       location,
-                                      style: Theme.of(context)
-                                          .typography
-                                          .black
-                                          .labelSmall!
-                                          .apply(
-                                              color:
-                                                  Theme.of(context).primaryColor),
+                                      style: Theme.of(
+                                        context,
+                                      ).typography.black.labelSmall!.apply(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
                                     ),
-                                  )
+                                  ),
                                 ],
-                              )
+                              ),
                             ],
-                          )
-                        ]),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                )
-              ]),
+                ],
+              ),
             ),
           ),
         ),
@@ -152,38 +187,98 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (center == null) return Scaffold(body: Center(child: LoadingAnimationWidget.inkDrop(color: Theme.of(context).primaryColorLight, size: 100)),);
+    if (center == null)
+      return Scaffold(
+        body: Center(
+          child: LoadingAnimationWidget.inkDrop(
+            color: Theme.of(context).primaryColorLight,
+            size: 100,
+          ),
+        ),
+      );
 
-    Map args = {};
-    if (ModalRoute.of(context)!.settings.arguments != null) args = ModalRoute.of(context)!.settings.arguments as Map;
+    if (!reloaded) {
+      Map args = {};
+      if (ModalRoute.of(context)!.settings.arguments != null)
+        args = ModalRoute.of(context)!.settings.arguments as Map;
 
-    if (args.isNotEmpty) {
-      setState(() {
-        markers = {
-          Marker(markerId: MarkerId("My location"), position: center!),
-          Marker(markerId: MarkerId("Event location"), position: args["coordinates"])
-        };
-      });
+      if (args.isNotEmpty) {
+        setState(() {
+          markers = {
+            Marker(markerId: MarkerId("My location"), position: center!),
+            Marker(
+              markerId: MarkerId("Event location"),
+              position: args["coordinates"],
+            ),
+          };
+        });
+      }
     }
 
     return Scaffold(
       body: Stack(
         alignment: Alignment.topCenter,
         children: [
-          GoogleMap(initialCameraPosition: CameraPosition(target: center!, zoom: 14), markers: markers, zoomControlsEnabled: false,),
+          GoogleMap(
+            initialCameraPosition: CameraPosition(target: center!, zoom: 14),
+            markers: markers,
+            zoomControlsEnabled: false,
+          ),
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Card(color: Colors.white, child: Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: Row(mainAxisSize: MainAxisSize.min, children: [IconButton(onPressed: () => Navigator.pop(context), icon: Icon(Icons.arrow_back_ios), color: Colors.black,), Expanded(child: TextFormField(decoration: InputDecoration(border: InputBorder.none, hintText: "Search for events", hintStyle: Theme.of(context).typography.black.labelLarge!.apply(color: Color(0xFF9C9A9D))), cursorColor: Colors.black,))],),
-            )),
+            child: Card(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: Icon(Icons.arrow_back_ios),
+                      color: Colors.black,
+                    ),
+                    Expanded(
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          hintText: "Search for events",
+                          hintStyle: Theme.of(context)
+                              .typography
+                              .black
+                              .labelLarge!
+                              .apply(color: Color(0xFF9C9A9D)),
+                        ),
+                        cursorColor: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         ],
       ),
-      bottomSheet: SingleChildScrollView(scrollDirection: Axis.horizontal, child: Padding(
-        padding: const EdgeInsets.only(bottom: 20.0),
-        child: Row(children: events.map((e) => EventCard(e["name"], e["location"], e["date"], e["image"], e["coordinates"])).toList(),),
-      ),),
+      bottomSheet: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 20.0),
+          child: Row(
+            children:
+                events
+                    .map(
+                      (e) => eventCard(
+                        e["name"],
+                        e["location"],
+                        e["date"],
+                        e["image"],
+                        e["coordinates"],
+                      ),
+                    )
+                    .toList(),
+          ),
+        ),
+      ),
     );
   }
 }

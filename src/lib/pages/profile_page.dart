@@ -50,9 +50,10 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Container(
             constraints: BoxConstraints(
               minWidth: MediaQuery.of(context).size.width,
-              minHeight: MediaQuery.of(context).size.height -
-                        kToolbarHeight -
-                        kBottomNavigationBarHeight
+              minHeight:
+                  MediaQuery.of(context).size.height -
+                  kToolbarHeight -
+                  kBottomNavigationBarHeight,
             ),
             child: Column(
               children: [
@@ -65,7 +66,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
                   child: Text(
                     "Profile",
-                    style: Theme.of(context).typography.black.headlineLarge!.apply(fontWeightDelta: 3),
+                    style: Theme.of(
+                      context,
+                    ).typography.black.headlineLarge!.apply(fontWeightDelta: 3),
                   ),
                 ),
                 Padding(
@@ -75,28 +78,54 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: Theme.of(context).typography.black.labelMedium,
                   ),
                 ),
-                TextButton(onPressed: () {Navigator.pushNamed(context, "/settings");}, child: Text(
-                      "Notifications",
-                      style: Theme.of(context).typography.black.labelMedium!.apply(),
-                    ),),
-                TextButton(
-                    onPressed: () async {
-                      await SecureStorage.delete();
-                      await Navigator.popAndPushNamed(context, "/login");
+                Container(
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, "/settings");
                     },
-                    child: Text(
-                      "LOG OUT",
-                      style: Theme.of(context).typography.white.labelLarge!.apply(fontSizeDelta: 2, fontWeightDelta: 3),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Notifications",
+                          style:
+                              Theme.of(
+                                context,
+                              ).typography.black.labelMedium!.apply(),
+                        ),
+                        Icon(
+                          Icons.keyboard_arrow_right_outlined,
+                          color: Colors.black,
+                        ),
+                      ],
                     ),
-                    style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(
-                            Theme.of(context).primaryColor),
-                        fixedSize: WidgetStatePropertyAll(
-                            Size(0.6 * MediaQuery.of(context).size.width, 50)),
-                        elevation: WidgetStatePropertyAll(10)),
-                  )
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    await SecureStorage.delete();
+                    await Navigator.popAndPushNamed(context, "/login");
+                  },
+                  child: Text(
+                    "LOG OUT",
+                    style: Theme.of(context).typography.white.labelLarge!.apply(
+                      fontSizeDelta: 2,
+                      fontWeightDelta: 3,
+                    ),
+                  ),
+                  style: ButtonStyle(
+                    backgroundColor: WidgetStatePropertyAll(
+                      Theme.of(context).primaryColor,
+                    ),
+                    fixedSize: WidgetStatePropertyAll(
+                      Size(0.6 * MediaQuery.of(context).size.width, 50),
+                    ),
+                    elevation: WidgetStatePropertyAll(10),
+                  ),
+                ),
               ],
-            )
+            ),
           ),
         ),
       ),
