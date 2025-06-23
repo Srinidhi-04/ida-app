@@ -109,9 +109,9 @@ def get_events(request: HttpRequest):
     if not completed:
         events = list(Events.objects.all().values())
     else:
-        events = Events.objects.filter(completed = completed == "yes")
+        events = Events.objects.filter(completed = completed == "yes").order_by("-essential")
         if completed != "yes" and essential:
-            events = events.filter(essential = essential == "yes")
+            events = events.filter(essential = essential == "yes").order_by("-essential")
         events = list(events.values())
 
     return JsonResponse({"data": events})

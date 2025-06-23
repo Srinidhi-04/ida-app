@@ -1,6 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class MapPage extends StatefulWidget {
@@ -31,22 +34,9 @@ class _MapPageState extends State<MapPage> {
     "Dec",
   ];
   List<String> days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  List<Map> events = [
-    {
-      "name": "Keep Calm and Ask A Dad",
-      "location": "CIF Room 3025",
-      "date": DateTime.now(),
-      "image": "https://i.imgur.com/Z3X6IMd.png",
-      "coordinates": LatLng(40.112866138760154, -88.22778400452617),
-    },
-    {
-      "name": "UIUC vs Purdue Basketball",
-      "location": "State Farm Center",
-      "date": DateTime.now(),
-      "image": "https://i.imgur.com/UGnaS5X.jpeg",
-      "coordinates": LatLng(40.09659366812142, -88.23489569343018),
-    },
-  ];
+  List<Map> events = [];
+
+  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
 
   Widget eventCard(
     String name,
@@ -179,10 +169,32 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
+  Future<void> getEvents() async {
+    var response = await get(Uri.parse(baseUrl + "/get-events?completed=no"));
+    Map info = jsonDecode(response.body);
+    List all_events = info["data"];
+
+    List<Map> new_events = [];
+    for (var event in all_events) {
+      new_events.add({
+        "date": DateTime.parse(event["date"]),
+        "name": event["name"],
+        "location": event["location"],
+        "image": event["image"],
+        "coordinates": LatLng(event["latitude"], event["longitude"]),
+      });
+    }
+
+    setState(() {
+      events = new_events;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getPosition();
+    getEvents();
   }
 
   @override

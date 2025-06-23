@@ -42,7 +42,7 @@ class _EventsPageState extends State<EventsPage> {
 
   String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
 
-  Widget SwitchOption(int index, String text) {
+  Widget switchOption(int index, String text) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: TextButton(
@@ -74,7 +74,7 @@ class _EventsPageState extends State<EventsPage> {
     );
   }
 
-  Widget EventCard(int index, int event_id, String name, String location, DateTime date, String image, String body, LatLng coordinates) {
+  Widget eventCard(int index, int event_id, String name, String location, DateTime date, String image, String body, LatLng coordinates) {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 170,
@@ -316,8 +316,8 @@ class _EventsPageState extends State<EventsPage> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            SwitchOption(0, "UPCOMING"),
-                            SwitchOption(1, "PAST")
+                            switchOption(0, "UPCOMING"),
+                            switchOption(1, "PAST")
                           ],
                         ),
                       ),
@@ -331,10 +331,10 @@ class _EventsPageState extends State<EventsPage> {
                       children: (selected == 0) ? ((upcoming["all"]!.isEmpty) ? [Center(child: Padding(
                         padding: const EdgeInsets.only(top: 20),
                         child: Text("No upcoming events", style: Theme.of(context).typography.black.headlineLarge,),
-                      ))] : upcoming["all"]!.map((e) => EventCard(upcoming["all"]!.indexOf(e), e["event_id"], e["name"], e["location"], e["date"], e["image"], e["body"], e["coordinates"])).toList()) : ((past.isEmpty) ? [Center(child: Padding(
+                      ))] : upcoming["all"]!.map((e) => eventCard(upcoming["all"]!.indexOf(e), e["event_id"], e["name"], e["location"], e["date"], e["image"], e["body"], e["coordinates"])).toList()) : ((past.isEmpty) ? [Center(child: Padding(
                         padding: const EdgeInsets.only(top: 20),
                         child: Text("No past events", style: Theme.of(context).typography.black.headlineLarge,),
-                      ))] : past.map((e) => EventCard(past.indexOf(e), e["event_id"], e["name"], e["location"], e["date"], e["image"], e["body"], e["coordinates"])).toList()),
+                      ))] : past.map((e) => eventCard(past.indexOf(e), e["event_id"], e["name"], e["location"], e["date"], e["image"], e["body"], e["coordinates"])).toList()),
                     ),
                     (selected == 0) ? Padding(
                       padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
@@ -345,17 +345,17 @@ class _EventsPageState extends State<EventsPage> {
                       children: (selected == 0) ? ((upcoming["essential"]!.isEmpty) ? [Center(child: Padding(
                         padding: const EdgeInsets.only(top: 20),
                         child: Text("No upcoming events", style: Theme.of(context).typography.black.headlineLarge,),
-                      ))] : upcoming["essential"]!.map((e) => EventCard(upcoming["essential"]!.indexOf(e), e["event_id"], e["name"], e["location"], e["date"], e["image"], e["body"], e["coordinates"])).toList()) : ((past.isEmpty) ? [Center(child: Padding(
+                      ))] : upcoming["essential"]!.map((e) => eventCard(upcoming["essential"]!.indexOf(e), e["event_id"], e["name"], e["location"], e["date"], e["image"], e["body"], e["coordinates"])).toList()) : ((past.isEmpty) ? [Center(child: Padding(
                         padding: const EdgeInsets.only(top: 20),
                         child: Text("No past events", style: Theme.of(context).typography.black.headlineLarge,),
-                      ))] : past.map((e) => EventCard(past.indexOf(e), e["event_id"], e["name"], e["location"], e["date"], e["image"], e["body"], e["coordinates"])).toList()),
+                      ))] : past.map((e) => eventCard(past.indexOf(e), e["event_id"], e["name"], e["location"], e["date"], e["image"], e["body"], e["coordinates"])).toList()),
                     ) : Container(),
                   ],
                 ),
               ),
             )
           ),
-          floatingActionButton: (admin) ? FloatingActionButton(onPressed: () {Navigator.of(context).pushNamed("/create");}, child: Icon(Icons.add), backgroundColor: Theme.of(context).primaryColorDark, foregroundColor: Theme.of(context).primaryColorLight, shape: CircleBorder(),) : null,
+          floatingActionButton: (admin) ? FloatingActionButton(onPressed: () {Navigator.of(context).pushNamed("/create", arguments: {"callback": () {getEvents();}});}, child: Icon(Icons.add), backgroundColor: Theme.of(context).primaryColorDark, foregroundColor: Theme.of(context).primaryColorLight, shape: CircleBorder(),) : null,
           bottomNavigationBar: Navigation(selected: 1),
         );
   }

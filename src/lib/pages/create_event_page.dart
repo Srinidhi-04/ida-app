@@ -24,6 +24,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
 
   @override
   Widget build(BuildContext context) {
+    Map args = ModalRoute.of(context)!.settings.arguments as Map;
+    Function callback = args["callback"];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -471,6 +474,9 @@ class _CreateEventPageState extends State<CreateEventPage> {
                               "essential": (featured ? "yes" : "no"),
                             },
                           );
+                          
+                          Navigator.pop(context);
+                          callback();
                         }
 
                         setState(() {
