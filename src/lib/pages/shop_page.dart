@@ -13,9 +13,22 @@ class ShopPage extends StatefulWidget {
 class _ShopPageState extends State<ShopPage> {
   Map<int, int> quantity = {};
 
-  List<Map> items = [{"id": 0, "name": "Centennial Plaza Brick", "price": 250.0, "image": "https://i.imgur.com/UGnaS5X.jpeg"}, {"id": 1, "name": "Centennial Plaza Brick", "price": 250.0, "image": "https://i.imgur.com/UGnaS5X.jpeg"}];
+  List<Map> items = [
+    {
+      "id": 0,
+      "name": "Centennial Plaza Brick",
+      "price": 250.0,
+      "image": "https://i.imgur.com/UGnaS5X.jpeg",
+    },
+    {
+      "id": 1,
+      "name": "Centennial Plaza Brick",
+      "price": 250.0,
+      "image": "https://i.imgur.com/UGnaS5X.jpeg",
+    },
+  ];
 
-  Widget ShopItem(int id, String name, double price, String image) {
+  Widget shopItem(int id, String name, double price, String image) {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 170,
@@ -24,25 +37,28 @@ class _ShopPageState extends State<ShopPage> {
         child: Card(
           elevation: 5,
           color: Colors.white,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(10.0),
-            child: Row(mainAxisSize: MainAxisSize.min, children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image(
-                  width: MediaQuery.of(context).size.width / 5,
-                  height: 170,
-                  image: NetworkImage(image),
-                  fit: BoxFit.cover,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image(
+                    width: MediaQuery.of(context).size.width / 5,
+                    height: 170,
+                    image: NetworkImage(image),
+                    fit: BoxFit.cover,
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20),
-                child: Container(
-                  width: 0.6 * MediaQuery.of(context).size.width,
-                  child: Column(
+                Padding(
+                  padding: const EdgeInsets.only(left: 20),
+                  child: Container(
+                    width: 0.6 * MediaQuery.of(context).size.width,
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
@@ -55,24 +71,20 @@ class _ShopPageState extends State<ShopPage> {
                               children: [
                                 Text(
                                   name,
-                                  style: Theme.of(context)
-                                      .typography
-                                      .white
-                                      .headlineSmall!
-                                      .apply(
-                                          color: Theme.of(context)
-                                              .primaryColorLight,
-                                          fontSizeDelta: -4),
+                                  style: Theme.of(
+                                    context,
+                                  ).typography.white.headlineSmall!.apply(
+                                    color: Theme.of(context).primaryColorLight,
+                                    fontSizeDelta: -4,
+                                  ),
                                 ),
                                 Text(
                                   "\$${price}",
-                                  style: Theme.of(context)
-                                      .typography
-                                      .black
-                                      .bodyMedium!
-                                      .apply(
-                                          color: Theme.of(context)
-                                              .primaryColorDark),
+                                  style: Theme.of(
+                                    context,
+                                  ).typography.black.bodyMedium!.apply(
+                                    color: Theme.of(context).primaryColorDark,
+                                  ),
                                 ),
                               ],
                             ),
@@ -83,14 +95,18 @@ class _ShopPageState extends State<ShopPage> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IconButton(
-                                onPressed: () {
-                                  quantity.update(id, (v) => max(v - 1, 0),
-                                      ifAbsent: () => 0);
-                                  setState(() {
-                                    quantity = quantity;
-                                  });
-                                },
-                                icon: Icon(Icons.remove)),
+                              onPressed: () {
+                                quantity.update(
+                                  id,
+                                  (v) => max(v - 1, 0),
+                                  ifAbsent: () => 0,
+                                );
+                                setState(() {
+                                  quantity = quantity;
+                                });
+                              },
+                              icon: Icon(Icons.remove),
+                            ),
                             Text(
                               (quantity.containsKey(id))
                                   ? quantity[id]!.toString()
@@ -99,20 +115,26 @@ class _ShopPageState extends State<ShopPage> {
                                   Theme.of(context).typography.black.bodyMedium,
                             ),
                             IconButton(
-                                onPressed: () {
-                                  quantity.update(id, (v) => v + 1,
-                                      ifAbsent: () => 1);
-                                  setState(() {
-                                    quantity = quantity;
-                                  });
-                                },
-                                icon: Icon(Icons.add)),
+                              onPressed: () {
+                                quantity.update(
+                                  id,
+                                  (v) => v + 1,
+                                  ifAbsent: () => 1,
+                                );
+                                setState(() {
+                                  quantity = quantity;
+                                });
+                              },
+                              icon: Icon(Icons.add),
+                            ),
                           ],
-                        )
-                      ]),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              )
-            ]),
+              ],
+            ),
           ),
         ),
       ),
@@ -123,13 +145,12 @@ class _ShopPageState extends State<ShopPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Shop",
-            style: Theme.of(context)
-                .typography
-                .black
-                .headlineMedium!
-                .apply(color: Theme.of(context).primaryColorDark)),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))],
+        title: Text(
+          "Shop",
+          style: Theme.of(context).typography.black.headlineMedium!.apply(
+            color: Theme.of(context).primaryColorDark,
+          ),
+        ),
       ),
       body: RefreshIndicator(
         onRefresh: () async {},
@@ -139,15 +160,27 @@ class _ShopPageState extends State<ShopPage> {
           physics: AlwaysScrollableScrollPhysics(),
           child: Container(
             constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height -
-                    kToolbarHeight -
-                    kBottomNavigationBarHeight,
-                minWidth: MediaQuery.of(context).size.width),
+              minHeight:
+                  MediaQuery.of(context).size.height -
+                  kToolbarHeight -
+                  kBottomNavigationBarHeight,
+              minWidth: MediaQuery.of(context).size.width,
+            ),
             child: Padding(
               padding: const EdgeInsets.only(top: 10.0),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: items.map((e) => ShopItem(e["id"], e["name"], e["price"], e["image"])).toList()
+                children:
+                    items
+                        .map(
+                          (e) => shopItem(
+                            e["id"],
+                            e["name"],
+                            e["price"],
+                            e["image"],
+                          ),
+                        )
+                        .toList(),
               ),
             ),
           ),
