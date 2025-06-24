@@ -599,7 +599,7 @@ class _EventsPageState extends State<EventsPage> {
                     },
                   );
                 },
-                child: Icon(Icons.add),
+                child: Icon(Icons.add_rounded),
                 backgroundColor: Theme.of(context).primaryColorDark,
                 foregroundColor: Theme.of(context).primaryColorLight,
                 shape: CircleBorder(),

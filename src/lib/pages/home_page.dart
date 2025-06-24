@@ -39,7 +39,9 @@ class _HomePageState extends State<HomePage> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).pushNamed(route);
+        },
         child: Text(
           text,
           style: Theme.of(
@@ -112,7 +114,11 @@ class _HomePageState extends State<HomePage> {
                         width: 220,
                         height: 160,
                         decoration: BoxDecoration(
-                          color: Color(0xFFFFCD6C),
+                          image: DecorationImage(
+                            image: NetworkImage(image),
+                            fit: BoxFit.cover,
+                          ),
+                          //color: Color(0xFFFFCD6C),
                           borderRadius: BorderRadius.circular(10),
                         ),
                       ),
@@ -251,17 +257,15 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.search, size: 28),
-        ),
         title: Image(
           image: NetworkImage("https://i.imgur.com/0FHQKN4.png"),
           height: 40,
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed("/shop");
+            },
             icon: Icon(Icons.shopping_cart_outlined, size: 28),
           ),
         ],
