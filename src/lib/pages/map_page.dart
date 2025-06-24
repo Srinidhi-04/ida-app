@@ -36,6 +36,7 @@ class _MapPageState extends State<MapPage> {
   List<String> days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   List<Map> events = [];
   TextEditingController autocompleteController = TextEditingController();
+  GoogleMapController? mapController;
 
   String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
 
@@ -60,6 +61,11 @@ class _MapPageState extends State<MapPage> {
           ),
           child: TextButton(
             onPressed: () {
+              CameraUpdate cameraUpdate = CameraUpdate.newLatLngZoom(
+                coordinates,
+                14,
+              );
+
               setState(() {
                 markers = {
                   Marker(markerId: MarkerId("My location"), position: center!),
@@ -70,6 +76,7 @@ class _MapPageState extends State<MapPage> {
                 };
 
                 reloaded = true;
+                mapController!.animateCamera(cameraUpdate);
               });
             },
             style: ButtonStyle(
@@ -176,6 +183,11 @@ class _MapPageState extends State<MapPage> {
                   .map(
                     (e) => TextButton(
                       onPressed: () {
+                        CameraUpdate cameraUpdate = CameraUpdate.newLatLngZoom(
+                          e["coordinates"],
+                          14,
+                        );
+
                         setState(() {
                           markers = {
                             Marker(
@@ -190,6 +202,7 @@ class _MapPageState extends State<MapPage> {
 
                           reloaded = true;
                           autocompleteController.text = "";
+                          mapController!.animateCamera(cameraUpdate);
                         });
                       },
                       child: Align(
@@ -287,6 +300,11 @@ class _MapPageState extends State<MapPage> {
         alignment: Alignment.topCenter,
         children: [
           GoogleMap(
+            onMapCreated: (controller) {
+              setState(() {
+                mapController = controller;
+              });
+            },
             initialCameraPosition: CameraPosition(target: center!, zoom: 14),
             markers: markers,
             zoomControlsEnabled: false,

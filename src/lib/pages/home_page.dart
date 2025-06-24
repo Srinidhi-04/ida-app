@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
 
@@ -29,6 +30,8 @@ class _HomePageState extends State<HomePage> {
   ];
 
   List<Map> events = [];
+
+  bool loadingEvents = false;
 
   String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
 
@@ -193,6 +196,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getEvents() async {
+    setState(() {
+      loadingEvents = true;
+    });
+
     var response = await get(Uri.parse(baseUrl + "/get-events?completed=no"));
     Map info = jsonDecode(response.body);
     List all_events = info["data"];
@@ -211,6 +218,7 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       events = new_events;
+      loadingEvents = false;
     });
   }
 
@@ -350,7 +358,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-                events.isNotEmpty
+                loadingEvents ? LoadingAnimationWidget.staggeredDotsWave(color: Theme.of(context).primaryColorLight, size: 50) : events.isNotEmpty
                     ? SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(
