@@ -35,6 +35,7 @@ class _MapPageState extends State<MapPage> {
   ];
   List<String> days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   List<Map> events = [];
+  TextEditingController autocompleteController = TextEditingController();
 
   String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
 
@@ -157,6 +158,60 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
+  Widget generateAutocomplete(String text) {
+    if (text == "") return Container();
+
+    return Container(
+      color: Colors.white,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.4,
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children:
+              events
+                  .where((e) => e["name"].toLowerCase().startsWith(text))
+                  .map(
+                    (e) => TextButton(
+                      onPressed: () {
+                        setState(() {
+                          markers = {
+                            Marker(
+                              markerId: MarkerId("My location"),
+                              position: center!,
+                            ),
+                            Marker(
+                              markerId: MarkerId("Event location"),
+                              position: e["coordinates"],
+                            ),
+                          };
+
+                          reloaded = true;
+                          autocompleteController.text = "";
+                        });
+                      },
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          e["name"],
+                          style: Theme.of(context).typography.black.labelMedium,
+                        ),
+                      ),
+                      style: ButtonStyle(
+                        shape: WidgetStatePropertyAll(
+                          LinearBorder.bottom(side: BorderSide()),
+                        ),
+                      ),
+                    ),
+                  )
+                  .toList(),
+        ),
+      ),
+    );
+  }
+
   void getPosition() async {
     var permission = await Geolocator.checkPermission();
     if (permission == LocationPermission.denied) {
@@ -170,7 +225,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> getEvents() async {
-    var response = await get(Uri.parse(baseUrl + "/get-events?completed=no"));
+    var response = await get(Uri.parse(baseUrl + "/get-events"));
     Map info = jsonDecode(response.body);
     List all_events = info["data"];
 
@@ -238,34 +293,52 @@ class _MapPageState extends State<MapPage> {
           ),
           Padding(
             padding: const EdgeInsets.all(20.0),
-            child: Card(
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Card(
+                    color: Colors.white,
+                    child: IconButton(
                       onPressed: () => Navigator.pop(context),
-                      icon: Icon(Icons.arrow_back_ios),
+                      icon: Icon(Icons.keyboard_arrow_left),
                       color: Colors.black,
                     ),
-                    Expanded(
-                      child: TextFormField(
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "Search for events",
-                          hintStyle: Theme.of(context)
-                              .typography
-                              .black
-                              .labelLarge!
-                              .apply(color: Color(0xFF9C9A9D)),
-                        ),
-                        cursorColor: Colors.black,
+                  ),
+                  Expanded(
+                    child: Card(
+                      color: Colors.white,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(left: 10.0),
+                            child: TextFormField(
+                              controller: autocompleteController,
+                              decoration: InputDecoration(
+                                border: InputBorder.none,
+                                hintText: "Search for events",
+                                hintStyle: Theme.of(context)
+                                    .typography
+                                    .black
+                                    .labelLarge!
+                                    .apply(color: Color(0xFF9C9A9D)),
+                              ),
+                              cursorColor: Colors.black,
+                              onChanged: (value) => setState(() {}),
+                            ),
+                          ),
+                          generateAutocomplete(
+                            autocompleteController.text.toLowerCase(),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
