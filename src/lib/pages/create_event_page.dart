@@ -35,7 +35,6 @@ class _CreateEventPageState extends State<CreateEventPage> {
             color: Theme.of(context).primaryColorDark,
           ),
         ),
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -441,7 +440,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                           errors[5] = "Longitude is a required field";
                         else
                           errors[5] = null;
-                        
+
                         if (body == "")
                           errors[6] = "Body is a required field";
                         else
@@ -474,7 +473,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                               "essential": (featured ? "yes" : "no"),
                             },
                           );
-                          
+
                           Navigator.pop(context);
                           callback();
                         }

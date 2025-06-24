@@ -97,6 +97,27 @@ def add_event(request: HttpRequest):
 
     return JsonResponse({"message": "Event successfully added", "event_id": event.event_id})
 
+def delete_event(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+    
+    try:
+        event_id = int(request.POST.get("event_id"))
+    except:
+        return JsonResponse({"error": "'event_id' field is required as a int"}, status = 400)
+    
+    try:
+        event = Events.objects.get(event_id = event_id)
+    except:
+        return JsonResponse({"error": "The given event_id does not exist"}, status = 400)
+    
+    try:
+        event.delete()
+    except:
+        return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
+    
+    return JsonResponse({"message": "Event deleted successfully"})
+
 def get_events(request: HttpRequest):
     if request.method != "GET":
         return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)

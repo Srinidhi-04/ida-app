@@ -89,6 +89,9 @@ class _HomePageState extends State<HomePage> {
                 "title": title,
                 "body": body,
                 "event_id": event_id,
+                "callback": () async {
+                  await getEvents();
+                },
               },
             );
           },
@@ -358,7 +361,12 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-                loadingEvents ? LoadingAnimationWidget.staggeredDotsWave(color: Theme.of(context).primaryColorLight, size: 50) : events.isNotEmpty
+                loadingEvents
+                    ? LoadingAnimationWidget.staggeredDotsWave(
+                      color: Theme.of(context).primaryColorLight,
+                      size: 50,
+                    )
+                    : events.isNotEmpty
                     ? SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: Row(

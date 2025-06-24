@@ -1,10 +1,21 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
 
-class EventPage extends StatelessWidget {
+class EventPage extends StatefulWidget {
   EventPage({super.key});
+
+  @override
+  State<EventPage> createState() => _EventPageState();
+}
+
+class _EventPageState extends State<EventPage> {
+  late bool admin;
+  bool loaded = false;
 
   List<String> months = [
     "Jan",
@@ -21,8 +32,50 @@ class EventPage extends StatelessWidget {
     "Dec",
   ];
 
+  bool action_pressed = false;
+
+  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
+
+  Future<void> checkLogin() async {
+    Map<String, String> info = await SecureStorage.read();
+    if (info["last_login"] != null) {
+      DateTime date = DateTime.parse(info["last_login"]!);
+      if (DateTime.now().subtract(Duration(days: 30)).compareTo(date) >= 0) {
+        await SecureStorage.delete();
+        await Navigator.popAndPushNamed(context, "/login");
+        return;
+      }
+    }
+    if (info["user_id"] == null) {
+      await Navigator.popAndPushNamed(context, "/login");
+      return;
+    }
+
+    setState(() {
+      admin = bool.parse(info["admin"]!);
+      loaded = true;
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkLogin();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (!loaded)
+      return Scaffold(
+        body: Center(
+          child: LoadingAnimationWidget.inkDrop(
+            color: Theme.of(context).primaryColorLight,
+            size: 100,
+          ),
+        ),
+      );
+
     Map args = ModalRoute.of(context)!.settings.arguments as Map;
     int event_id = args["event_id"];
     String image = args["image"];
@@ -30,6 +83,7 @@ class EventPage extends StatelessWidget {
     String location = args["location"];
     String title = args["title"];
     String body = args["body"];
+    Function callback = args["callback"];
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -41,7 +95,50 @@ class EventPage extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.white,
-        actions: [IconButton(onPressed: () {}, icon: Icon(Icons.more_vert))],
+        actions:
+            (admin)
+                ? [
+                  (action_pressed)
+                      ? TapRegion(
+                        onTapOutside:
+                            (event) => setState(() {
+                              action_pressed = false;
+                            }),
+                        child: TextButton.icon(
+                          onPressed: () async {
+                            await post(
+                              Uri.parse(baseUrl + "/delete-event/"),
+                              body: {"event_id": event_id.toString()},
+                            );
+                            callback();
+                            Navigator.pop(context);
+                          },
+                          label: Text(
+                            "Delete",
+                            style:
+                                Theme.of(context).typography.white.labelMedium,
+                          ),
+                          icon: Icon(Icons.delete_outline),
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStatePropertyAll(
+                              Theme.of(context).primaryColorLight,
+                            ),
+                            foregroundColor: WidgetStatePropertyAll(
+                              Colors.white,
+                            ),
+                          ),
+                        ),
+                      )
+                      : IconButton(
+                        onPressed: () {
+                          setState(() {
+                            action_pressed = true;
+                          });
+                        },
+                        icon: Icon(Icons.more_vert),
+                      ),
+                ]
+                : [],
       ),
       body: RefreshIndicator(
         onRefresh: () async {},
@@ -165,7 +262,7 @@ class EventPage extends StatelessWidget {
                       padding: EdgeInsets.all(20),
                       child: Container(
                         constraints: BoxConstraints(
-                          minWidth: MediaQuery.of(context).size.width
+                          minWidth: MediaQuery.of(context).size.width,
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -190,7 +287,8 @@ class EventPage extends StatelessWidget {
                             SizedBox(height: 20),
                             Text(
                               body,
-                              style: Theme.of(context).typography.black.bodyLarge,
+                              style:
+                                  Theme.of(context).typography.black.bodyLarge,
                             ),
                             SizedBox(height: 50),
                           ],
