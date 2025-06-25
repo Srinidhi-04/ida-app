@@ -127,6 +127,80 @@ void main() async {
           foregroundColor: Color(0xFF13294B),
           surfaceTintColor: Colors.transparent,
         ),
+        textTheme: TextTheme(
+          headlineLarge: TextStyle(
+            fontSize: 26,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+          headlineMedium: TextStyle(
+            fontSize: 24,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+          headlineSmall: TextStyle(
+            fontSize: 22,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+          titleLarge: TextStyle(
+            fontSize: 26,
+            fontFamily: GoogleFonts.sourceSans3().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+          titleMedium: TextStyle(
+            fontSize: 24,
+            fontFamily: GoogleFonts.sourceSans3().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+          titleSmall: TextStyle(
+            fontSize: 22,
+            fontFamily: GoogleFonts.sourceSans3().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+          bodyLarge: TextStyle(
+            fontSize: 18,
+            fontFamily: GoogleFonts.sourceSans3().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+          bodyMedium: TextStyle(
+            fontSize: 14,
+            fontFamily: GoogleFonts.sourceSans3().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+          bodySmall: TextStyle(
+            fontSize: 12,
+            fontFamily: GoogleFonts.sourceSans3().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+          labelLarge: TextStyle(
+            fontSize: 18,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+          labelMedium: TextStyle(
+            fontSize: 14,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+          labelSmall: TextStyle(
+            fontSize: 12,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+        ),
         typography: Typography(
           black: TextTheme(
             headlineLarge: TextStyle(
