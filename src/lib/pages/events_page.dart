@@ -7,6 +7,7 @@ import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class EventsPage extends StatefulWidget {
   const EventsPage({super.key});
@@ -91,199 +92,259 @@ class _EventsPageState extends State<EventsPage> {
     String image,
     String body,
     LatLng coordinates,
+    int type,
   ) {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 170,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10, 0, 20, 10),
-        child: Card(
-          elevation: 5,
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: TextButton(
-            onPressed: () {
-              Navigator.pushNamed(
-                context,
-                "/event",
-                arguments: {
-                  "image": image,
-                  "date": date,
-                  "location": location,
-                  "title": name,
-                  "body": body,
-                  "event_id": event_id,
-                  "callback": () async {
-                    await getEvents();
-                  },
-                },
-              );
-            },
-            style: ButtonStyle(
-              padding: WidgetStatePropertyAll(EdgeInsets.zero),
-              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              shape: WidgetStatePropertyAll(
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-              ),
+        child: Slidable(
+          key: ValueKey(event_id),
+          endActionPane: ActionPane(
+            motion: BehindMotion(),
+            dismissible: DismissiblePane(
+              onDismissed: () async {
+                setState(() {
+                  if (type == 0) {
+                    upcoming["all"]!.removeAt(index);
+                  } else if (type == 1) {
+                    upcoming["essential"]!.removeAt(index);
+                  } else {
+                    past.removeAt(index);
+                  }
+                });
+                await post(
+                  Uri.parse(baseUrl + "/delete-event/"),
+                  body: {"event_id": event_id.toString()},
+                );
+                getEvents();
+                getNotifications();
+              },
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ClipRRect(
+            children: [
+              CustomSlidableAction(
+                onPressed: (slideContext) async {
+                  setState(() {
+                    if (type == 0) {
+                      upcoming["all"]!.removeAt(index);
+                    } else if (type == 1) {
+                      upcoming["essential"]!.removeAt(index);
+                    } else {
+                      past.removeAt(index);
+                    }
+                  });
+                  await post(
+                    Uri.parse(baseUrl + "/delete-event/"),
+                    body: {"event_id": event_id.toString()},
+                  );
+                  getEvents();
+                  getNotifications();
+                },
+                backgroundColor: Colors.red,
+                foregroundColor: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                child: Icon(Icons.delete_outline, size: 50),
+              ),
+            ],
+          ),
+          child: Card(
+            elevation: 5,
+            color: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: TextButton(
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  "/event",
+                  arguments: {
+                    "image": image,
+                    "date": date,
+                    "location": location,
+                    "title": name,
+                    "body": body,
+                    "event_id": event_id,
+                    "callback": () {
+                      getEvents();
+                      getNotifications();
+                    },
+                  },
+                );
+              },
+              style: ButtonStyle(
+                padding: WidgetStatePropertyAll(EdgeInsets.zero),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                shape: WidgetStatePropertyAll(
+                  RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
-                    child: Image(
-                      width: MediaQuery.of(context).size.width / 5,
-                      height: 170,
-                      image: NetworkImage(image),
-                      fit: BoxFit.cover,
-                    ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Container(
-                      width: 0.6 * MediaQuery.of(context).size.width,
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(bottom: 5.0),
-                                    child: Text(
-                                      "${days[date.weekday - 1]}, ${months[date.month - 1]} ${(date.day < 10) ? 0 : ""}${date.day} • ${(date.hour % 12 < 10 && date.hour % 12 != 0) ? 0 : ""}${(date.hour % 12 == 0) ? 12 : date.hour % 12}:${(date.minute < 10) ? 0 : ""}${date.minute} ${(date.hour >= 12) ? "PM" : "AM"}",
-                                      style: Theme.of(
-                                        context,
-                                      ).typography.white.labelSmall!.apply(
-                                        color:
-                                            Theme.of(context).primaryColorLight,
-                                      ),
-                                    ),
-                                  ),
-                                  IconButton(
-                                    onPressed: () async {
-                                      setState(() {
-                                        if (notifs.contains(event_id))
-                                          notifs.remove(event_id);
-                                        else
-                                          notifs.add(event_id);
-                                      });
-
-                                      if (notifs.contains(event_id))
-                                        await FirebaseMessaging.instance
-                                            .subscribeToTopic(
-                                              "ida-event-${event_id}",
-                                            );
-                                      else
-                                        await FirebaseMessaging.instance
-                                            .unsubscribeFromTopic(
-                                              "ida-event-${event_id}",
-                                            );
-
-                                      await post(
-                                        Uri.parse(
-                                          baseUrl + "/toggle-notification/",
-                                        ),
-                                        body: {
-                                          "user_id": user_id.toString(),
-                                          "event_id": event_id.toString(),
-                                        },
-                                      );
-                                      await getNotifications();
-                                    },
-                                    icon: Icon(
-                                      (notifs.contains(event_id))
-                                          ? Icons.notifications_active
-                                          : Icons.notification_add,
-                                    ),
-                                    color:
-                                        (notifs.contains(event_id))
-                                            ? Theme.of(context).primaryColorDark
-                                            : Theme.of(
-                                              context,
-                                            ).primaryColorLight,
-                                    iconSize: 30,
-                                  ),
-                                ],
-                              ),
-                              Text(
-                                name,
-                                style: Theme.of(
-                                  context,
-                                ).typography.black.labelLarge!.apply(
-                                  color: Theme.of(context).primaryColorDark,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.location_on,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  Container(
-                                    constraints: BoxConstraints(
-                                      maxWidth:
-                                          0.3 *
-                                          MediaQuery.of(context).size.width,
-                                    ),
-                                    child: Text(
-                                      location,
-                                      style: Theme.of(
-                                        context,
-                                      ).typography.black.labelSmall!.apply(
-                                        color: Theme.of(context).primaryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    "/map",
-                                    arguments: {"coordinates": coordinates},
-                                  );
-                                },
-                                child: Text(
-                                  "View on map",
-                                  style:
-                                      Theme.of(
-                                        context,
-                                      ).typography.white.labelSmall,
-                                ),
-                                style: ButtonStyle(
-                                  backgroundColor: WidgetStatePropertyAll(
-                                    Theme.of(context).primaryColorDark,
-                                  ),
-                                  shape: WidgetStatePropertyAll(
-                                    RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(30),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image(
+                        width: MediaQuery.of(context).size.width / 5,
+                        height: 170,
+                        image: NetworkImage(image),
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.only(left: 20),
+                      child: Container(
+                        width: 0.6 * MediaQuery.of(context).size.width,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                        bottom: 5.0,
+                                      ),
+                                      child: Text(
+                                        "${days[date.weekday - 1]}, ${months[date.month - 1]} ${(date.day < 10) ? 0 : ""}${date.day} • ${(date.hour % 12 < 10 && date.hour % 12 != 0) ? 0 : ""}${(date.hour % 12 == 0) ? 12 : date.hour % 12}:${(date.minute < 10) ? 0 : ""}${date.minute} ${(date.hour >= 12) ? "PM" : "AM"}",
+                                        style: Theme.of(
+                                          context,
+                                        ).typography.white.labelSmall!.apply(
+                                          color:
+                                              Theme.of(
+                                                context,
+                                              ).primaryColorLight,
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      onPressed: () async {
+                                        setState(() {
+                                          if (notifs.contains(event_id))
+                                            notifs.remove(event_id);
+                                          else
+                                            notifs.add(event_id);
+                                        });
+
+                                        if (notifs.contains(event_id))
+                                          await FirebaseMessaging.instance
+                                              .subscribeToTopic(
+                                                "ida-event-${event_id}",
+                                              );
+                                        else
+                                          await FirebaseMessaging.instance
+                                              .unsubscribeFromTopic(
+                                                "ida-event-${event_id}",
+                                              );
+
+                                        await post(
+                                          Uri.parse(
+                                            baseUrl + "/toggle-notification/",
+                                          ),
+                                          body: {
+                                            "user_id": user_id.toString(),
+                                            "event_id": event_id.toString(),
+                                          },
+                                        );
+                                        await getNotifications();
+                                      },
+                                      icon: Icon(
+                                        (notifs.contains(event_id))
+                                            ? Icons.notifications_active
+                                            : Icons.notification_add,
+                                      ),
+                                      color:
+                                          (notifs.contains(event_id))
+                                              ? Theme.of(
+                                                context,
+                                              ).primaryColorDark
+                                              : Theme.of(
+                                                context,
+                                              ).primaryColorLight,
+                                      iconSize: 30,
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  name,
+                                  style: Theme.of(
+                                    context,
+                                  ).typography.black.labelLarge!.apply(
+                                    color: Theme.of(context).primaryColorDark,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.location_on,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    Container(
+                                      constraints: BoxConstraints(
+                                        maxWidth:
+                                            0.3 *
+                                            MediaQuery.of(context).size.width,
+                                      ),
+                                      child: Text(
+                                        location,
+                                        style: Theme.of(
+                                          context,
+                                        ).typography.black.labelSmall!.apply(
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      "/map",
+                                      arguments: {"coordinates": coordinates},
+                                    );
+                                  },
+                                  child: Text(
+                                    "View on map",
+                                    style:
+                                        Theme.of(
+                                          context,
+                                        ).typography.white.labelSmall,
+                                  ),
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStatePropertyAll(
+                                      Theme.of(context).primaryColorDark,
+                                    ),
+                                    shape: WidgetStatePropertyAll(
+                                      RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -466,6 +527,7 @@ class _EventsPageState extends State<EventsPage> {
                                       e["image"],
                                       e["body"],
                                       e["coordinates"],
+                                      0,
                                     ),
                                   )
                                   .toList())
@@ -495,6 +557,7 @@ class _EventsPageState extends State<EventsPage> {
                                       e["image"],
                                       e["body"],
                                       e["coordinates"],
+                                      2,
                                     ),
                                   )
                                   .toList()),
@@ -547,6 +610,7 @@ class _EventsPageState extends State<EventsPage> {
                                           e["image"],
                                           e["body"],
                                           e["coordinates"],
+                                          1,
                                         ),
                                       )
                                       .toList())
@@ -576,6 +640,7 @@ class _EventsPageState extends State<EventsPage> {
                                           e["image"],
                                           e["body"],
                                           e["coordinates"],
+                                          2,
                                         ),
                                       )
                                       .toList()),
