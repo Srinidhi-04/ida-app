@@ -40,7 +40,10 @@ class _LoginPageState extends State<LoginPage> {
   String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
 
   Future<bool> login() async {
-    var response = await post(Uri.parse(baseUrl + "/login/"), body: {"email": email, "password": password});
+    var response = await post(
+      Uri.parse(baseUrl + "/login/"),
+      body: {"email": email, "password": password},
+    );
     Map info = jsonDecode(response.body);
     if (info.containsKey("error")) {
       setState(() {
@@ -48,7 +51,12 @@ class _LoginPageState extends State<LoginPage> {
       });
       return false;
     }
-    await SecureStorage.writeMany({"user_id": info["user_id"].toString(), "last_login": DateTime.now().toString(), "email": info["email"].toString(), "admin": info["admin"].toString()});
+    await SecureStorage.writeMany({
+      "user_id": info["user_id"].toString(),
+      "last_login": DateTime.now().toString(),
+      "email": info["email"].toString(),
+      "admin": info["admin"].toString(),
+    });
     Navigator.popAndPushNamed(context, "/home");
     return true;
   }
@@ -126,23 +134,13 @@ class _LoginPageState extends State<LoginPage> {
                           textAlignVertical: TextAlignVertical.center,
                           decoration: InputDecoration(
                             prefixIcon: Icon(Icons.person_outline, color: grey),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              borderSide: BorderSide(color: grey, width: 2),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              borderSide: BorderSide(color: grey, width: 2),
-                            ),
                             hintText: "Email",
-                            hintStyle: Theme.of(
-                              context,
-                            ).typography.black.labelLarge!.apply(color: grey),
                           ),
                           cursorColor: grey,
-                          onChanged: (value) => setState(() {
-                            email = value;
-                          }),
+                          onChanged:
+                              (value) => setState(() {
+                                email = value;
+                              }),
                         ),
                       ),
                       Padding(
@@ -155,32 +153,28 @@ class _LoginPageState extends State<LoginPage> {
                               Icons.lock_open_outlined,
                               color: grey,
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              borderSide: BorderSide(color: grey, width: 2),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5),
-                              borderSide: BorderSide(color: grey, width: 2),
-                            ),
                             hintText: "Password",
-                            hintStyle: Theme.of(
-                              context,
-                            ).typography.black.labelLarge!.apply(color: grey),
                           ),
                           cursorColor: grey,
-                          onChanged: (value) => setState(() {
-                            password = value;
-                          }),
+                          onChanged:
+                              (value) => setState(() {
+                                password = value;
+                              }),
                         ),
                       ),
-                      (error.isNotEmpty) ? Padding(
-                        padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
-                        child: Text(
-                          error,
-                          style: Theme.of(context).typography.white.bodyLarge!.apply(color: Colors.red),
-                        ),
-                      ) : Container()
+                      (error.isNotEmpty)
+                          ? Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+                            child: Text(
+                              error,
+                              style: Theme.of(context)
+                                  .typography
+                                  .white
+                                  .bodyLarge!
+                                  .apply(color: Colors.red),
+                            ),
+                          )
+                          : Container(),
                     ],
                   ),
                   Column(
@@ -200,13 +194,12 @@ class _LoginPageState extends State<LoginPage> {
                             return;
                           }
 
-                          await login();                          
+                          await login();
                         },
                         child: Text(
                           "LOGIN",
-                          style: Theme.of(
-                            context,
-                          ).typography.white.labelMedium!.apply(fontWeightDelta: 7),
+                          style: Theme.of(context).typography.white.labelMedium!
+                              .apply(fontWeightDelta: 7),
                         ),
                         style: ButtonStyle(
                           backgroundColor: WidgetStatePropertyAll(
@@ -228,11 +221,34 @@ class _LoginPageState extends State<LoginPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("Don't have an account yet?", style: Theme.of(context).typography.black.bodyLarge!.apply(color: Theme.of(context).primaryColorDark),),
-                            TextButton(onPressed: () {Navigator.of(context).popAndPushNamed("/signup");}, child: Text("Sign Up", style: Theme.of(context).typography.black.bodyLarge!.apply(color: Theme.of(context).primaryColorDark, fontWeightDelta: 7, decoration: TextDecoration.underline),))
+                            Text(
+                              "Don't have an account yet?",
+                              style: Theme.of(
+                                context,
+                              ).typography.black.bodyLarge!.apply(
+                                color: Theme.of(context).primaryColorDark,
+                              ),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(
+                                  context,
+                                ).popAndPushNamed("/signup");
+                              },
+                              child: Text(
+                                "Sign Up",
+                                style: Theme.of(
+                                  context,
+                                ).typography.black.bodyLarge!.apply(
+                                  color: Theme.of(context).primaryColorDark,
+                                  fontWeightDelta: 7,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ],

@@ -52,21 +52,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.badge_outlined, color: grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(color: grey, width: 2),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(color: grey, width: 2),
-                      ),
                       hintText: "Name",
-                      hintStyle: Theme.of(
-                        context,
-                      ).typography.black.labelLarge!.apply(color: grey),
-                      errorStyle: Theme.of(
-                        context,
-                      ).typography.white.bodyMedium!.apply(color: Colors.red),
                       errorText: errors[0],
                     ),
                     cursorColor: grey,
@@ -199,21 +185,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.location_on_outlined, color: grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(color: grey, width: 2),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(color: grey, width: 2),
-                      ),
                       hintText: "Location",
-                      hintStyle: Theme.of(
-                        context,
-                      ).typography.black.labelLarge!.apply(color: grey),
-                      errorStyle: Theme.of(
-                        context,
-                      ).typography.white.bodyMedium!.apply(color: Colors.red),
                       errorText: errors[3],
                     ),
                     cursorColor: grey,
@@ -238,23 +210,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                 Icons.grid_3x3_outlined,
                                 color: grey,
                               ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5),
-                                borderSide: BorderSide(color: grey, width: 2),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5),
-                                borderSide: BorderSide(color: grey, width: 2),
-                              ),
                               hintText: "Latitude",
-                              hintStyle: Theme.of(
-                                context,
-                              ).typography.black.labelLarge!.apply(color: grey),
-                              errorStyle: Theme.of(context)
-                                  .typography
-                                  .white
-                                  .bodyMedium!
-                                  .apply(color: Colors.red),
                               errorText: errors[4],
                             ),
                             cursorColor: grey,
@@ -285,23 +241,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                                 Icons.grid_3x3_outlined,
                                 color: grey,
                               ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5),
-                                borderSide: BorderSide(color: grey, width: 2),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5),
-                                borderSide: BorderSide(color: grey, width: 2),
-                              ),
                               hintText: "Longitude",
-                              hintStyle: Theme.of(
-                                context,
-                              ).typography.black.labelLarge!.apply(color: grey),
-                              errorStyle: Theme.of(context)
-                                  .typography
-                                  .white
-                                  .bodyMedium!
-                                  .apply(color: Colors.red),
                               errorText: errors[5],
                             ),
                             cursorColor: grey,
@@ -331,18 +271,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.image_outlined, color: grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(color: grey, width: 2),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(color: grey, width: 2),
-                      ),
                       hintText: "Thumbnail",
-                      hintStyle: Theme.of(
-                        context,
-                      ).typography.black.labelLarge!.apply(color: grey),
                     ),
                     cursorColor: grey,
                     onChanged:
@@ -357,21 +286,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.description_outlined, color: grey),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(color: grey, width: 2),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(5),
-                        borderSide: BorderSide(color: grey, width: 2),
-                      ),
                       hintText: "Body",
-                      hintStyle: Theme.of(
-                        context,
-                      ).typography.black.labelLarge!.apply(color: grey),
-                      errorStyle: Theme.of(
-                        context,
-                      ).typography.white.bodyMedium!.apply(color: Colors.red),
                       errorText: errors[6],
                     ),
                     maxLines: null,

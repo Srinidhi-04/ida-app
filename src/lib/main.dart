@@ -81,6 +81,32 @@ void main() async {
         "/create": (context) => CreateEventPage(),
       },
       theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Color(0xFFFF5F05),
+          primary: Color(0xFFFF5F05),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: Color(0xFF9C9A9D), width: 2),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(5),
+            borderSide: BorderSide(color: Color(0xFF9C9A9D), width: 2),
+          ),
+          hintStyle: TextStyle(
+            fontSize: 18,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Color(0xFF9C9A9D),
+          ),
+          errorStyle: TextStyle(
+            fontSize: 14,
+            fontFamily: GoogleFonts.sourceSans3().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.red,
+          ),
+        ),
         textButtonTheme: TextButtonThemeData(
           style: ButtonStyle(
             overlayColor: WidgetStatePropertyAll(Color(0x3313294B)),
@@ -250,6 +276,121 @@ void main() async {
               color: Colors.white,
             ),
           ),
+        ),
+        datePickerTheme: DatePickerThemeData(
+          backgroundColor: Colors.white,
+          dayBackgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+            if (states.contains(WidgetState.selected)) {
+              return Color(0xFFFF5F05);
+            }
+            return Colors.transparent;
+          }),
+          dayForegroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+            if (states.contains(WidgetState.selected)) {
+              return Color(0xFF13294B);
+            } else if (states.contains(WidgetState.disabled)) {
+              return Color(0xFF9C9A9D);
+            }
+            return Colors.black;
+          }),
+          dayShape: WidgetStateProperty.resolveWith<OutlinedBorder?>((states) {
+            if (states.contains(WidgetState.selected)) {
+              return CircleBorder(side: BorderSide(color: Color(0xFF13294B)));
+            }
+            return CircleBorder();
+          }),
+          weekdayStyle: TextStyle(
+            fontSize: 14,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+          dayStyle: TextStyle(
+            fontSize: 14,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+            fontWeight: FontWeight.normal,
+            color: Colors.black,
+          ),
+          cancelButtonStyle: ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+            foregroundColor: WidgetStatePropertyAll(Colors.black),
+            textStyle: WidgetStatePropertyAll(
+              TextStyle(
+                fontSize: 16,
+                fontFamily: GoogleFonts.montserrat().fontFamily,
+                fontWeight: FontWeight.normal,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          confirmButtonStyle: ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+            foregroundColor: WidgetStatePropertyAll(Colors.black),
+            textStyle: WidgetStatePropertyAll(
+              TextStyle(
+                fontSize: 16,
+                fontFamily: GoogleFonts.montserrat().fontFamily,
+                fontWeight: FontWeight.normal,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          todayBorder: BorderSide(color: Color(0xFFFF5F05)),
+          todayBackgroundColor: WidgetStatePropertyAll(Color(0xFF13294B)),
+          todayForegroundColor: WidgetStatePropertyAll(Color(0xFFFF5F05)),
+          yearOverlayColor: WidgetStatePropertyAll(Color(0xFF13294B)),
+          yearStyle: TextStyle(
+            fontSize: 16,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+            fontWeight: FontWeight.normal,
+          ),
+          headerHelpStyle: TextStyle(
+            fontSize: 20,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+            fontWeight: FontWeight.normal,
+          ),
+          dividerColor: Color(0xFF9C9A9D),
+        ),
+
+        timePickerTheme: TimePickerThemeData(
+          backgroundColor: Colors.white,
+          cancelButtonStyle: ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+            foregroundColor: WidgetStatePropertyAll(Colors.black),
+            textStyle: WidgetStatePropertyAll(
+              TextStyle(
+                fontSize: 16,
+                fontFamily: GoogleFonts.montserrat().fontFamily,
+                fontWeight: FontWeight.normal,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          confirmButtonStyle: ButtonStyle(
+            backgroundColor: WidgetStatePropertyAll(Colors.transparent),
+            foregroundColor: WidgetStatePropertyAll(Colors.black),
+            textStyle: WidgetStatePropertyAll(
+              TextStyle(
+                fontSize: 16,
+                fontFamily: GoogleFonts.montserrat().fontFamily,
+                fontWeight: FontWeight.normal,
+                color: Colors.black,
+              ),
+            ),
+          ),
+          hourMinuteTextStyle: TextStyle(fontSize: 40),
+          dialBackgroundColor: Color(0xFFEEEEEE),
+          helpTextStyle: TextStyle(
+            fontSize: 20,
+            fontFamily: GoogleFonts.montserrat().fontFamily,
+            fontWeight: FontWeight.normal,
+          ),
+          hourMinuteColor: WidgetStateColor.resolveWith((states) {
+            if (states.contains(WidgetState.selected)) {
+              return Color(0xFFCCCCCC);
+            }
+            return Color(0xFFEEEEEE);
+          }),
         ),
       ),
     ),
