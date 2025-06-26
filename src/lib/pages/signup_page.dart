@@ -32,7 +32,6 @@ class SignupPage extends StatefulWidget {
 }
 
 class _SignupPageState extends State<SignupPage> {
-  Color grey = Color(0xFF9C9A9D);
   String email = "";
   String password = "";
   String error = "";
@@ -133,10 +132,10 @@ class _SignupPageState extends State<SignupPage> {
                         child: TextFormField(
                           textAlignVertical: TextAlignVertical.center,
                           decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.person_outline, color: grey),
+                            prefixIcon: Icon(Icons.person_outline, color: Theme.of(context).primaryColor),
                             hintText: "Email",
                           ),
-                          cursorColor: grey,
+                          cursorColor: Theme.of(context).primaryColor,
                           onChanged:
                               (value) => setState(() {
                                 email = value;
@@ -150,12 +149,12 @@ class _SignupPageState extends State<SignupPage> {
                           obscureText: true,
                           decoration: InputDecoration(
                             prefixIcon: Icon(
-                              Icons.lock_open_outlined,
-                              color: grey,
+                              Icons.lock_outlined,
+                              color: Theme.of(context).primaryColor,
                             ),
                             hintText: "Password",
                           ),
-                          cursorColor: grey,
+                          cursorColor: Theme.of(context).primaryColor,
                           onChanged:
                               (value) => setState(() {
                                 password = value;

@@ -9,7 +9,6 @@ class CreateEventPage extends StatefulWidget {
 }
 
 class _CreateEventPageState extends State<CreateEventPage> {
-  Color grey = Color(0xFF9C9A9D);
   String name = "";
   DateTime? event_date;
   TimeOfDay? event_time;
@@ -51,11 +50,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   child: TextFormField(
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.badge_outlined, color: grey),
+                      prefixIcon: Icon(Icons.badge_outlined, color: Theme.of(context).primaryColor),
                       hintText: "Name",
                       errorText: errors[0],
                     ),
-                    cursorColor: grey,
+                    cursorColor: Theme.of(context).primaryColor,
                     onChanged:
                         (value) => setState(() {
                           name = value;
@@ -184,11 +183,11 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   child: TextFormField(
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.location_on_outlined, color: grey),
+                      prefixIcon: Icon(Icons.location_on_outlined, color: Theme.of(context).primaryColor),
                       hintText: "Location",
                       errorText: errors[3],
                     ),
-                    cursorColor: grey,
+                    cursorColor: Theme.of(context).primaryColor,
                     onChanged:
                         (value) => setState(() {
                           location = value;
@@ -208,12 +207,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
                             decoration: InputDecoration(
                               prefixIcon: Icon(
                                 Icons.grid_3x3_outlined,
-                                color: grey,
+                                color: Theme.of(context).primaryColor,
                               ),
                               hintText: "Latitude",
                               errorText: errors[4],
                             ),
-                            cursorColor: grey,
+                            cursorColor: Theme.of(context).primaryColor,
                             onChanged:
                                 (value) => setState(() {
                                   try {
@@ -239,12 +238,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
                             decoration: InputDecoration(
                               prefixIcon: Icon(
                                 Icons.grid_3x3_outlined,
-                                color: grey,
+                                color: Theme.of(context).primaryColor,
                               ),
                               hintText: "Longitude",
                               errorText: errors[5],
                             ),
-                            cursorColor: grey,
+                            cursorColor: Theme.of(context).primaryColor,
                             onChanged:
                                 (value) => setState(() {
                                   try {
@@ -270,10 +269,10 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   child: TextFormField(
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.image_outlined, color: grey),
+                      prefixIcon: Icon(Icons.image_outlined, color: Theme.of(context).primaryColor),
                       hintText: "Thumbnail",
                     ),
-                    cursorColor: grey,
+                    cursorColor: Theme.of(context).primaryColor,
                     onChanged:
                         (value) => setState(() {
                           image = value;
@@ -285,12 +284,12 @@ class _CreateEventPageState extends State<CreateEventPage> {
                   child: TextFormField(
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.description_outlined, color: grey),
+                      prefixIcon: Icon(Icons.description_outlined, color: Theme.of(context).primaryColor),
                       hintText: "Body",
                       errorText: errors[6],
                     ),
                     maxLines: null,
-                    cursorColor: grey,
+                    cursorColor: Theme.of(context).primaryColor,
                     onChanged:
                         (value) => setState(() {
                           body = value;
