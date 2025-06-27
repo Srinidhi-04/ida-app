@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:src/pages/about_page.dart';
 import 'package:src/pages/create_event_page.dart';
 import 'package:src/pages/event_page.dart';
 import 'package:src/pages/events_page.dart';
@@ -79,6 +80,7 @@ void main() async {
         "/profile": (context) => ProfilePage(),
         "/settings": (context) => SettingsPage(),
         "/create": (context) => CreateEventPage(),
+        "/about": (context) => AboutPage(),
       },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

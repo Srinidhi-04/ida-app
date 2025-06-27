@@ -14,9 +14,10 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  bool reloaded = false;
+  bool initialized = false;
 
   LatLng? center;
+  LatLng? myLoc;
   Set<Marker> markers = {};
 
   List<String> months = [
@@ -68,14 +69,12 @@ class _MapPageState extends State<MapPage> {
 
               setState(() {
                 markers = {
-                  Marker(markerId: MarkerId("My location"), position: center!),
+                  Marker(markerId: MarkerId("My location"), position: myLoc!),
                   Marker(
                     markerId: MarkerId("Event location"),
                     position: coordinates,
                   ),
                 };
-
-                reloaded = true;
                 mapController!.animateCamera(cameraUpdate);
               });
             },
@@ -199,8 +198,6 @@ class _MapPageState extends State<MapPage> {
                               position: e["coordinates"],
                             ),
                           };
-
-                          reloaded = true;
                           autocompleteController.text = "";
                           mapController!.animateCamera(cameraUpdate);
                         });
@@ -232,8 +229,14 @@ class _MapPageState extends State<MapPage> {
     }
     Position posit = await Geolocator.getCurrentPosition();
     setState(() {
-      center = LatLng(posit.latitude, posit.longitude);
-      markers = {Marker(markerId: MarkerId("My location"), position: center!)};
+      myLoc = LatLng(posit.latitude, posit.longitude);
+      if (center == null) center = myLoc;
+      markers.add(
+        Marker(
+          markerId: MarkerId("My location"),
+          position: myLoc!,
+        ),
+      );
     });
   }
 
@@ -259,6 +262,34 @@ class _MapPageState extends State<MapPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!initialized) {
+      Map args = {};
+      if (ModalRoute.of(context)!.settings.arguments != null) {
+        args = ModalRoute.of(context)!.settings.arguments as Map;
+      }
+
+      if (args.isNotEmpty) {
+        setState(() {
+          markers.add(
+            Marker(
+              markerId: MarkerId("Event location"),
+              position: args["coordinates"],
+            ),
+          );
+          center = args["coordinates"];
+        });
+      }
+
+      setState(() {
+        initialized = true;
+      });
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
     getPosition();
@@ -276,24 +307,6 @@ class _MapPageState extends State<MapPage> {
           ),
         ),
       );
-
-    if (!reloaded) {
-      Map args = {};
-      if (ModalRoute.of(context)!.settings.arguments != null)
-        args = ModalRoute.of(context)!.settings.arguments as Map;
-
-      if (args.isNotEmpty) {
-        setState(() {
-          markers = {
-            Marker(markerId: MarkerId("My location"), position: center!),
-            Marker(
-              markerId: MarkerId("Event location"),
-              position: args["coordinates"],
-            ),
-          };
-        });
-      }
-    }
 
     return Scaffold(
       body: Stack(
@@ -338,6 +351,7 @@ class _MapPageState extends State<MapPage> {
                               controller: autocompleteController,
                               decoration: InputDecoration(
                                 border: InputBorder.none,
+                                focusedBorder: InputBorder.none,
                                 hintText: "Search for events",
                                 hintStyle: Theme.of(context)
                                     .typography
@@ -345,7 +359,7 @@ class _MapPageState extends State<MapPage> {
                                     .labelLarge!
                                     .apply(color: Color(0xFF9C9A9D)),
                               ),
-                              cursorColor: Colors.black,
+                              cursorColor: Theme.of(context).primaryColor,
                               onChanged: (value) => setState(() {}),
                             ),
                           ),

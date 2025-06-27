@@ -101,6 +101,7 @@ class _EventsPageState extends State<EventsPage> {
         padding: const EdgeInsets.fromLTRB(10, 0, 20, 10),
         child: Slidable(
           key: ValueKey(event_id),
+          enabled: admin,
           endActionPane: ActionPane(
             motion: BehindMotion(),
             dismissible: DismissiblePane(
