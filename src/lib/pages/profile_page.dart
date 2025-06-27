@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
 
@@ -10,7 +11,10 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String email = "N/A";
+  late bool admin;
+  late String email;
+
+  bool loaded = false;
 
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
@@ -28,18 +32,29 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     setState(() {
       email = info["email"]!;
+      admin = bool.parse(info["admin"]!);
+      loaded = true;
     });
   }
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     checkLogin();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!loaded)
+      return Scaffold(
+        body: Center(
+          child: LoadingAnimationWidget.inkDrop(
+            color: Theme.of(context).primaryColorLight,
+            size: 100,
+          ),
+        ),
+      );
+
     return Scaffold(
       body: RefreshIndicator(
         onRefresh: () async {},
@@ -71,6 +86,15 @@ class _ProfilePageState extends State<ProfilePage> {
                     ).typography.black.headlineLarge!.apply(fontWeightDelta: 3),
                   ),
                 ),
+                (admin)
+                    ? Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                      child: Text(
+                        "Admin",
+                        style: Theme.of(context).typography.black.labelSmall,
+                      ),
+                    )
+                    : Container(),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
                   child: Text(

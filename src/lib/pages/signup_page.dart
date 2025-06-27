@@ -74,7 +74,6 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     checkLogin();
   }

@@ -419,7 +419,6 @@ class _EventsPageState extends State<EventsPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     checkLogin();
     getEvents();
