@@ -257,3 +257,26 @@ def get_settings(request: HttpRequest):
     settings.pop("_state")
 
     return JsonResponse({"data": settings})
+
+def change_name(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+    
+    try:
+        user_id = int(request.POST.get("user_id"))
+    except:
+        return JsonResponse({"error": "'user_id' field is required as a int"}, status = 400)
+    
+    name = request.POST.get("name")
+    if not name:
+        return JsonResponse({"error": "'name' field is required"}, status = 400)
+    
+    try:
+        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+    except:
+        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    
+    user.name = name
+    user.save()
+
+    return JsonResponse({"message": "Name changed successfully"})

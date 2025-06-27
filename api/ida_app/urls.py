@@ -12,4 +12,5 @@ urlpatterns = [
     path("get-notifications/", get_notifications),
     path("change-settings/", change_settings),
     path("get-settings/", get_settings),
+    path("change-name/", change_name),
 ]
