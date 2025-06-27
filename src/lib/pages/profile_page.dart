@@ -12,6 +12,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   late bool admin;
+  late String name;
   late String email;
 
   bool loaded = false;
@@ -32,6 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     setState(() {
       email = info["email"]!;
+      name = info["name"]!;
       admin = bool.parse(info["admin"]!);
       loaded = true;
     });
@@ -95,6 +97,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     )
                     : Container(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                  child: Text(
+                    name,
+                    style: Theme.of(context).typography.black.labelMedium,
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
                   child: Text(

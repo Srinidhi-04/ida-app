@@ -12,22 +12,25 @@ def signup(request: HttpRequest):
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
     
     email = request.POST.get("email")
+    name = request.POST.get("name")
     password = request.POST.get("password")
 
     if not email:
         return JsonResponse({"error": "'email' field is required"}, status = 400)
+    if not name:
+        return JsonResponse({"error": "'name' field is required"}, status = 400)
     if not password:
         return JsonResponse({"error": "'password' field is required"}, status = 400)
 
     try:
-        user: UserCredentials = UserCredentials.objects.create_user(email = email, password = password)
+        user: UserCredentials = UserCredentials.objects.create_user(email = email, name = name, password = password)
     except Exception:
         return JsonResponse({"error": "A user with that email already exists"}, status = 400)
 
     settings = UserSettings(user = user, announcements = True, updates = True, merch = True, status = True, reminders = True)
     settings.save()
 
-    return JsonResponse({"message": "User successfully signed up", "user_id": user.user_id, "email": user.email, "admin": user.admin})
+    return JsonResponse({"message": "User successfully signed up", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin})
 
 def login(request: HttpRequest):
     if request.method != "POST":
@@ -44,7 +47,7 @@ def login(request: HttpRequest):
     user: UserCredentials = authenticate(request, email = email, password = password)
 
     if user:
-        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "admin": user.admin})
+        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin})
     
     return JsonResponse({"error": "Email or password is incorrect"}, status = 400)
 

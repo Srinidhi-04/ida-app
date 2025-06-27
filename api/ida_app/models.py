@@ -2,34 +2,37 @@ from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password, **kwargs):
+    def create_user(self, email, name, password, **kwargs):
         if not email:
             raise ValueError("'email' field is required")
+        if not name:
+            raise ValueError("'name' field is required")
         if not password:
             raise ValueError("'password' field is required")
 
         email = self.normalize_email(email)
         email.lower()
 
-        user: UserCredentials = self.model(email = email, **kwargs)
+        user: UserCredentials = self.model(email = email, name = name, **kwargs)
         user.set_password(password)
 
         try:
             user.save(using = self._db)
         except:
-            raise Exception("A user with that username or email already exists")
+            raise Exception("A user with that email already exists")
 
         return user
     
-    def create_superuser(self, email, password, **kwargs):
+    def create_superuser(self, email, name, password, **kwargs):
         kwargs.setdefault("admin", True)
         kwargs.setdefault("is_superuser", True)
-        return self.create_user(email, password, **kwargs)
+        return self.create_user(email, name, password, **kwargs)
 
 
 class UserCredentials(AbstractBaseUser, PermissionsMixin):
     user_id = models.AutoField(primary_key = True, unique = True, null = False)
     email = models.EmailField(unique = True, null = False)
+    name = models.TextField(unique = False, null = False)
     admin = models.BooleanField(default = False, null = False)
 
     USERNAME_FIELD = "email"

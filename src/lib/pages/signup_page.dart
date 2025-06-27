@@ -34,6 +34,7 @@ class SignupPage extends StatefulWidget {
 class _SignupPageState extends State<SignupPage> {
   String email = "";
   String password = "";
+  String name = "";
   String error = "";
 
   String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
@@ -41,7 +42,7 @@ class _SignupPageState extends State<SignupPage> {
   Future<bool> signup() async {
     var response = await post(
       Uri.parse(baseUrl + "/signup/"),
-      body: {"email": email, "password": password},
+      body: {"name": name, "email": email, "password": password},
     );
     Map info = jsonDecode(response.body);
     if (info.containsKey("error")) {
@@ -54,6 +55,7 @@ class _SignupPageState extends State<SignupPage> {
       "user_id": info["user_id"].toString(),
       "last_login": DateTime.now().toString(),
       "email": info["email"].toString(),
+      "name": info["name"].toString(),
       "admin": info["admin"].toString(),
     });
     Navigator.popAndPushNamed(context, "/home");
@@ -100,163 +102,202 @@ class _SignupPageState extends State<SignupPage> {
                 location: Offset(MediaQuery.of(context).size.width, 0),
               ),
             ),
-            Container(
-              color: Color(0x77FFFFFF),
-              height: MediaQuery.of(context).size.height,
-              width: MediaQuery.of(context).size.width,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Image(
-                    image: NetworkImage("https://i.imgur.com/0FHQKN4.png"),
-                    width: MediaQuery.of(context).size.width * 0.6,
-                  ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Text(
-                        "Sign Up",
-                        style: Theme.of(
-                          context,
-                        ).typography.black.headlineLarge!.apply(
-                          color: Theme.of(context).primaryColorDark,
-                          fontWeightDelta: 7,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
-                        child: TextFormField(
-                          textAlignVertical: TextAlignVertical.center,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(Icons.person_outline, color: Theme.of(context).primaryColor),
-                            hintText: "Email",
+            SingleChildScrollView(
+              child: Container(
+                color: Color(0x77FFFFFF),
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Image(
+                      image: NetworkImage("https://i.imgur.com/0FHQKN4.png"),
+                      width: MediaQuery.of(context).size.width * 0.6,
+                    ),
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          "Sign Up",
+                          style: Theme.of(
+                            context,
+                          ).typography.black.headlineLarge!.apply(
+                            color: Theme.of(context).primaryColorDark,
+                            fontWeightDelta: 7,
                           ),
-                          cursorColor: Theme.of(context).primaryColor,
-                          onChanged:
-                              (value) => setState(() {
-                                email = value;
-                              }),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                        child: TextFormField(
-                          textAlignVertical: TextAlignVertical.center,
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            prefixIcon: Icon(
-                              Icons.lock_outlined,
-                              color: Theme.of(context).primaryColor,
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
+                          child: TextFormField(
+                            textAlignVertical: TextAlignVertical.center,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.person_outline,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              hintText: "Name",
                             ),
-                            hintText: "Password",
+                            cursorColor: Theme.of(context).primaryColor,
+                            onChanged:
+                                (value) => setState(() {
+                                  name = value;
+                                }),
                           ),
-                          cursorColor: Theme.of(context).primaryColor,
-                          onChanged:
-                              (value) => setState(() {
-                                password = value;
-                              }),
                         ),
-                      ),
-                      (error.isNotEmpty)
-                          ? Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
-                            child: Text(
-                              error,
-                              style: Theme.of(context)
-                                  .typography
-                                  .white
-                                  .bodyLarge!
-                                  .apply(color: Colors.red),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                          child: TextFormField(
+                            textAlignVertical: TextAlignVertical.center,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.alternate_email_outlined,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              hintText: "Email",
                             ),
-                          )
-                          : Container(),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      TextButton(
-                        onPressed: () async {
-                          if (email.isEmpty) {
-                            setState(() {
-                              error = "Email cannot be empty";
-                            });
-                            return;
-                          }
-                          if (password.isEmpty) {
-                            setState(() {
-                              error = "Password cannot be empty";
-                            });
-                            return;
-                          }
+                            cursorColor: Theme.of(context).primaryColor,
+                            onChanged:
+                                (value) => setState(() {
+                                  email = value;
+                                }),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                          child: TextFormField(
+                            textAlignVertical: TextAlignVertical.center,
+                            obscureText: true,
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.lock_outlined,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                              hintText: "Password",
+                            ),
+                            cursorColor: Theme.of(context).primaryColor,
+                            onChanged:
+                                (value) => setState(() {
+                                  password = value;
+                                }),
+                          ),
+                        ),
+                        (error.isNotEmpty)
+                            ? Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+                              child: Text(
+                                error,
+                                style: Theme.of(context)
+                                    .typography
+                                    .white
+                                    .bodyLarge!
+                                    .apply(color: Colors.red),
+                              ),
+                            )
+                            : Container(),
+                      ],
+                    ),
+                    Column(
+                      children: [
+                        TextButton(
+                          onPressed: () async {
+                            if (name.isEmpty) {
+                              setState(() {
+                                error = "Name cannot be empty";
+                              });
+                              return;
+                            }
+                            if (email.isEmpty) {
+                              setState(() {
+                                error = "Email cannot be empty";
+                              });
+                              return;
+                            }
+                            if (password.isEmpty) {
+                              setState(() {
+                                error = "Password cannot be empty";
+                              });
+                              return;
+                            }
 
-                          if (!RegExp(
-                            r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-                          ).hasMatch(email)) {
-                            setState(() {
-                              error = "Invalid email format";
-                            });
-                            return;
-                          }
+                            if (!RegExp(
+                              r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                            ).hasMatch(email)) {
+                              setState(() {
+                                error = "Invalid email format";
+                              });
+                              return;
+                            }
 
-                          await signup();
-                        },
-                        child: Text(
-                          "SIGNUP",
-                          style: Theme.of(context).typography.white.labelMedium!
-                              .apply(fontWeightDelta: 7),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll(
-                            Theme.of(context).primaryColorLight,
+                            await signup();
+                          },
+                          child: Text(
+                            "SIGNUP",
+                            style: Theme.of(context)
+                                .typography
+                                .white
+                                .labelMedium!
+                                .apply(fontWeightDelta: 7),
                           ),
-                          foregroundColor: WidgetStatePropertyAll(Colors.white),
-                          shape: WidgetStatePropertyAll(
-                            RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
+                          style: ButtonStyle(
+                            backgroundColor: WidgetStatePropertyAll(
+                              Theme.of(context).primaryColorLight,
                             ),
-                          ),
-                          fixedSize: WidgetStatePropertyAll(
-                            Size(MediaQuery.of(context).size.width * 0.75, 50),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 5),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Already have an account?",
-                              style: Theme.of(
-                                context,
-                              ).typography.black.bodyLarge!.apply(
-                                color: Theme.of(context).primaryColorDark,
+                            foregroundColor: WidgetStatePropertyAll(
+                              Colors.white,
+                            ),
+                            shape: WidgetStatePropertyAll(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
                               ),
                             ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.of(context).popAndPushNamed("/login");
-                              },
-                              child: Text(
-                                "Log In",
+                            fixedSize: WidgetStatePropertyAll(
+                              Size(
+                                MediaQuery.of(context).size.width * 0.75,
+                                50,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Already have an account?",
                                 style: Theme.of(
                                   context,
                                 ).typography.black.bodyLarge!.apply(
                                   color: Theme.of(context).primaryColorDark,
-                                  fontWeightDelta: 7,
-                                  decoration: TextDecoration.underline,
                                 ),
                               ),
-                            ),
-                          ],
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(
+                                    context,
+                                  ).popAndPushNamed("/login");
+                                },
+                                child: Text(
+                                  "Log In",
+                                  style: Theme.of(
+                                    context,
+                                  ).typography.black.bodyLarge!.apply(
+                                    color: Theme.of(context).primaryColorDark,
+                                    fontWeightDelta: 7,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
