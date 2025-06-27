@@ -28,12 +28,14 @@ class _ShopPageState extends State<ShopPage> {
     },
   ];
 
+  double total = 0;
+
   Widget shopItem(int id, String name, double price, String image) {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 170,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 0, 20, 10),
+        padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
         child: Card(
           elevation: 5,
           color: Colors.white,
@@ -60,74 +62,146 @@ class _ShopPageState extends State<ShopPage> {
                     width: 0.6 * MediaQuery.of(context).size.width,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 20),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  name,
-                                  style: Theme.of(
-                                    context,
-                                  ).typography.white.headlineSmall!.apply(
-                                    color: Theme.of(context).primaryColorLight,
-                                    fontSizeDelta: -4,
-                                  ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                name,
+                                style: Theme.of(
+                                  context,
+                                ).typography.white.labelMedium!.apply(
+                                  color: Theme.of(context).primaryColorLight,
+                                  fontSizeDelta: 2,
+                                  fontWeightDelta: 3,
                                 ),
-                                Text(
-                                  "\$${price}",
-                                  style: Theme.of(
-                                    context,
-                                  ).typography.black.bodyMedium!.apply(
-                                    color: Theme.of(context).primaryColorDark,
-                                  ),
+                              ),
+                              Text(
+                                "\$${price}",
+                                style: Theme.of(
+                                  context,
+                                ).typography.black.labelSmall!.apply(
+                                  color: Theme.of(context).primaryColorDark,
+                                  fontWeightDelta: 3,
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                quantity.update(
-                                  id,
-                                  (v) => max(v - 1, 0),
-                                  ifAbsent: () => 0,
-                                );
-                                setState(() {
-                                  quantity = quantity;
-                                });
-                              },
-                              icon: Icon(Icons.remove),
-                            ),
-                            Text(
-                              (quantity.containsKey(id))
-                                  ? quantity[id]!.toString()
-                                  : "0",
-                              style:
-                                  Theme.of(context).typography.black.bodyMedium,
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                quantity.update(
-                                  id,
-                                  (v) => v + 1,
-                                  ifAbsent: () => 1,
-                                );
-                                setState(() {
-                                  quantity = quantity;
-                                });
-                              },
-                              icon: Icon(Icons.add),
-                            ),
-                          ],
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              (!quantity.containsKey(id) || quantity[id] == 0)
+                                  ? TextButton(
+                                    onPressed: () {
+                                      setState(() {
+                                        quantity[id] = 1;
+                                        total += price;
+                                      });
+                                    },
+                                    child: Text(
+                                      "Add to cart",
+                                      style: Theme.of(
+                                        context,
+                                      ).typography.black.labelSmall!.apply(
+                                        color:
+                                            Theme.of(context).primaryColorDark,
+                                        fontWeightDelta: 3,
+                                      ),
+                                    ),
+                                    style: ButtonStyle(
+                                      backgroundColor: WidgetStatePropertyAll(
+                                        Theme.of(context).primaryColorLight,
+                                      ),
+                                      shape: WidgetStatePropertyAll(
+                                        RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                            30,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  : Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.transparent,
+                                      borderRadius: BorderRadius.circular(30),
+                                      border: Border.all(
+                                        color:
+                                            Theme.of(context).primaryColorLight,
+                                      ),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        IconButton(
+                                          constraints: BoxConstraints(),
+                                          padding: EdgeInsets.zero,
+                                          visualDensity: VisualDensity.compact,
+                                          onPressed: () {
+                                            setState(() {
+                                              quantity.update(
+                                                id,
+                                                (v) => max(v - 1, 0),
+                                                ifAbsent: () => 0,
+                                              );
+                                              total -= price;
+                                            });
+                                          },
+                                          icon: Icon(Icons.remove, size: 15),
+                                        ),
+                                        Text(
+                                          (quantity.containsKey(id))
+                                              ? quantity[id]!.toString()
+                                              : "0",
+                                          style:
+                                              Theme.of(
+                                                context,
+                                              ).typography.black.labelSmall,
+                                        ),
+                                        IconButton(
+                                          constraints: BoxConstraints(),
+                                          padding: EdgeInsets.zero,
+                                          visualDensity: VisualDensity.compact,
+                                          onPressed: () {
+                                            setState(() {
+                                              quantity.update(
+                                                id,
+                                                (v) => v + 1,
+                                                ifAbsent: () => 1,
+                                              );
+                                              total += price;
+                                            });
+                                          },
+                                          icon: Icon(Icons.add, size: 15),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                              (quantity.containsKey(id) && quantity[id]! > 0)
+                                  ? Padding(
+                                    padding: const EdgeInsets.only(top: 5.0),
+                                    child: Text(
+                                      "Total Price: \$${quantity[id]! * price}",
+                                      style: Theme.of(
+                                        context,
+                                      ).typography.black.labelSmall!.apply(
+                                        color:
+                                            Theme.of(context).primaryColorDark,
+                                        fontWeightDelta: 3,
+                                      ),
+                                    ),
+                                  )
+                                  : Container(),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -169,18 +243,41 @@ class _ShopPageState extends State<ShopPage> {
             child: Padding(
               padding: const EdgeInsets.only(top: 10.0),
               child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children:
-                    items
-                        .map(
-                          (e) => shopItem(
-                            e["id"],
-                            e["name"],
-                            e["price"],
-                            e["image"],
-                          ),
-                        )
-                        .toList(),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20.0),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "Cart Total: ",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                            TextSpan(text: "\$${total}"),
+                          ],
+                        ),
+                        style: Theme.of(context).typography.black.labelMedium!
+                            .apply(color: Theme.of(context).primaryColorDark),
+                      ),
+                    ),
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children:
+                        items
+                            .map(
+                              (e) => shopItem(
+                                e["id"],
+                                e["name"],
+                                e["price"],
+                                e["image"],
+                              ),
+                            )
+                            .toList(),
+                  ),
+                ],
               ),
             ),
           ),
