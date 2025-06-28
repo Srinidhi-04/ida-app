@@ -205,16 +205,17 @@ class _EventsPageState extends State<EventsPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Column(
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Padding(
                                       padding: const EdgeInsets.only(
-                                        bottom: 5.0,
+                                        bottom: 10.0,
                                       ),
                                       child: Text(
                                         "${days[date.weekday - 1]}, ${months[date.month - 1]} ${(date.day < 10) ? 0 : ""}${date.day} • ${(date.hour % 12 < 10 && date.hour % 12 != 0) ? 0 : ""}${(date.hour % 12 == 0) ? 12 : date.hour % 12}:${(date.minute < 10) ? 0 : ""}${date.minute} ${(date.hour >= 12) ? "PM" : "AM"}",
@@ -228,7 +229,19 @@ class _EventsPageState extends State<EventsPage> {
                                         ),
                                       ),
                                     ),
-                                    IconButton(
+                                    Text(
+                                      name,
+                                      style: Theme.of(
+                                        context,
+                                      ).typography.black.labelLarge!.apply(
+                                        color:
+                                            Theme.of(context).primaryColorDark,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                (type != 2)
+                                    ? IconButton(
                                       onPressed: () async {
                                         setState(() {
                                           if (notifs.contains(event_id))
@@ -273,17 +286,8 @@ class _EventsPageState extends State<EventsPage> {
                                                 context,
                                               ).primaryColorLight,
                                       iconSize: 30,
-                                    ),
-                                  ],
-                                ),
-                                Text(
-                                  name,
-                                  style: Theme.of(
-                                    context,
-                                  ).typography.black.labelLarge!.apply(
-                                    color: Theme.of(context).primaryColorDark,
-                                  ),
-                                ),
+                                    )
+                                    : Container(),
                               ],
                             ),
                             Row(

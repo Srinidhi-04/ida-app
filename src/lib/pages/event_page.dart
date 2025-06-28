@@ -103,27 +103,32 @@ class _EventPageState extends State<EventPage> {
                             (event) => setState(() {
                               action_pressed = false;
                             }),
-                        child: TextButton.icon(
-                          onPressed: () async {
-                            await post(
-                              Uri.parse(baseUrl + "/delete-event/"),
-                              body: {"event_id": event_id.toString()},
-                            );
-                            callback();
-                            Navigator.pop(context);
-                          },
-                          label: Text(
-                            "Delete",
-                            style:
-                                Theme.of(context).typography.white.labelMedium,
-                          ),
-                          icon: Icon(Icons.delete_outline),
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                              Theme.of(context).primaryColorLight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 5.0),
+                          child: TextButton.icon(
+                            onPressed: () async {
+                              await post(
+                                Uri.parse(baseUrl + "/delete-event/"),
+                                body: {"event_id": event_id.toString()},
+                              );
+                              callback();
+                              Navigator.pop(context);
+                            },
+                            label: Text(
+                              "Delete",
+                              style:
+                                  Theme.of(
+                                    context,
+                                  ).typography.white.labelMedium,
                             ),
-                            foregroundColor: WidgetStatePropertyAll(
-                              Colors.white,
+                            icon: Icon(Icons.delete_outline),
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                Theme.of(context).primaryColorLight,
+                              ),
+                              foregroundColor: WidgetStatePropertyAll(
+                                Colors.white,
+                              ),
                             ),
                           ),
                         ),
