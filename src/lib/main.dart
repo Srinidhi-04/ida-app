@@ -7,6 +7,7 @@ import 'package:src/pages/events_page.dart';
 import 'package:src/pages/home_page.dart';
 import 'package:src/pages/login_page.dart';
 import 'package:src/pages/map_page.dart';
+import 'package:src/pages/name_page.dart';
 import 'package:src/pages/profile_page.dart';
 import 'package:src/pages/settings_page.dart';
 import 'package:src/pages/shop_page.dart';
@@ -81,6 +82,7 @@ void main() async {
         "/settings": (context) => SettingsPage(),
         "/create": (context) => CreateEventPage(),
         "/about": (context) => AboutPage(),
+        "/name": (context) => NamePage(),
       },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

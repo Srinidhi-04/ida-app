@@ -222,6 +222,13 @@ class _SignupPageState extends State<SignupPage> {
                               return;
                             }
 
+                            if (RegExp(r"[^a-zA-Z ]").hasMatch(name)) {
+                              setState(() {
+                                error = "Invalid name";
+                              });
+                              return;
+                            }
+
                             if (!RegExp(
                               r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
                             ).hasMatch(email)) {

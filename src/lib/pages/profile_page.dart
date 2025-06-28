@@ -17,6 +17,30 @@ class _ProfilePageState extends State<ProfilePage> {
 
   bool loaded = false;
 
+  Widget profileButton(String name, String route) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5.0),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.6,
+        child: TextButton(
+          onPressed: () {
+            Navigator.pushNamed(context, route);
+          },
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                name,
+                style: Theme.of(context).typography.black.labelMedium!.apply(),
+              ),
+              Icon(Icons.keyboard_arrow_right_outlined, color: Colors.black),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
     if (info["last_login"] != null) {
@@ -59,7 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       body: RefreshIndicator(
-        onRefresh: () async {},
+        onRefresh: () async {await checkLogin();},
         color: Theme.of(context).primaryColorLight,
         backgroundColor: Colors.white,
         child: SingleChildScrollView(
@@ -111,28 +135,19 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: Theme.of(context).typography.black.labelMedium,
                   ),
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width * 0.6,
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, "/settings");
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Notifications",
-                          style:
-                              Theme.of(
-                                context,
-                              ).typography.black.labelMedium!.apply(),
-                        ),
-                        Icon(
-                          Icons.keyboard_arrow_right_outlined,
-                          color: Colors.black,
-                        ),
-                      ],
-                    ),
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      profileButton("Notification Settings", "/settings"),
+                      Divider(
+                        color: Theme.of(context).primaryColor,
+                        indent: 75,
+                        endIndent: 75,
+                      ),
+                      profileButton("Profile Settings", "/name"),
+                    ],
                   ),
                 ),
                 TextButton(

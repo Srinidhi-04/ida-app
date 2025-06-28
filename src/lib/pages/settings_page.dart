@@ -146,7 +146,7 @@ class _SettingsPageState extends State<SettingsPage> {
               padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
               child: Column(
                 children: [
-                  Divider(),
+                  Divider(color: Theme.of(context).primaryColor),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children:
@@ -188,7 +188,10 @@ class _SettingsPageState extends State<SettingsPage> {
                         padding: const EdgeInsets.all(10.0),
                         child: TextButton(
                           onPressed: () async {
-                            var response = await post(
+                            setState(() {
+                              changed = false;
+                            });
+                            await post(
                               Uri.parse(baseUrl + "/change-settings/"),
                               body: {
                                 "user_id": user_id.toString(),
@@ -200,11 +203,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                 "reminders": alert,
                               },
                             );
-                            print(jsonDecode(response.body));
                             await getSettings();
                           },
                           child: Text(
-                            "Save Changes",
+                            "Save",
                             style: Theme.of(context)
                                 .typography
                                 .white
