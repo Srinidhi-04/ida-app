@@ -96,7 +96,7 @@ def add_event(request: HttpRequest):
     except:
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
     
-    schedule_topic_notification(topic=f"ida-event-{event.event_id}", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} on {event_date.strftime("%d/%m/%Y")}", run_time=event_date)
+    schedule_topic_notification(topic=f"ida-event-{event.event_id}", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=event_date)
 
     return JsonResponse({"message": "Event successfully added", "event_id": event.event_id})
 
@@ -165,7 +165,7 @@ def edit_event(request: HttpRequest):
 
     event.save()
     
-    schedule_topic_notification(topic=f"ida-event-{event.event_id}", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} on {event_date.strftime("%d/%m/%Y")}", run_time=event_date)
+    schedule_topic_notification(topic=f"ida-event-{event.event_id}", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=event_date)
 
     return JsonResponse({"message": "Event successfully edited", "event_id": event.event_id})
 
