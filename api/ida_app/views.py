@@ -27,10 +27,10 @@ def signup(request: HttpRequest):
     except Exception:
         return JsonResponse({"error": "A user with that email already exists"}, status = 400)
 
-    settings = UserSettings(user = user, announcements = True, updates = True, merch = True, status = True, reminders = True)
+    settings = UserSettings(user = user, announcements = True, updates = True, merch = True, status = True, reminders = "2 hours before")
     settings.save()
 
-    return JsonResponse({"message": "User successfully signed up", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin})
+    return JsonResponse({"message": "User successfully signed up", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin, "reminders": settings.reminders})
 
 def login(request: HttpRequest):
     if request.method != "POST":
@@ -47,7 +47,9 @@ def login(request: HttpRequest):
     user: UserCredentials = authenticate(request, email = email, password = password)
 
     if user:
-        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin})
+        settings = UserSettings.objects.get(user = user)
+
+        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin, "reminders": settings.reminders})
     
     return JsonResponse({"error": "Email or password is incorrect"}, status = 400)
 
@@ -97,6 +99,9 @@ def add_event(request: HttpRequest):
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
     
     schedule_topic_notification(topic=f"ida-event-{event.event_id}", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=event_date)
+    schedule_topic_notification(topic=f"ida-event-{event.event_id}-0", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(minutes=30)))
+    schedule_topic_notification(topic=f"ida-event-{event.event_id}-1", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(hours=2)))
+    schedule_topic_notification(topic=f"ida-event-{event.event_id}-2", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(hours=6)))
 
     return JsonResponse({"message": "Event successfully added", "event_id": event.event_id})
 
@@ -149,7 +154,10 @@ def edit_event(request: HttpRequest):
     except:
         return JsonResponse({"error": "An event with that event ID does not exist"}, status = 400)
     
-    delete_topic_notification(topic=f"ida-event-{event.event_id}", run_time=event.date)
+    delete_topic_notification(topic=f"ida-event-{event.event_id}")
+    delete_topic_notification(topic=f"ida-event-{event.event_id}-0")
+    delete_topic_notification(topic=f"ida-event-{event.event_id}-1")
+    delete_topic_notification(topic=f"ida-event-{event.event_id}-2")
 
     event.name = name
     event.date = event_date
@@ -166,6 +174,9 @@ def edit_event(request: HttpRequest):
     event.save()
     
     schedule_topic_notification(topic=f"ida-event-{event.event_id}", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=event_date)
+    schedule_topic_notification(topic=f"ida-event-{event.event_id}-0", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(minutes=30)))
+    schedule_topic_notification(topic=f"ida-event-{event.event_id}-1", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(hours=2)))
+    schedule_topic_notification(topic=f"ida-event-{event.event_id}-2", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(hours=6)))
 
     return JsonResponse({"message": "Event successfully edited", "event_id": event.event_id})
 
@@ -183,7 +194,10 @@ def delete_event(request: HttpRequest):
     except:
         return JsonResponse({"error": "An event with that event ID does not exist"}, status = 400)
     
-    delete_topic_notification(topic=f"ida-event-{event.event_id}", run_time=event.date)
+    delete_topic_notification(topic=f"ida-event-{event.event_id}")
+    delete_topic_notification(topic=f"ida-event-{event.event_id}-0")
+    delete_topic_notification(topic=f"ida-event-{event.event_id}-1")
+    delete_topic_notification(topic=f"ida-event-{event.event_id}-2")
 
     try:
         event.delete()

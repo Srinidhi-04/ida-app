@@ -19,6 +19,7 @@ class EventsPage extends StatefulWidget {
 class _EventsPageState extends State<EventsPage> {
   late int user_id;
   late bool admin;
+  late String reminders;
   List<bool> loaded = [false, false];
 
   int selected = 0;
@@ -289,16 +290,57 @@ class _EventsPageState extends State<EventsPage> {
                                             notifs.add(event_id);
                                         });
 
-                                        if (notifs.contains(event_id))
-                                          await FirebaseMessaging.instance
+                                        if (notifs.contains(event_id)) {
+                                          FirebaseMessaging.instance
                                               .subscribeToTopic(
                                                 "ida-event-${event_id}",
                                               );
-                                        else
-                                          await FirebaseMessaging.instance
+
+                                          if (reminders ==
+                                              "30 minutes before") {
+                                            FirebaseMessaging.instance
+                                                .subscribeToTopic(
+                                                  "ida-event-${event_id}-0",
+                                                );
+                                          } else if (reminders ==
+                                              "2 hours before") {
+                                            FirebaseMessaging.instance
+                                                .subscribeToTopic(
+                                                  "ida-event-${event_id}-1",
+                                                );
+                                          } else if (reminders ==
+                                              "6 hours before") {
+                                            FirebaseMessaging.instance
+                                                .subscribeToTopic(
+                                                  "ida-event-${event_id}-2",
+                                                );
+                                          }
+                                        } else {
+                                          FirebaseMessaging.instance
                                               .unsubscribeFromTopic(
                                                 "ida-event-${event_id}",
                                               );
+
+                                          if (reminders ==
+                                              "30 minutes before") {
+                                            FirebaseMessaging.instance
+                                                .unsubscribeFromTopic(
+                                                  "ida-event-${event_id}-0",
+                                                );
+                                          } else if (reminders ==
+                                              "2 hours before") {
+                                            FirebaseMessaging.instance
+                                                .unsubscribeFromTopic(
+                                                  "ida-event-${event_id}-1",
+                                                );
+                                          } else if (reminders ==
+                                              "6 hours before") {
+                                            FirebaseMessaging.instance
+                                                .unsubscribeFromTopic(
+                                                  "ida-event-${event_id}-2",
+                                                );
+                                          }
+                                        }
 
                                         await post(
                                           Uri.parse(
@@ -456,6 +498,7 @@ class _EventsPageState extends State<EventsPage> {
     setState(() {
       user_id = int.parse(info["user_id"]!);
       admin = bool.parse(info["admin"]!);
+      reminders = info["reminders"]!;
     });
     await getNotifications();
   }

@@ -56,6 +56,7 @@ class _LoginPageState extends State<LoginPage> {
       "email": info["email"].toString(),
       "name": info["name"].toString(),
       "admin": info["admin"].toString(),
+      "reminders": info["reminders"].toString(),
     });
     Navigator.popAndPushNamed(context, "/home");
     return true;

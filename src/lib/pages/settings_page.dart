@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -39,6 +40,8 @@ class _SettingsPageState extends State<SettingsPage> {
     "6 hours before",
   ];
 
+  late String original_alert;
+
   bool changed = false;
 
   String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
@@ -73,6 +76,7 @@ class _SettingsPageState extends State<SettingsPage> {
     Map info = jsonDecode(response.body);
     setState(() {
       alert = info["data"]!.remove("reminders");
+      original_alert = alert;
       info["data"]!.remove("user_id");
       notifs = info["data"];
       loaded = true;
@@ -203,7 +207,27 @@ class _SettingsPageState extends State<SettingsPage> {
                                 "reminders": alert,
                               },
                             );
-                            await getSettings();
+                            getSettings();
+                            if (alert != original_alert) {
+                              SecureStorage.writeOne("reminders", alert);
+                              var response = await get(
+                                Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
+                              );
+                              Map info = jsonDecode(response.body);
+                              List notifs = info["data"];
+
+                              for (int event_id in notifs) {
+                                FirebaseMessaging.instance
+                                  .unsubscribeFromTopic(
+                                    "ida-event-${event_id}-${alerts.indexOf(original_alert)-1}",
+                                  );
+
+                                FirebaseMessaging.instance
+                                  .subscribeToTopic(
+                                    "ida-event-${event_id}-${alerts.indexOf(alert)-1}",
+                                  );
+                              }
+                            }
                           },
                           child: Text(
                             "Save",

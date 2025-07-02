@@ -22,7 +22,7 @@ def send_topic_notification(topic: str, title: str, body: str):
     print(f"Successfully sent message to topic '{topic}': {response}")
 
 def schedule_topic_notification(topic: str, title: str, body: str, run_time: datetime.datetime):
-    job_id = f"notif_{topic}_{int(run_time.timestamp())}"
+    job_id = f"notif_{topic}"
     scheduler.add_job(
         send_topic_notification,
         'date',
@@ -37,8 +37,8 @@ def schedule_topic_notification(topic: str, title: str, body: str, run_time: dat
     
     print(f"Successfully scheduled notification to topic '{topic}'")
 
-def delete_topic_notification(topic: str, run_time: datetime.datetime):
-    job_id = f"notif_{topic}_{int(run_time.timestamp())}"
+def delete_topic_notification(topic: str):
+    job_id = f"notif_{topic}"
 
     try:
         scheduler.remove_job(job_id=job_id)
