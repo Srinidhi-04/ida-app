@@ -572,7 +572,8 @@ class _EventsPageState extends State<EventsPage> {
                                       e["body"],
                                       e["coordinates"],
                                       0,
-                                      false,
+                                      (upcoming["essential"]!.isNotEmpty &&
+                                          upcoming["essential"]!.contains(e)),
                                     ),
                                   )
                                   .toList())
