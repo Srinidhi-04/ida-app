@@ -183,6 +183,8 @@ def delete_event(request: HttpRequest):
     except:
         return JsonResponse({"error": "An event with that event ID does not exist"}, status = 400)
     
+    delete_topic_notification(topic=f"ida-event-{event.event_id}", run_time=event.date)
+
     try:
         event.delete()
     except:
