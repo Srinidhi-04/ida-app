@@ -93,6 +93,7 @@ class _EventsPageState extends State<EventsPage> {
     String body,
     LatLng coordinates,
     int type,
+    bool featured,
   ) {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -124,6 +125,41 @@ class _EventsPageState extends State<EventsPage> {
               },
             ),
             children: [
+              CustomSlidableAction(
+                onPressed: (slideContext) async {
+                  Navigator.of(context).pushNamed(
+                    "/manage",
+                    arguments: {
+                      "event_id": event_id,
+                      "name": name,
+                      "date": date,
+                      "location": location,
+                      "latitude": coordinates.latitude,
+                      "longitude": coordinates.longitude,
+                      "image": image,
+                      "body": body,
+                      "featured": featured,
+                      "callback": (
+                        String new_name,
+                        DateTime new_date,
+                        String new_location,
+                        double new_latitude,
+                        double new_longitude,
+                        String new_image,
+                        String new_body,
+                        bool new_featured,
+                      ) {
+                        getEvents();
+                        getNotifications();
+                      },
+                    },
+                  );
+                },
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                child: Icon(Icons.edit_outlined, size: 50),
+              ),
               CustomSlidableAction(
                 onPressed: (slideContext) async {
                   setState(() {
@@ -171,6 +207,9 @@ class _EventsPageState extends State<EventsPage> {
                       getEvents();
                       getNotifications();
                     },
+                    "latitude": coordinates.latitude,
+                    "longitude": coordinates.longitude,
+                    "featured": featured,
                   },
                 );
               },
@@ -451,7 +490,8 @@ class _EventsPageState extends State<EventsPage> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          await getEvents();
+          getEvents();
+          getNotifications();
         },
         color: Theme.of(context).primaryColorLight,
         backgroundColor: Colors.white,
@@ -490,7 +530,7 @@ class _EventsPageState extends State<EventsPage> {
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          "Registered",
+                          "All Events",
                           style: Theme.of(
                             context,
                           ).typography.black.labelLarge!.apply(
@@ -532,6 +572,7 @@ class _EventsPageState extends State<EventsPage> {
                                       e["body"],
                                       e["coordinates"],
                                       0,
+                                      false,
                                     ),
                                   )
                                   .toList())
@@ -562,6 +603,7 @@ class _EventsPageState extends State<EventsPage> {
                                       e["body"],
                                       e["coordinates"],
                                       2,
+                                      false,
                                     ),
                                   )
                                   .toList()),
@@ -587,67 +629,37 @@ class _EventsPageState extends State<EventsPage> {
                     ? Column(
                       mainAxisSize: MainAxisSize.min,
                       children:
-                          (selected == 0)
-                              ? ((upcoming["essential"]!.isEmpty)
-                                  ? [
-                                    Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(top: 20),
-                                        child: Text(
-                                          "No upcoming events",
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).typography.black.headlineLarge,
-                                        ),
-                                      ),
+                          ((upcoming["essential"]!.isEmpty)
+                              ? [
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 20),
+                                    child: Text(
+                                      "No upcoming events",
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).typography.black.headlineLarge,
                                     ),
-                                  ]
-                                  : upcoming["essential"]!
-                                      .map(
-                                        (e) => eventCard(
-                                          upcoming["essential"]!.indexOf(e),
-                                          e["event_id"],
-                                          e["name"],
-                                          e["location"],
-                                          e["date"],
-                                          e["image"],
-                                          e["body"],
-                                          e["coordinates"],
-                                          1,
-                                        ),
-                                      )
-                                      .toList())
-                              : ((past.isEmpty)
-                                  ? [
-                                    Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(top: 20),
-                                        child: Text(
-                                          "No past events",
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).typography.black.headlineLarge,
-                                        ),
-                                      ),
+                                  ),
+                                ),
+                              ]
+                              : upcoming["essential"]!
+                                  .map(
+                                    (e) => eventCard(
+                                      upcoming["essential"]!.indexOf(e),
+                                      e["event_id"],
+                                      e["name"],
+                                      e["location"],
+                                      e["date"],
+                                      e["image"],
+                                      e["body"],
+                                      e["coordinates"],
+                                      1,
+                                      true,
                                     ),
-                                  ]
-                                  : past
-                                      .map(
-                                        (e) => eventCard(
-                                          past.indexOf(e),
-                                          e["event_id"],
-                                          e["name"],
-                                          e["location"],
-                                          e["date"],
-                                          e["image"],
-                                          e["body"],
-                                          e["coordinates"],
-                                          2,
-                                        ),
-                                      )
-                                      .toList()),
+                                  )
+                                  .toList()),
                     )
                     : Container(),
               ],
@@ -660,7 +672,7 @@ class _EventsPageState extends State<EventsPage> {
               ? FloatingActionButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed(
-                    "/create",
+                    "/manage",
                     arguments: {
                       "callback": () {
                         getEvents();

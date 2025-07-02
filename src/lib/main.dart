@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:src/pages/about_page.dart';
-import 'package:src/pages/create_event_page.dart';
+import 'package:src/pages/manage_event_page.dart';
 import 'package:src/pages/event_page.dart';
 import 'package:src/pages/events_page.dart';
 import 'package:src/pages/home_page.dart';
@@ -80,7 +80,7 @@ void main() async {
         "/map": (context) => MapPage(),
         "/profile": (context) => ProfilePage(),
         "/settings": (context) => SettingsPage(),
-        "/create": (context) => CreateEventPage(),
+        "/manage": (context) => ManageEventPage(),
         "/about": (context) => AboutPage(),
         "/name": (context) => NamePage(),
       },

@@ -16,6 +16,18 @@ class EventPage extends StatefulWidget {
 class _EventPageState extends State<EventPage> {
   late bool admin;
   bool loaded = false;
+  bool initialized = false;
+
+  late int event_id;
+  late String image;
+  late DateTime date;
+  late String location;
+  late String title;
+  late String body;
+  late Function callback;
+  late double latitude;
+  late double longitude;
+  late bool featured;
 
   List<String> months = [
     "Jan",
@@ -31,8 +43,6 @@ class _EventPageState extends State<EventPage> {
     "Nov",
     "Dec",
   ];
-
-  bool action_pressed = false;
 
   String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
 
@@ -58,6 +68,28 @@ class _EventPageState extends State<EventPage> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!initialized) {
+      Map args = ModalRoute.of(context)!.settings.arguments as Map;
+      setState(() {
+        event_id = args["event_id"];
+        image = args["image"];
+        date = args["date"];
+        location = args["location"];
+        title = args["title"];
+        body = args["body"];
+        callback = args["callback"];
+        latitude = args["latitude"];
+        longitude = args["longitude"];
+        featured = args["featured"];
+        initialized = true;
+      });
+    }
+  }
+
+  @override
   void initState() {
     super.initState();
     checkLogin();
@@ -75,15 +107,6 @@ class _EventPageState extends State<EventPage> {
         ),
       );
 
-    Map args = ModalRoute.of(context)!.settings.arguments as Map;
-    int event_id = args["event_id"];
-    String image = args["image"];
-    DateTime date = args["date"];
-    String location = args["location"];
-    String title = args["title"];
-    String body = args["body"];
-    Function callback = args["callback"];
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -97,16 +120,65 @@ class _EventPageState extends State<EventPage> {
         actions:
             (admin)
                 ? [
-                  (action_pressed)
-                      ? TapRegion(
-                        onTapOutside:
-                            (event) => setState(() {
-                              action_pressed = false;
-                            }),
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 5.0),
-                          child: TextButton.icon(
-                            onPressed: () async {
+                  PopupMenuButton(
+                    color: Theme.of(context).primaryColorLight,
+                    itemBuilder:
+                        (popupContext) => [
+                          PopupMenuItem(
+                            onTap: () {
+                              Navigator.of(context).pushNamed(
+                                "/manage",
+                                arguments: {
+                                  "event_id": event_id,
+                                  "name": title,
+                                  "date": date,
+                                  "location": location,
+                                  "latitude": latitude,
+                                  "longitude": longitude,
+                                  "image": image,
+                                  "body": body,
+                                  "featured": featured,
+                                  "callback": (
+                                    String new_name,
+                                    DateTime new_date,
+                                    String new_location,
+                                    double new_latitude,
+                                    double new_longitude,
+                                    String new_image,
+                                    String new_body,
+                                    bool new_featured,
+                                  ) {
+                                    setState(() {
+                                      title = new_name;
+                                      date = new_date;
+                                      location = new_location;
+                                      latitude = new_latitude;
+                                      longitude = new_longitude;
+                                      image = new_image;
+                                      body = new_body;
+                                      featured = new_featured;
+                                    });
+                                    callback();
+                                  },
+                                },
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                Icon(Icons.edit_outlined, color: Colors.white),
+                                SizedBox(width: 5),
+                                Text(
+                                  "Edit",
+                                  style:
+                                      Theme.of(
+                                        context,
+                                      ).typography.white.labelMedium,
+                                ),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem(
+                            onTap: () async {
                               await post(
                                 Uri.parse(baseUrl + "/delete-event/"),
                                 body: {"event_id": event_id.toString()},
@@ -114,33 +186,22 @@ class _EventPageState extends State<EventPage> {
                               callback();
                               Navigator.pop(context);
                             },
-                            label: Text(
-                              "Delete",
-                              style:
-                                  Theme.of(
-                                    context,
-                                  ).typography.white.labelMedium,
-                            ),
-                            icon: Icon(Icons.delete_outline),
-                            style: ButtonStyle(
-                              backgroundColor: WidgetStatePropertyAll(
-                                Theme.of(context).primaryColorLight,
-                              ),
-                              foregroundColor: WidgetStatePropertyAll(
-                                Colors.white,
-                              ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete_outline),
+                                SizedBox(width: 5),
+                                Text(
+                                  "Delete",
+                                  style:
+                                      Theme.of(
+                                        context,
+                                      ).typography.white.labelMedium,
+                                ),
+                              ],
                             ),
                           ),
-                        ),
-                      )
-                      : IconButton(
-                        onPressed: () {
-                          setState(() {
-                            action_pressed = true;
-                          });
-                        },
-                        icon: Icon(Icons.more_vert),
-                      ),
+                        ],
+                  ),
                 ]
                 : [],
       ),

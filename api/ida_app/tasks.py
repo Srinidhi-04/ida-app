@@ -37,3 +37,11 @@ def schedule_topic_notification(topic: str, title: str, body: str, run_time: dat
     
     print(f"Successfully scheduled notification to topic '{topic}'")
 
+def delete_topic_notification(topic: str, run_time: datetime.datetime):
+    job_id = f"notif_{topic}_{int(run_time.timestamp())}"
+
+    try:
+        scheduler.remove_job(job_id=job_id)
+        print(f"Job {job_id} successully deleted")
+    except:
+        print("Job does not exist")

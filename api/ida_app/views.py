@@ -100,6 +100,75 @@ def add_event(request: HttpRequest):
 
     return JsonResponse({"message": "Event successfully added", "event_id": event.event_id})
 
+def edit_event(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+
+    try:
+        event_id = int(request.POST.get("event_id"))
+    except:
+        return JsonResponse({"error": "'event_id' field is required as an int"}, status = 400)
+
+    name = request.POST.get("name")
+    date = request.POST.get("date")
+    location = request.POST.get("location")
+    body = request.POST.get("body")
+
+    try:
+        latitude = float(request.POST.get("latitude"))
+    except:
+        return JsonResponse({"error": "'latitude' field is required as a float"}, status = 400)
+    
+    try:
+        longitude = float(request.POST.get("longitude"))
+    except:
+        return JsonResponse({"error": "'longitude' field is required as a float"}, status = 400)
+    
+    image = request.POST.get("image")
+    if not image or image == "":
+        image = "https://i.imgur.com/Mw85Kfp.png"
+
+    essential = request.POST.get("essential")
+    if not essential:
+        essential = False
+    else:
+        essential = essential == "yes"
+
+    if not name:
+        return JsonResponse({"error": "'name' field is required"}, status = 400)
+    if not date:
+        return JsonResponse({"error": "'date' field is required"}, status = 400)
+    if not location:
+        return JsonResponse({"error": "'location' field is required"}, status = 400)
+    if not body:
+        return JsonResponse({"error": "'body' field is required"}, status = 400)
+    
+    try:
+        event_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        event = Events.objects.get(event_id = event_id)
+    except:
+        return JsonResponse({"error": "An event with that event ID does not exist"}, status = 400)
+    
+    delete_topic_notification(topic=f"ida-event-{event.event_id}", run_time=event.date)
+
+    event.name = name
+    event.date = event_date
+    event.location = location
+    event.latitude = latitude
+    event.longitude = longitude
+    event.image = image
+    event.essential = essential
+    event.body = body
+
+    if event_date > datetime.datetime.now():
+        event.completed = False
+
+    event.save()
+    
+    schedule_topic_notification(topic=f"ida-event-{event.event_id}", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.time()}", run_time=event_date)
+
+    return JsonResponse({"message": "Event successfully edited", "event_id": event.event_id})
+
 def delete_event(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
@@ -107,12 +176,12 @@ def delete_event(request: HttpRequest):
     try:
         event_id = int(request.POST.get("event_id"))
     except:
-        return JsonResponse({"error": "'event_id' field is required as a int"}, status = 400)
+        return JsonResponse({"error": "'event_id' field is required as an int"}, status = 400)
     
     try:
         event = Events.objects.get(event_id = event_id)
     except:
-        return JsonResponse({"error": "The given event_id does not exist"}, status = 400)
+        return JsonResponse({"error": "An event with that event ID does not exist"}, status = 400)
     
     try:
         event.delete()
@@ -147,12 +216,12 @@ def toggle_notification(request: HttpRequest):
     try:
         user_id = int(request.POST.get("user_id"))
     except:
-        return JsonResponse({"error": "'user_id' field is required as a int"}, status = 400)
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
     
     try:
         event_id = int(request.POST.get("event_id"))
     except:
-        return JsonResponse({"error": "'event_id' field is required as a int"}, status = 400)
+        return JsonResponse({"error": "'event_id' field is required as an int"}, status = 400)
 
     try:
         user = UserCredentials.objects.get(user_id = user_id)
@@ -180,7 +249,7 @@ def get_notifications(request: HttpRequest):
     try:
         user_id = int(request.GET.get("user_id"))
     except:
-        return JsonResponse({"error": "'user_id' field is required as a int"}, status = 400)
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
 
     try:
         user = UserCredentials.objects.get(user_id = user_id)
@@ -198,7 +267,7 @@ def change_settings(request: HttpRequest):
     try:
         user_id = int(request.POST.get("user_id"))
     except:
-        return JsonResponse({"error": "'user_id' field is required as a int"}, status = 400)
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
     
     announcements = request.POST.get("announcements")
     if not announcements:
@@ -246,7 +315,7 @@ def get_settings(request: HttpRequest):
     try:
         user_id = int(request.GET.get("user_id"))
     except:
-        return JsonResponse({"error": "'user_id' field is required as a int"}, status = 400)
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
     
     try:
         user = UserCredentials.objects.get(user_id = user_id)
@@ -265,7 +334,7 @@ def change_name(request: HttpRequest):
     try:
         user_id = int(request.POST.get("user_id"))
     except:
-        return JsonResponse({"error": "'user_id' field is required as a int"}, status = 400)
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
     
     name = request.POST.get("name")
     if not name:

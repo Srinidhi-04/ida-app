@@ -1,14 +1,16 @@
 import "package:flutter/material.dart";
 import "package:http/http.dart";
 
-class CreateEventPage extends StatefulWidget {
-  const CreateEventPage({super.key});
+class ManageEventPage extends StatefulWidget {
+  const ManageEventPage({super.key});
 
   @override
-  State<CreateEventPage> createState() => _CreateEventPageState();
+  State<ManageEventPage> createState() => _ManageEventPageState();
 }
 
-class _CreateEventPageState extends State<CreateEventPage> {
+class _ManageEventPageState extends State<ManageEventPage> {
+  int? event_id;
+
   String name = "";
   DateTime? event_date;
   TimeOfDay? event_time;
@@ -18,18 +20,67 @@ class _CreateEventPageState extends State<CreateEventPage> {
   String body = "";
   bool featured = false;
   List<String?> errors = [null, null, null, null, null, null, null];
+  bool initialized = false;
+  late Function callback;
+
+  TextEditingController name_controller = TextEditingController();
+  TextEditingController location_controller = TextEditingController();
+  TextEditingController lat_controller = TextEditingController();
+  TextEditingController long_controller = TextEditingController();
+  TextEditingController image_controller = TextEditingController();
+  TextEditingController body_controller = TextEditingController();
 
   String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
 
   @override
-  Widget build(BuildContext context) {
-    Map args = ModalRoute.of(context)!.settings.arguments as Map;
-    Function callback = args["callback"];
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
+    if (!initialized) {
+      Map args = ModalRoute.of(context)!.settings.arguments as Map;
+
+      if (args.containsKey("event_id")) {
+        setState(() {
+          event_id = args["event_id"];
+
+          name = args["name"];
+          name_controller.text = name;
+
+          DateTime date = args["date"];
+
+          event_date = date;
+          event_time = TimeOfDay(hour: date.hour, minute: date.minute);
+
+          location = args["location"];
+          location_controller.text = location;
+
+          latlng = [args["latitude"], args["longitude"]];
+          lat_controller.text = latlng[0].toString();
+          long_controller.text = latlng[1].toString();
+
+          image = args["image"];
+          image_controller.text = image;
+
+          body = args["body"];
+          body_controller.text = body;
+
+          featured = args["featured"];
+        });
+      }
+
+      setState(() {
+        initialized = true;
+        callback = args["callback"];
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Create Event",
+          (event_id == null) ? "Create Event" : "Edit Event",
           style: Theme.of(context).typography.black.headlineMedium!.apply(
             color: Theme.of(context).primaryColorDark,
           ),
@@ -48,9 +99,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
                   child: TextFormField(
+                    controller: name_controller,
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.badge_outlined, color: Theme.of(context).primaryColor),
+                      prefixIcon: Icon(
+                        Icons.badge_outlined,
+                        color: Theme.of(context).primaryColor,
+                      ),
                       hintText: "Name",
                       errorText: errors[0],
                     ),
@@ -181,9 +236,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: TextFormField(
+                    controller: location_controller,
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.location_on_outlined, color: Theme.of(context).primaryColor),
+                      prefixIcon: Icon(
+                        Icons.location_on_outlined,
+                        color: Theme.of(context).primaryColor,
+                      ),
                       hintText: "Location",
                       errorText: errors[3],
                     ),
@@ -203,6 +262,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         child: Padding(
                           padding: const EdgeInsets.only(right: 10),
                           child: TextFormField(
+                            controller: lat_controller,
                             textAlignVertical: TextAlignVertical.center,
                             decoration: InputDecoration(
                               prefixIcon: Icon(
@@ -234,6 +294,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                         child: Padding(
                           padding: const EdgeInsets.only(left: 10),
                           child: TextFormField(
+                            controller: long_controller,
                             textAlignVertical: TextAlignVertical.center,
                             decoration: InputDecoration(
                               prefixIcon: Icon(
@@ -267,9 +328,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: TextFormField(
+                    controller: image_controller,
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.image_outlined, color: Theme.of(context).primaryColor),
+                      prefixIcon: Icon(
+                        Icons.image_outlined,
+                        color: Theme.of(context).primaryColor,
+                      ),
                       hintText: "Thumbnail",
                     ),
                     cursorColor: Theme.of(context).primaryColor,
@@ -282,9 +347,13 @@ class _CreateEventPageState extends State<CreateEventPage> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
                   child: TextFormField(
+                    controller: body_controller,
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.description_outlined, color: Theme.of(context).primaryColor),
+                      prefixIcon: Icon(
+                        Icons.description_outlined,
+                        color: Theme.of(context).primaryColor,
+                      ),
                       hintText: "Body",
                       errorText: errors[6],
                     ),
@@ -374,22 +443,52 @@ class _CreateEventPageState extends State<CreateEventPage> {
                             event_time!.hour,
                             event_time!.minute,
                           );
-                          await post(
-                            Uri.parse(baseUrl + "/add-event/"),
-                            body: {
-                              "name": name,
-                              "date": final_date.toString().split(".")[0],
-                              "location": location,
-                              "latitude": latlng[0].toString(),
-                              "longitude": latlng[1].toString(),
-                              "image": image,
-                              "body": body,
-                              "essential": (featured ? "yes" : "no"),
-                            },
-                          );
 
-                          Navigator.pop(context);
-                          callback();
+                          if (event_id == null) {
+                            await post(
+                              Uri.parse(baseUrl + "/add-event/"),
+                              body: {
+                                "name": name,
+                                "date": final_date.toString().split(".")[0],
+                                "location": location,
+                                "latitude": latlng[0].toString(),
+                                "longitude": latlng[1].toString(),
+                                "image": image,
+                                "body": body,
+                                "essential": (featured ? "yes" : "no"),
+                              },
+                            );
+                            Navigator.pop(context);
+                            callback();
+                          } else {
+                            await post(
+                              Uri.parse(baseUrl + "/edit-event/"),
+                              body: {
+                                "event_id": event_id.toString(),
+                                "name": name,
+                                "date": final_date.toString().split(".")[0],
+                                "location": location,
+                                "latitude": latlng[0].toString(),
+                                "longitude": latlng[1].toString(),
+                                "image": image,
+                                "body": body,
+                                "essential": (featured ? "yes" : "no"),
+                              },
+                            );
+                            Navigator.pop(context);
+                            callback(
+                              name,
+                              final_date,
+                              location,
+                              latlng[0],
+                              latlng[1],
+                              (image != "")
+                                  ? image
+                                  : "https://i.imgur.com/Mw85Kfp.png",
+                              body,
+                              featured,
+                            );
+                          }
                         }
 
                         setState(() {
@@ -399,7 +498,7 @@ class _CreateEventPageState extends State<CreateEventPage> {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Text(
-                          "Create",
+                          (event_id == null) ? "Create" : "Save",
                           style: Theme.of(context).typography.white.labelLarge!
                               .apply(fontWeightDelta: 3),
                         ),
