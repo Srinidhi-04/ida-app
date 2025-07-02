@@ -1,6 +1,7 @@
 // ignore_for_file: must_be_immutable
 
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/secure_storage.dart';
@@ -298,25 +299,39 @@ class _EventPageState extends State<EventPage> {
                                   ],
                                 ),
                               ),
-                              Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.only(right: 5),
-                                    child: Icon(
-                                      Icons.location_on_outlined,
-                                      color: Colors.white,
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    "/map",
+                                    arguments: {
+                                      "coordinates": LatLng(
+                                        latitude,
+                                        longitude,
+                                      ),
+                                    },
+                                  );
+                                },
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.only(right: 5),
+                                      child: Icon(
+                                        Icons.location_on_outlined,
+                                        color: Colors.white,
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                    "${location}",
-                                    style: Theme.of(context)
-                                        .typography
-                                        .white
-                                        .labelMedium!
-                                        .apply(fontWeightDelta: 3),
-                                  ),
-                                ],
+                                    Text(
+                                      "${location}",
+                                      style: Theme.of(context)
+                                          .typography
+                                          .white
+                                          .labelMedium!
+                                          .apply(fontWeightDelta: 3),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
