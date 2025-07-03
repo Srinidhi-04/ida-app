@@ -82,8 +82,16 @@ class _ProfilePageState extends State<ProfilePage> {
       );
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        foregroundColor: Colors.white,
+        elevation: 0,
+      ),
+      extendBodyBehindAppBar: true,
       body: RefreshIndicator(
-        onRefresh: () async {await checkLogin();},
+        onRefresh: () async {
+          await checkLogin();
+        },
         color: Theme.of(context).primaryColorLight,
         backgroundColor: Colors.white,
         child: SingleChildScrollView(
