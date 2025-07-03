@@ -133,7 +133,9 @@ class _VerifyPageState extends State<VerifyPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Image(
-                          image: NetworkImage("https://i.imgur.com/0FHQKN4.png"),
+                          image: NetworkImage(
+                            "https://i.imgur.com/0FHQKN4.png",
+                          ),
                           width: MediaQuery.of(context).size.width * 0.6,
                         ),
                         Column(
@@ -168,7 +170,12 @@ class _VerifyPageState extends State<VerifyPage> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
+                              padding: const EdgeInsets.fromLTRB(
+                                30,
+                                20,
+                                30,
+                                10,
+                              ),
                               child: TextFormField(
                                 keyboardType: TextInputType.number,
                                 textAlignVertical: TextAlignVertical.center,
@@ -177,8 +184,9 @@ class _VerifyPageState extends State<VerifyPage> {
                                     Icons.vpn_key_outlined,
                                     color: Theme.of(context).primaryColor,
                                   ),
-                                  hintText: "Code",
+                                  hintText: "Verification Code",
                                 ),
+                                maxLength: 6,
                                 cursorColor: Theme.of(context).primaryColor,
                                 onChanged:
                                     (value) => setState(() {
@@ -200,8 +208,8 @@ class _VerifyPageState extends State<VerifyPage> {
                                 TextButton(
                                   onPressed: () async {
                                     await post(
-                                      Uri.parse(baseUrl + "/resend-code/"),
-                                      body: {"user_id": user_id.toString()},
+                                      Uri.parse(baseUrl + "/send-code/"),
+                                      body: {"email": email},
                                     );
                                     setState(() {
                                       top_text =
@@ -223,7 +231,12 @@ class _VerifyPageState extends State<VerifyPage> {
                             ),
                             (error.isNotEmpty)
                                 ? Padding(
-                                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    10,
+                                    20,
+                                    10,
+                                    0,
+                                  ),
                                   child: Text(
                                     error,
                                     style: Theme.of(context)
@@ -242,11 +255,12 @@ class _VerifyPageState extends State<VerifyPage> {
                               onPressed: () async {
                                 if (code.length != 6) {
                                   setState(() {
-                                    error = "The code needs to be 6 digits long";
+                                    error =
+                                        "The code needs to be 6 digits long";
                                   });
                                   return;
                                 }
-        
+
                                 await verify();
                               },
                               child: Text(

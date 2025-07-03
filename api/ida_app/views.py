@@ -62,19 +62,20 @@ def verify_code(request: HttpRequest):
 
     return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin, "reminders": settings.reminders})
 
-def resend_code(request: HttpRequest):
+def send_code(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
     
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+    email = request.POST.get("email")
+    if not email:
+        return JsonResponse({"error": "'email' field is required"}, status = 400)
+    
+    forgot = request.POST.get("forgot") == "yes"
     
     try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+        user: UserCredentials = UserCredentials.objects.get(email = email)
     except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+        return JsonResponse({"error": "A user with that email does not exist"}, status = 400)
 
     while True:
         code = rd.randint(100000, 999999)
@@ -83,13 +84,50 @@ def resend_code(request: HttpRequest):
         except:
             break
     
-    user.signup_code = code
+    if not forgot:
+        user.signup_code = code
+    else:
+        user.forgot_code = code
+
     user.save()
 
-    send_verification_code(user.name, user.signup_code, user.email)
+    send_verification_code(user.name, code, user.email)
 
     return JsonResponse({"message": "Code successfully resent", "user_id": user.user_id, "email": user.email})
 
+def change_password(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+    
+    email = request.POST.get("email")
+    if not email:
+        return JsonResponse({"error": "'email' field is required"}, status = 400)
+    
+    password = request.POST.get("password")
+    if not password:
+        return JsonResponse({"error": "'password' field is required"}, status = 400)
+    
+    try:
+        code = int(request.POST.get("code"))
+    except:
+        return JsonResponse({"error": "The code needs to be a number"}, status = 400)
+    
+    try:
+        user: UserCredentials = UserCredentials.objects.get(email = email)
+    except:
+        return JsonResponse({"error": "A user with that email does not exist"}, status = 400)
+    
+    if user.forgot_code != code:
+        return JsonResponse({"error": "The code is incorrect"}, status = 400)
+
+    user.forgot_code = None
+    user.last_login = datetime.datetime.now()
+    user.set_password(password)
+    user.save()
+
+    settings = UserSettings.objects.get(user = user)
+
+    return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin, "reminders": settings.reminders})
 
 def login(request: HttpRequest):
     if request.method != "POST":

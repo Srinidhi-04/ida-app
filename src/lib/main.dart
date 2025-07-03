@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:src/pages/about_page.dart';
-import 'package:src/pages/manage_event_page.dart';
+import 'package:src/pages/forgot_page.dart';
+import 'package:src/pages/manage_page.dart';
 import 'package:src/pages/event_page.dart';
 import 'package:src/pages/events_page.dart';
 import 'package:src/pages/home_page.dart';
@@ -75,6 +76,7 @@ void main() async {
         "/login": (context) => LoginPage(),
         "/signup": (context) => SignupPage(),
         "/verify": (context) => VerifyPage(),
+        "/forgot": (context) => ForgotPage(),
         "/home": (context) => HomePage(),
         "/shop": (context) => ShopPage(),
         "/events": (context) => EventsPage(),
@@ -82,7 +84,7 @@ void main() async {
         "/map": (context) => MapPage(),
         "/profile": (context) => ProfilePage(),
         "/settings": (context) => SettingsPage(),
-        "/manage": (context) => ManageEventPage(),
+        "/manage": (context) => ManagePage(),
         "/about": (context) => AboutPage(),
         "/name": (context) => NamePage(),
       },

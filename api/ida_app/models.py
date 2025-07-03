@@ -35,6 +35,10 @@ class UserManager(BaseUserManager):
         kwargs.setdefault("admin", True)
         kwargs.setdefault("is_superuser", True)
         return self.create_user(email, name, password, **kwargs)
+    
+    def create_admin(self, email, name, password, **kwargs):
+        kwargs.setdefault("admin", True)
+        return self.create_user(email, name, password, **kwargs)
 
 
 class UserCredentials(AbstractBaseUser, PermissionsMixin):

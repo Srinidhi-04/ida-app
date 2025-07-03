@@ -2,14 +2,14 @@ import "package:flutter/material.dart";
 import "package:http/http.dart";
 import "package:loading_animation_widget/loading_animation_widget.dart";
 
-class ManageEventPage extends StatefulWidget {
-  const ManageEventPage({super.key});
+class ManagePage extends StatefulWidget {
+  const ManagePage({super.key});
 
   @override
-  State<ManageEventPage> createState() => _ManageEventPageState();
+  State<ManagePage> createState() => _ManagePageState();
 }
 
-class _ManageEventPageState extends State<ManageEventPage> {
+class _ManagePageState extends State<ManagePage> {
   int? event_id;
 
   String name = "";

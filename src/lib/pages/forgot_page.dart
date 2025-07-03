@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import "package:http/http.dart";
+import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/secure_storage.dart';
 
@@ -25,28 +25,57 @@ class CirclePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
+class ForgotPage extends StatefulWidget {
+  const ForgotPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<ForgotPage> createState() => _ForgotPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _ForgotPageState extends State<ForgotPage> {
   String email = "";
   String password = "";
+  String code = "";
   String error = "";
+  String top_text = "";
   bool submitted = false;
+  bool sent = false;
+
+  TextEditingController emailController = TextEditingController();
 
   String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
 
-  Future<bool> login() async {
+  Future<void> sendCode() async {
     setState(() {
       submitted = true;
     });
     var response = await post(
-      Uri.parse(baseUrl + "/login/"),
-      body: {"email": email, "password": password},
+      Uri.parse(baseUrl + "/send-code/"),
+      body: {"email": email, "forgot": "yes"},
+    );
+    Map info = jsonDecode(response.body);
+    setState(() {
+      submitted = false;
+    });
+    if (info.containsKey("error")) {
+      setState(() {
+        error = info["error"];
+      });
+      return;
+    }
+    setState(() {
+      sent = true;
+      top_text = "We've sent a verification code to ${email}.";
+    });
+  }
+
+  Future<bool> changePassword() async {
+    setState(() {
+      submitted = true;
+    });
+    var response = await post(
+      Uri.parse(baseUrl + "/change-password/"),
+      body: {"email": email, "password": password, "code": code},
     );
     Map info = jsonDecode(response.body);
     setState(() {
@@ -58,16 +87,6 @@ class _LoginPageState extends State<LoginPage> {
       });
       return false;
     }
-
-    if (info["reminders"] == null) {
-      await SecureStorage.writeMany({
-        "user_id": info["user_id"].toString(),
-        "email": info["email"],
-      });
-      Navigator.popAndPushNamed(context, "/verify");
-      return true;
-    }
-
     await SecureStorage.writeMany({
       "user_id": info["user_id"].toString(),
       "last_login": DateTime.now().toString(),
@@ -76,7 +95,6 @@ class _LoginPageState extends State<LoginPage> {
       "admin": info["admin"].toString(),
       "reminders": info["reminders"].toString(),
     });
-
     Navigator.popAndPushNamed(context, "/home");
     return true;
   }
@@ -143,8 +161,28 @@ class _LoginPageState extends State<LoginPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+                            (sent)
+                                ? Padding(
+                                  padding: const EdgeInsets.only(bottom: 25.0),
+                                  child: Container(
+                                    color: Colors.lightGreen,
+                                    width:
+                                        MediaQuery.of(context).size.width - 60,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(10.0),
+                                      child: Text(
+                                        top_text,
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).typography.white.bodyMedium,
+                                      ),
+                                    ),
+                                  ),
+                                )
+                                : Container(),
                             Text(
-                              "Log In",
+                              "Forgot Password",
                               style: Theme.of(
                                 context,
                               ).typography.black.headlineLarge!.apply(
@@ -160,6 +198,7 @@ class _LoginPageState extends State<LoginPage> {
                                 10,
                               ),
                               child: TextFormField(
+                                controller: emailController,
                                 textAlignVertical: TextAlignVertical.center,
                                 decoration: InputDecoration(
                                   prefixIcon: Icon(
@@ -175,63 +214,107 @@ class _LoginPageState extends State<LoginPage> {
                                     }),
                               ),
                             ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                30,
-                                10,
-                                30,
-                                10,
-                              ),
-                              child: TextFormField(
-                                textAlignVertical: TextAlignVertical.center,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.lock_outlined,
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                  hintText: "Password",
-                                ),
-                                cursorColor: Theme.of(context).primaryColor,
-                                onChanged:
-                                    (value) => setState(() {
-                                      password = value;
-                                    }),
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerLeft,
-                              child: Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                  20,
-                                  0,
-                                  30,
-                                  10,
-                                ),
-                                child: TextButton(
-                                  onPressed: () {
-                                    Navigator.popAndPushNamed(
-                                      context,
-                                      "/forgot",
-                                    );
-                                  },
-                                  child: Text(
-                                    "Forgot Password",
-                                    style: Theme.of(
-                                      context,
-                                    ).typography.black.labelMedium!.apply(
-                                      color: Theme.of(context).primaryColorDark,
-                                      fontWeightDelta: 3,
+                            (sent)
+                                ? Column(
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                        30,
+                                        10,
+                                        30,
+                                        10,
+                                      ),
+                                      child: TextFormField(
+                                        textAlignVertical:
+                                            TextAlignVertical.center,
+                                        obscureText: true,
+                                        decoration: InputDecoration(
+                                          prefixIcon: Icon(
+                                            Icons.lock_outlined,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                          hintText: "New Password",
+                                        ),
+                                        cursorColor:
+                                            Theme.of(context).primaryColor,
+                                        onChanged:
+                                            (value) => setState(() {
+                                              password = value;
+                                            }),
+                                      ),
                                     ),
-                                  ),
-                                  style: ButtonStyle(
-                                    backgroundColor: WidgetStatePropertyAll(
-                                      Colors.transparent,
+                                    Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                        30,
+                                        10,
+                                        30,
+                                        10,
+                                      ),
+                                      child: TextFormField(
+                                        textAlignVertical:
+                                            TextAlignVertical.center,
+                                        decoration: InputDecoration(
+                                          prefixIcon: Icon(
+                                            Icons.vpn_key_outlined,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                          hintText: "Verification Code",
+                                        ),
+                                        maxLength: 6,
+                                        cursorColor:
+                                            Theme.of(context).primaryColor,
+                                        onChanged:
+                                            (value) => setState(() {
+                                              code = value;
+                                            }),
+                                      ),
                                     ),
-                                  ),
-                                ),
-                              ),
-                            ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "Didn't receive the code?",
+                                          style: Theme.of(
+                                            context,
+                                          ).typography.black.bodyLarge!.apply(
+                                            color:
+                                                Theme.of(
+                                                  context,
+                                                ).primaryColorDark,
+                                          ),
+                                        ),
+                                        TextButton(
+                                          onPressed: () async {
+                                            await sendCode();
+
+                                            setState(() {
+                                              top_text =
+                                                  "Verification code resent to ${email}";
+                                            });
+                                          },
+                                          child: Text(
+                                            "Resend",
+                                            style: Theme.of(
+                                              context,
+                                            ).typography.black.bodyLarge!.apply(
+                                              color:
+                                                  Theme.of(
+                                                    context,
+                                                  ).primaryColorDark,
+                                              fontWeightDelta: 7,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                                : Container(),
                             (error.isNotEmpty)
                                 ? Padding(
                                   padding: const EdgeInsets.fromLTRB(
@@ -262,17 +345,47 @@ class _LoginPageState extends State<LoginPage> {
                                   });
                                   return;
                                 }
-                                if (password.isEmpty) {
+
+                                if (!RegExp(
+                                  r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
+                                ).hasMatch(email)) {
                                   setState(() {
-                                    error = "Password cannot be empty";
+                                    error = "Invalid email format";
                                   });
                                   return;
                                 }
 
-                                await login();
+                                if (sent) {
+                                  if (password.isEmpty) {
+                                    setState(() {
+                                      error = "Password cannot be empty";
+                                    });
+                                    return;
+                                  }
+
+                                  if (code.isEmpty) {
+                                    setState(() {
+                                      error = "Password cannot be empty";
+                                    });
+                                    return;
+                                  }
+
+                                  if (code.length != 6) {
+                                    setState(() {
+                                      error =
+                                          "The code needs to be 6 digits long";
+                                    });
+                                    return;
+                                  }
+
+                                  await changePassword();
+                                  return;
+                                }
+
+                                await sendCode();
                               },
                               child: Text(
-                                "LOGIN",
+                                (sent) ? "CHANGE" : "SEND CODE",
                                 style: Theme.of(context)
                                     .typography
                                     .white
@@ -305,7 +418,7 @@ class _LoginPageState extends State<LoginPage> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    "Don't have an account yet?",
+                                    "Already have an account?",
                                     style: Theme.of(
                                       context,
                                     ).typography.black.bodyLarge!.apply(
@@ -316,10 +429,10 @@ class _LoginPageState extends State<LoginPage> {
                                     onPressed: () {
                                       Navigator.of(
                                         context,
-                                      ).popAndPushNamed("/signup");
+                                      ).popAndPushNamed("/login");
                                     },
                                     child: Text(
-                                      "Sign Up",
+                                      "Log In",
                                       style: Theme.of(
                                         context,
                                       ).typography.black.bodyLarge!.apply(
