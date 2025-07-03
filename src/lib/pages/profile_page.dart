@@ -161,7 +161,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 TextButton(
                   onPressed: () async {
                     await SecureStorage.delete();
-                    await Navigator.popAndPushNamed(context, "/login");
+                    await Navigator.of(
+                      context,
+                    ).pushNamedAndRemoveUntil("/login", (route) => false);
                   },
                   child: Text(
                     "LOG OUT",

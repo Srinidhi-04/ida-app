@@ -67,6 +67,9 @@ class _HomePageState extends State<HomePage> {
     String location,
     String image,
     String body,
+    double latitude,
+    double longitude,
+    bool featured,
   ) {
     return Padding(
       padding: const EdgeInsets.only(right: 20),
@@ -94,6 +97,9 @@ class _HomePageState extends State<HomePage> {
                 "callback": () async {
                   await getEvents();
                 },
+                "latitude": latitude,
+                "longitude": longitude,
+                "featured": featured,
               },
             );
           },
@@ -222,6 +228,9 @@ class _HomePageState extends State<HomePage> {
         "location": event["location"],
         "image": event["image"],
         "body": event["body"],
+        "latitude": event["latitude"],
+        "longitude": event["longitude"],
+        "featured": event["essential"],
       });
     }
 
@@ -383,6 +392,9 @@ class _HomePageState extends State<HomePage> {
                                     e["location"],
                                     e["image"],
                                     e["body"],
+                                    e["latitude"],
+                                    e["longitude"],
+                                    e["featured"],
                                   ),
                                 )
                                 .toList(),
