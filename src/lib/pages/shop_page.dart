@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:src/widgets/navigation.dart';
 
@@ -28,7 +26,8 @@ class _ShopPageState extends State<ShopPage> {
     },
   ];
 
-  double total = 0;
+  bool cart = false;
+  bool initialized = false;
 
   Widget shopItem(int id, String name, double price, String image) {
     return Container(
@@ -102,7 +101,6 @@ class _ShopPageState extends State<ShopPage> {
                                     onPressed: () {
                                       setState(() {
                                         quantity[id] = 1;
-                                        total += price;
                                       });
                                     },
                                     child: Text(
@@ -147,12 +145,9 @@ class _ShopPageState extends State<ShopPage> {
                                           visualDensity: VisualDensity.compact,
                                           onPressed: () {
                                             setState(() {
-                                              quantity.update(
-                                                id,
-                                                (v) => max(v - 1, 0),
-                                                ifAbsent: () => 0,
-                                              );
-                                              total -= price;
+                                              quantity[id] = quantity[id]! - 1;
+                                              if (quantity[id] == 0)
+                                                quantity.remove(id);
                                             });
                                           },
                                           icon: Icon(Icons.remove, size: 15),
@@ -172,12 +167,7 @@ class _ShopPageState extends State<ShopPage> {
                                           visualDensity: VisualDensity.compact,
                                           onPressed: () {
                                             setState(() {
-                                              quantity.update(
-                                                id,
-                                                (v) => v + 1,
-                                                ifAbsent: () => 1,
-                                              );
-                                              total += price;
+                                              quantity[id] = quantity[id]! + 1;
                                             });
                                           },
                                           icon: Icon(Icons.add, size: 15),
@@ -215,74 +205,138 @@ class _ShopPageState extends State<ShopPage> {
     );
   }
 
+  double calculateTotal() {
+    double total = 0;
+
+    for (var item in items) {
+      if (quantity.containsKey(item["id"])) {
+        total += quantity[item["id"]]! * item["price"];
+      }
+    }
+
+    return total;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!initialized) {
+      Map args = {};
+      if (ModalRoute.of(context)!.settings.arguments != null) {
+        args = ModalRoute.of(context)!.settings.arguments as Map;
+      }
+
+      if (args.isNotEmpty) {
+        setState(() {
+          cart = true;
+          quantity = args["quantity"];
+          initialized = true;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Shop",
+          (cart) ? "Cart" : "Shop",
           style: Theme.of(context).typography.black.headlineMedium!.apply(
             color: Theme.of(context).primaryColorDark,
           ),
         ),
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {},
-        color: Theme.of(context).primaryColorLight,
-        backgroundColor: Colors.white,
-        child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Container(
-            constraints: BoxConstraints(
-              minHeight:
-                  MediaQuery.of(context).size.height -
-                  kToolbarHeight -
-                  kBottomNavigationBarHeight,
-              minWidth: MediaQuery.of(context).size.width,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 10.0),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 20.0),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: Text.rich(
-                        TextSpan(
-                          children: [
-                            TextSpan(
-                              text: "Cart Total: ",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+      body:
+          (cart && quantity.isEmpty)
+              ? Center(
+                child: Text(
+                  "Cart is empty",
+                  style: Theme.of(context).typography.black.headlineLarge,
+                ),
+              )
+              : RefreshIndicator(
+                onRefresh: () async {},
+                color: Theme.of(context).primaryColorLight,
+                backgroundColor: Colors.white,
+                child: SingleChildScrollView(
+                  physics: AlwaysScrollableScrollPhysics(),
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minHeight:
+                          MediaQuery.of(context).size.height -
+                          kToolbarHeight -
+                          kBottomNavigationBarHeight,
+                      minWidth: MediaQuery.of(context).size.width,
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 20.0),
+                            child: Align(
+                              alignment: Alignment.centerRight,
+                              child: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: "Cart Total: ",
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    TextSpan(text: "\$${calculateTotal()}"),
+                                  ],
+                                ),
+                                style: Theme.of(
+                                  context,
+                                ).typography.black.labelMedium!.apply(
+                                  color: Theme.of(context).primaryColorDark,
+                                ),
+                              ),
                             ),
-                            TextSpan(text: "\$${total}"),
-                          ],
-                        ),
-                        style: Theme.of(context).typography.black.labelMedium!
-                            .apply(color: Theme.of(context).primaryColorDark),
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children:
+                                items
+                                    .map(
+                                      (e) =>
+                                          (!cart ||
+                                                  quantity.containsKey(e["id"]))
+                                              ? shopItem(
+                                                e["id"],
+                                                e["name"],
+                                                e["price"],
+                                                e["image"],
+                                              )
+                                              : Container(),
+                                    )
+                                    .toList(),
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children:
-                        items
-                            .map(
-                              (e) => shopItem(
-                                e["id"],
-                                e["name"],
-                                e["price"],
-                                e["image"],
-                              ),
-                            )
-                            .toList(),
-                  ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ),
-      ),
+      floatingActionButton:
+          (!cart && quantity.isNotEmpty)
+              ? FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed(
+                    "/shop",
+                    arguments: {"cart": true, "quantity": quantity},
+                  );
+                },
+                child: Icon(Icons.shopping_cart_outlined),
+                backgroundColor: Theme.of(context).primaryColorDark,
+                foregroundColor: Theme.of(context).primaryColorLight,
+                shape: CircleBorder(),
+              )
+              : null,
       bottomNavigationBar: Navigation(selected: 3),
     );
   }
