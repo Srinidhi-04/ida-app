@@ -61,7 +61,7 @@ def send_verification_code(name: str, code: int, email: str):
         <p>
         Hi {name}!
         <br><br>
-        Your verification code is {code}. Do not share this code with anyone else.
+        Your verification code is <b>{code}</b>. Do not share this code with anyone else.
         <br><br>
         This email was sent automatically, do not reply to it.
         </p>
