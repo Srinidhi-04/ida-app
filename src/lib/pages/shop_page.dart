@@ -247,6 +247,17 @@ class _ShopPageState extends State<ShopPage> {
             color: Theme.of(context).primaryColorDark,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed(
+                "/shop",
+                arguments: {"cart": true, "quantity": quantity},
+              );
+            },
+            icon: Icon(Icons.shopping_cart_outlined, color: Theme.of(context).primaryColorDark)
+          )
+        ]
       ),
       body:
           (cart && quantity.isEmpty)
@@ -322,21 +333,6 @@ class _ShopPageState extends State<ShopPage> {
                   ),
                 ),
               ),
-      floatingActionButton:
-          (!cart && quantity.isNotEmpty)
-              ? FloatingActionButton(
-                onPressed: () {
-                  Navigator.of(context).pushNamed(
-                    "/shop",
-                    arguments: {"cart": true, "quantity": quantity},
-                  );
-                },
-                child: Icon(Icons.shopping_cart_outlined),
-                backgroundColor: Theme.of(context).primaryColorDark,
-                foregroundColor: Theme.of(context).primaryColorLight,
-                shape: CircleBorder(),
-              )
-              : null,
       bottomNavigationBar: Navigation(selected: 3),
     );
   }
