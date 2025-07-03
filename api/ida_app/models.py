@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+import random as rd
 
 class UserManager(BaseUserManager):
     def create_user(self, email, name, password, **kwargs):
@@ -13,7 +14,14 @@ class UserManager(BaseUserManager):
         email = self.normalize_email(email)
         email.lower()
 
-        user: UserCredentials = self.model(email = email, name = name, **kwargs)
+        while True:
+            code = rd.randint(100000, 999999)
+            try:
+                UserCredentials.objects.get(signup_code = code)
+            except:
+                break
+
+        user: UserCredentials = self.model(email = email, name = name, signup_code = code, **kwargs)
         user.set_password(password)
 
         try:
@@ -34,6 +42,8 @@ class UserCredentials(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique = True, null = False)
     name = models.TextField(unique = False, null = False)
     admin = models.BooleanField(default = False, null = False)
+    signup_code = models.IntegerField(unique = True, null = True)
+    forgot_code = models.IntegerField(unique = True, null = True)
 
     USERNAME_FIELD = "email"
 

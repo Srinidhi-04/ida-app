@@ -46,7 +46,7 @@ class _SplashPageState extends State<SplashPage> {
         return;
       }
     }
-    if (info["user_id"] != null) await Navigator.popAndPushNamed(context, "/home");
+    if (info["user_id"] != null && info["reminders"] != null) await Navigator.popAndPushNamed(context, "/home");
     else await Navigator.popAndPushNamed(context, "/login");
   }
 

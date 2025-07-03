@@ -24,25 +24,26 @@ class CirclePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-class SignupPage extends StatefulWidget {
-  const SignupPage({super.key});
+class VerifyPage extends StatefulWidget {
+  const VerifyPage({super.key});
 
   @override
-  State<SignupPage> createState() => _SignupPageState();
+  State<VerifyPage> createState() => _VerifyPageState();
 }
 
-class _SignupPageState extends State<SignupPage> {
-  String email = "";
-  String password = "";
-  String name = "";
+class _VerifyPageState extends State<VerifyPage> {
+  late int user_id;
+  late String email;
+  String code = "";
   String error = "";
+  String top_text = "";
 
   String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
 
-  Future<bool> signup() async {
+  Future<bool> verify() async {
     var response = await post(
-      Uri.parse(baseUrl + "/signup/"),
-      body: {"name": name, "email": email, "password": password},
+      Uri.parse(baseUrl + "/verify-code/"),
+      body: {"user_id": user_id.toString(), "code": code},
     );
     Map info = jsonDecode(response.body);
     if (info.containsKey("error")) {
@@ -53,9 +54,13 @@ class _SignupPageState extends State<SignupPage> {
     }
     await SecureStorage.writeMany({
       "user_id": info["user_id"].toString(),
-      "email": info["email"],
+      "last_login": DateTime.now().toString(),
+      "email": info["email"].toString(),
+      "name": info["name"].toString(),
+      "admin": info["admin"].toString(),
+      "reminders": info["reminders"].toString(),
     });
-    Navigator.pushNamed(context, "/verify");
+    Navigator.popAndPushNamed(context, "/home");
     return true;
   }
 
@@ -69,6 +74,15 @@ class _SignupPageState extends State<SignupPage> {
         return;
       }
     }
+    if (info["user_id"] == null) {
+      await Navigator.popAndPushNamed(context, "/login");
+      return;
+    }
+    setState(() {
+      user_id = int.parse(info["user_id"]!);
+      email = info["email"]!;
+      top_text = "We've sent a verification code to ${email}.";
+    });
   }
 
   @override
@@ -117,8 +131,25 @@ class _SignupPageState extends State<SignupPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 25.0),
+                          child: Container(
+                            color: Colors.lightGreen,
+                            width: MediaQuery.of(context).size.width - 60,
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Text(
+                                top_text,
+                                style:
+                                    Theme.of(
+                                      context,
+                                    ).typography.white.bodyMedium,
+                              ),
+                            ),
+                          ),
+                        ),
                         Text(
-                          "Sign Up",
+                          "Verify Code",
                           style: Theme.of(
                             context,
                           ).typography.black.headlineLarge!.apply(
@@ -129,57 +160,56 @@ class _SignupPageState extends State<SignupPage> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
                           child: TextFormField(
+                            keyboardType: TextInputType.number,
                             textAlignVertical: TextAlignVertical.center,
                             decoration: InputDecoration(
                               prefixIcon: Icon(
-                                Icons.person_outline,
+                                Icons.vpn_key_outlined,
                                 color: Theme.of(context).primaryColor,
                               ),
-                              hintText: "Name",
+                              hintText: "Code",
                             ),
                             cursorColor: Theme.of(context).primaryColor,
                             onChanged:
                                 (value) => setState(() {
-                                  name = value;
+                                  code = value;
                                 }),
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                          child: TextFormField(
-                            textAlignVertical: TextAlignVertical.center,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(
-                                Icons.alternate_email_outlined,
-                                color: Theme.of(context).primaryColor,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Didn't receive the code?",
+                              style: Theme.of(
+                                context,
+                              ).typography.black.bodyLarge!.apply(
+                                color: Theme.of(context).primaryColorDark,
                               ),
-                              hintText: "Email",
                             ),
-                            cursorColor: Theme.of(context).primaryColor,
-                            onChanged:
-                                (value) => setState(() {
-                                  email = value;
-                                }),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                          child: TextFormField(
-                            textAlignVertical: TextAlignVertical.center,
-                            obscureText: true,
-                            decoration: InputDecoration(
-                              prefixIcon: Icon(
-                                Icons.lock_outlined,
-                                color: Theme.of(context).primaryColor,
+                            TextButton(
+                              onPressed: () async {
+                                await post(
+                                  Uri.parse(baseUrl + "/resend-code/"),
+                                  body: {"user_id": user_id.toString()},
+                                );
+                                setState(() {
+                                  top_text =
+                                      "Verification code resent to ${email}";
+                                });
+                              },
+                              child: Text(
+                                "Resend",
+                                style: Theme.of(
+                                  context,
+                                ).typography.black.bodyLarge!.apply(
+                                  color: Theme.of(context).primaryColorDark,
+                                  fontWeightDelta: 7,
+                                  decoration: TextDecoration.underline,
+                                ),
                               ),
-                              hintText: "Password",
                             ),
-                            cursorColor: Theme.of(context).primaryColor,
-                            onChanged:
-                                (value) => setState(() {
-                                  password = value;
-                                }),
-                          ),
+                          ],
                         ),
                         (error.isNotEmpty)
                             ? Padding(
@@ -200,45 +230,17 @@ class _SignupPageState extends State<SignupPage> {
                       children: [
                         TextButton(
                           onPressed: () async {
-                            if (name.isEmpty) {
+                            if (code.length != 6) {
                               setState(() {
-                                error = "Name cannot be empty";
-                              });
-                              return;
-                            }
-                            if (email.isEmpty) {
-                              setState(() {
-                                error = "Email cannot be empty";
-                              });
-                              return;
-                            }
-                            if (password.isEmpty) {
-                              setState(() {
-                                error = "Password cannot be empty";
+                                error = "The code needs to be 6 digits long";
                               });
                               return;
                             }
 
-                            if (RegExp(r"[^a-zA-Z ]").hasMatch(name)) {
-                              setState(() {
-                                error = "Invalid name";
-                              });
-                              return;
-                            }
-
-                            if (!RegExp(
-                              r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
-                            ).hasMatch(email)) {
-                              setState(() {
-                                error = "Invalid email format";
-                              });
-                              return;
-                            }
-
-                            await signup();
+                            await verify();
                           },
                           child: Text(
-                            "SIGNUP",
+                            "VERIFY",
                             style: Theme.of(context)
                                 .typography
                                 .white
@@ -263,39 +265,6 @@ class _SignupPageState extends State<SignupPage> {
                                 50,
                               ),
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Already have an account?",
-                                style: Theme.of(
-                                  context,
-                                ).typography.black.bodyLarge!.apply(
-                                  color: Theme.of(context).primaryColorDark,
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.of(
-                                    context,
-                                  ).popAndPushNamed("/login");
-                                },
-                                child: Text(
-                                  "Log In",
-                                  style: Theme.of(
-                                    context,
-                                  ).typography.black.bodyLarge!.apply(
-                                    color: Theme.of(context).primaryColorDark,
-                                    fontWeightDelta: 7,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                            ],
                           ),
                         ),
                       ],

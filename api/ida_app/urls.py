@@ -4,6 +4,8 @@ from ida_app.views import *
 urlpatterns = [
     path("", index),
     path("signup/", signup),
+    path("verify-code/", verify_code),
+    path("resend-code/", resend_code),
     path("login/", login),
     path("add-event/", add_event),
     path("edit-event/", edit_event),

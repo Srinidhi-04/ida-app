@@ -27,10 +27,69 @@ def signup(request: HttpRequest):
     except Exception:
         return JsonResponse({"error": "A user with that email already exists"}, status = 400)
 
+    send_verification_code(user.name, user.signup_code, user.email)
+
+    return JsonResponse({"message": "User successfully signed up", "user_id": user.user_id, "email": user.email})
+
+def verify_code(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+    
+    try:
+        user_id = int(request.POST.get("user_id"))
+    except:
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+
+    try:
+        code = int(request.POST.get("code"))
+    except:
+        return JsonResponse({"error": "The code needs to be a number"}, status = 400)
+    
+    try:
+        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+    except:
+        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+
+    if user.signup_code != code:
+        return JsonResponse({"error": "The code is incorrect"}, status = 400)
+    
+    user.signup_code = None
+    user.last_login = datetime.datetime.now()
+    user.save()
+
     settings = UserSettings(user = user, announcements = True, updates = True, merch = True, status = True, reminders = "2 hours before")
     settings.save()
 
-    return JsonResponse({"message": "User successfully signed up", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin, "reminders": settings.reminders})
+    return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin, "reminders": settings.reminders})
+
+def resend_code(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+    
+    try:
+        user_id = int(request.POST.get("user_id"))
+    except:
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+    
+    try:
+        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+    except:
+        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+
+    while True:
+        code = rd.randint(100000, 999999)
+        try:
+            UserCredentials.objects.get(signup_code = code)
+        except:
+            break
+    
+    user.signup_code = code
+    user.save()
+
+    send_verification_code(user.name, user.signup_code, user.email)
+
+    return JsonResponse({"message": "Code successfully resent", "user_id": user.user_id, "email": user.email})
+
 
 def login(request: HttpRequest):
     if request.method != "POST":
@@ -46,7 +105,25 @@ def login(request: HttpRequest):
 
     user: UserCredentials = authenticate(request, email = email, password = password)
 
+    if user and user.signup_code:
+        while True:
+            code = rd.randint(100000, 999999)
+            try:
+                UserCredentials.objects.get(signup_code = code)
+            except:
+                break
+        
+        user.signup_code = code
+        user.save()
+
+        send_verification_code(user.name, user.signup_code, user.email)
+
+        return JsonResponse({"message": "Code successfully resent", "user_id": user.user_id, "email": user.email})
+
     if user:
+        user.last_login = datetime.datetime.now()
+        user.save()
+
         settings = UserSettings.objects.get(user = user)
 
         return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin, "reminders": settings.reminders})

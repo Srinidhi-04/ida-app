@@ -1,7 +1,15 @@
+from email.mime.text import MIMEText
+import smtplib
 from firebase_admin import messaging
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore
 import datetime
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")
 
 scheduler = BackgroundScheduler()
 
@@ -45,3 +53,30 @@ def delete_topic_notification(topic: str):
         print(f"Job {job_id} successully deleted")
     except:
         print("Job does not exist")
+
+def send_verification_code(name: str, code: int, email: str):
+    text = f"""
+    <html>
+    <body>
+        <p>
+        Hi {name}!
+        <br><br>
+        Your verification code is {code}. Do not share this code with anyone else.
+        <br><br>
+        This email was sent automatically, do not reply to it.
+        </p>
+        <img src="https://i.imgur.com/0FHQKN4.png" alt="image">
+    </body>
+    </html>
+    """
+
+    message = MIMEText(text, "html")
+    message["Subject"] = "IDA App Verification Code"
+    message["From"] = "illinidadsassociation@gmail.com"
+    message["To"] = email
+
+    session = smtplib.SMTP("smtp.gmail.com", 587)
+    session.starttls()
+    session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
+    session.sendmail("illinidadsassociation@gmail.com", email, message.as_string())
+    session.quit()

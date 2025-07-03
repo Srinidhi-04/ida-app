@@ -50,6 +50,16 @@ class _LoginPageState extends State<LoginPage> {
       });
       return false;
     }
+
+    if (info["reminders"] == null) {
+      await SecureStorage.writeMany({
+        "user_id": info["user_id"].toString(),
+        "email": info["email"],
+      });
+      Navigator.popAndPushNamed(context, "/verify");
+      return true;
+    }
+
     await SecureStorage.writeMany({
       "user_id": info["user_id"].toString(),
       "last_login": DateTime.now().toString(),
@@ -58,6 +68,7 @@ class _LoginPageState extends State<LoginPage> {
       "admin": info["admin"].toString(),
       "reminders": info["reminders"].toString(),
     });
+
     Navigator.popAndPushNamed(context, "/home");
     return true;
   }
