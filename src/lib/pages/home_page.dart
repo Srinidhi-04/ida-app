@@ -223,7 +223,7 @@ class _HomePageState extends State<HomePage> {
     for (var event in all_events) {
       new_events.add({
         "event_id": event["event_id"],
-        "date": DateTime.parse(event["date"]),
+        "date": DateTime.parse(event["date"]).toLocal(),
         "title": event["name"],
         "location": event["location"],
         "image": event["image"],

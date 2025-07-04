@@ -452,7 +452,7 @@ class _EventsPageState extends State<EventsPage> {
         all_events[i]["latitude"],
         all_events[i]["longitude"],
       );
-      all_events[i]["date"] = DateTime.parse(all_events[i]["date"]);
+      all_events[i]["date"] = DateTime.parse(all_events[i]["date"]).toLocal();
 
       if (all_events[i]["completed"])
         all_past.add(all_events[i]);

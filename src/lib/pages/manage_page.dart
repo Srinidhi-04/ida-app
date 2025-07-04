@@ -139,6 +139,7 @@ class _ManagePageState extends State<ManagePage> {
                                       lastDate: DateTime.now().add(
                                         Duration(days: 365),
                                       ),
+                                      initialDate: DateTime.now(),
                                     ).then(
                                       (value) => setState(() {
                                         event_date = value;
@@ -461,6 +462,10 @@ class _ManagePageState extends State<ManagePage> {
                                   body: {
                                     "name": name,
                                     "date": final_date.toString().split(".")[0],
+                                    "timezone":
+                                        final_date.timeZoneOffset
+                                            .toString()
+                                            .split(".")[0],
                                     "location": location,
                                     "latitude": latlng[0].toString(),
                                     "longitude": latlng[1].toString(),
@@ -478,6 +483,10 @@ class _ManagePageState extends State<ManagePage> {
                                     "event_id": event_id.toString(),
                                     "name": name,
                                     "date": final_date.toString().split(".")[0],
+                                    "timezone":
+                                        final_date.timeZoneOffset
+                                            .toString()
+                                            .split(".")[0],
                                     "location": location,
                                     "latitude": latlng[0].toString(),
                                     "longitude": latlng[1].toString(),

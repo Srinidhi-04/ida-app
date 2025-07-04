@@ -174,6 +174,7 @@ def add_event(request: HttpRequest):
 
     name = request.POST.get("name")
     date = request.POST.get("date")
+    timezone = request.POST.get("timezone")
     location = request.POST.get("location")
     body = request.POST.get("body")
 
@@ -201,13 +202,17 @@ def add_event(request: HttpRequest):
         return JsonResponse({"error": "'name' field is required"}, status = 400)
     if not date:
         return JsonResponse({"error": "'date' field is required"}, status = 400)
+    if not timezone:
+        return JsonResponse({"error": "'timezone' field is required"}, status = 400)
     if not location:
         return JsonResponse({"error": "'location' field is required"}, status = 400)
     if not body:
         return JsonResponse({"error": "'body' field is required"}, status = 400)
     
     try:
-        event_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        tz = datetime.timezone(offset=datetime.timedelta(hours=float(timezone.split(":")[0]), minutes=float(timezone.split(":")[1])))
+        event_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tz)
+
         event = Events(name = name, date = event_date, location = location, latitude = latitude, longitude = longitude, image = image, essential = essential, body = body)
         event.save()
     except:
@@ -231,6 +236,7 @@ def edit_event(request: HttpRequest):
 
     name = request.POST.get("name")
     date = request.POST.get("date")
+    timezone = request.POST.get("timezone")
     location = request.POST.get("location")
     body = request.POST.get("body")
 
@@ -258,13 +264,17 @@ def edit_event(request: HttpRequest):
         return JsonResponse({"error": "'name' field is required"}, status = 400)
     if not date:
         return JsonResponse({"error": "'date' field is required"}, status = 400)
+    if not timezone:
+        return JsonResponse({"error": "'timezone' field is required"}, status = 400)
     if not location:
         return JsonResponse({"error": "'location' field is required"}, status = 400)
     if not body:
         return JsonResponse({"error": "'body' field is required"}, status = 400)
     
     try:
-        event_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
+        tz = datetime.timezone(offset=datetime.timedelta(hours=float(timezone.split(":")[0]), minutes=float(timezone.split(":")[1])))
+        event_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tz)
+
         event = Events.objects.get(event_id = event_id)
     except:
         return JsonResponse({"error": "An event with that event ID does not exist"}, status = 400)

@@ -247,7 +247,7 @@ class _MapPageState extends State<MapPage> {
     List<Map> new_events = [];
     for (var event in all_events) {
       new_events.add({
-        "date": DateTime.parse(event["date"]),
+        "date": DateTime.parse(event["date"]).toLocal(),
         "name": event["name"],
         "location": event["location"],
         "image": event["image"],
