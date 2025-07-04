@@ -265,10 +265,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Image(
-          image: NetworkImage("https://i.imgur.com/0FHQKN4.png"),
-          height: 40,
-        ),
+        title: Image(image: AssetImage("assets/logo.png"), height: 40),
         actions: [
           IconButton(
             onPressed: () {
@@ -305,9 +302,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Image(
                           width: MediaQuery.of(context).size.width,
-                          image: NetworkImage(
-                            "https://i.imgur.com/JE2eR3M.png",
-                          ),
+                          image: AssetImage("assets/home_1.png"),
                         ),
                         SizedBox(height: 20),
                       ],
@@ -420,9 +415,7 @@ class _HomePageState extends State<HomePage> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(20),
                           child: Image(
-                            image: NetworkImage(
-                              "https://i.imgur.com/UGnaS5X.jpeg",
-                            ),
+                            image: AssetImage("assets/home_2.jpeg"),
                             color: Color(0x88000000),
                             colorBlendMode: BlendMode.darken,
                           ),

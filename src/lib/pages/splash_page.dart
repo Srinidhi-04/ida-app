@@ -13,8 +13,10 @@ class CirclePainter extends CustomPainter {
     Paint paint = Paint();
     paint.strokeWidth = 2;
     paint.color = color;
-    paint.shader = RadialGradient(colors: [color, Colors.white]).createShader(Rect.fromCircle(center: location, radius: size.width/2));
-    canvas.drawCircle(location, size.width/2, paint);
+    paint.shader = RadialGradient(
+      colors: [color, Colors.white],
+    ).createShader(Rect.fromCircle(center: location, radius: size.width / 2));
+    canvas.drawCircle(location, size.width / 2, paint);
   }
 
   @override
@@ -29,7 +31,6 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-
   @override
   void initState() {
     super.initState();
@@ -46,8 +47,10 @@ class _SplashPageState extends State<SplashPage> {
         return;
       }
     }
-    if (info["user_id"] != null && info["reminders"] != null) await Navigator.popAndPushNamed(context, "/home");
-    else await Navigator.popAndPushNamed(context, "/login");
+    if (info["user_id"] != null && info["reminders"] != null)
+      await Navigator.popAndPushNamed(context, "/home");
+    else
+      await Navigator.popAndPushNamed(context, "/login");
   }
 
   @override
@@ -60,19 +63,26 @@ class _SplashPageState extends State<SplashPage> {
           children: [
             CustomPaint(
               size: Size(350, 350),
-              painter: CirclePainter(color: Theme.of(context).primaryColorDark, location: Offset(0, MediaQuery.of(context).size.height)),
+              painter: CirclePainter(
+                color: Theme.of(context).primaryColorDark,
+                location: Offset(0, MediaQuery.of(context).size.height),
+              ),
             ),
             CustomPaint(
               size: Size(350, 350),
-              painter: CirclePainter(color: Theme.of(context).primaryColorLight, location: Offset(MediaQuery.of(context).size.width, 0)),
+              painter: CirclePainter(
+                color: Theme.of(context).primaryColorLight,
+                location: Offset(MediaQuery.of(context).size.width, 0),
+              ),
             ),
             Container(
               color: Color(0x77FFFFFF),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              child: Center(child: Image(image: NetworkImage("https://i.imgur.com/0FHQKN4.png")),)),
+              child: Center(child: Image(image: AssetImage("assets/logo.png"))),
+            ),
           ],
-        )
+        ),
       ),
     );
   }

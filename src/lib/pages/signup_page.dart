@@ -119,7 +119,7 @@ class _SignupPageState extends State<SignupPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Image(
-                          image: NetworkImage("https://i.imgur.com/0FHQKN4.png"),
+                          image: AssetImage("assets/logo.png"),
                           width: MediaQuery.of(context).size.width * 0.6,
                         ),
                         Column(
@@ -137,7 +137,12 @@ class _SignupPageState extends State<SignupPage> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(30, 20, 30, 10),
+                              padding: const EdgeInsets.fromLTRB(
+                                30,
+                                20,
+                                30,
+                                10,
+                              ),
                               child: TextFormField(
                                 textAlignVertical: TextAlignVertical.center,
                                 decoration: InputDecoration(
@@ -155,7 +160,12 @@ class _SignupPageState extends State<SignupPage> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                              padding: const EdgeInsets.fromLTRB(
+                                30,
+                                10,
+                                30,
+                                10,
+                              ),
                               child: TextFormField(
                                 textAlignVertical: TextAlignVertical.center,
                                 decoration: InputDecoration(
@@ -173,7 +183,12 @@ class _SignupPageState extends State<SignupPage> {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                              padding: const EdgeInsets.fromLTRB(
+                                30,
+                                10,
+                                30,
+                                10,
+                              ),
                               child: TextFormField(
                                 textAlignVertical: TextAlignVertical.center,
                                 obscureText: true,
@@ -193,7 +208,12 @@ class _SignupPageState extends State<SignupPage> {
                             ),
                             (error.isNotEmpty)
                                 ? Padding(
-                                  padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+                                  padding: const EdgeInsets.fromLTRB(
+                                    10,
+                                    20,
+                                    10,
+                                    0,
+                                  ),
                                   child: Text(
                                     error,
                                     style: Theme.of(context)
@@ -228,14 +248,14 @@ class _SignupPageState extends State<SignupPage> {
                                   });
                                   return;
                                 }
-        
+
                                 if (RegExp(r"[^a-zA-Z ]").hasMatch(name)) {
                                   setState(() {
                                     error = "Invalid name";
                                   });
                                   return;
                                 }
-        
+
                                 if (!RegExp(
                                   r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",
                                 ).hasMatch(email)) {
@@ -244,7 +264,15 @@ class _SignupPageState extends State<SignupPage> {
                                   });
                                   return;
                                 }
-        
+
+                                if (password.length < 8) {
+                                  setState(() {
+                                    error =
+                                        "Password must be at least 8 characters long";
+                                  });
+                                  return;
+                                }
+
                                 await signup();
                               },
                               child: Text(
@@ -299,7 +327,8 @@ class _SignupPageState extends State<SignupPage> {
                                       style: Theme.of(
                                         context,
                                       ).typography.black.bodyLarge!.apply(
-                                        color: Theme.of(context).primaryColorDark,
+                                        color:
+                                            Theme.of(context).primaryColorDark,
                                         fontWeightDelta: 7,
                                         decoration: TextDecoration.underline,
                                       ),

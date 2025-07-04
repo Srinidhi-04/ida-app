@@ -59,11 +59,13 @@ class _ForgotPageState extends State<ForgotPage> {
     });
     if (info.containsKey("error")) {
       setState(() {
+        sent = false;
         error = info["error"];
       });
       return;
     }
     setState(() {
+      error = "";
       sent = true;
       top_text = "We've sent a verification code to ${email}.";
     });
@@ -151,9 +153,7 @@ class _ForgotPageState extends State<ForgotPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Image(
-                          image: NetworkImage(
-                            "https://i.imgur.com/0FHQKN4.png",
-                          ),
+                          image: AssetImage("assets/logo.png"),
                           width: MediaQuery.of(context).size.width * 0.6,
                         ),
                         Column(

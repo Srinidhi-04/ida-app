@@ -133,9 +133,7 @@ class _VerifyPageState extends State<VerifyPage> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Image(
-                          image: NetworkImage(
-                            "https://i.imgur.com/0FHQKN4.png",
-                          ),
+                          image: AssetImage("assets/logo.png"),
                           width: MediaQuery.of(context).size.width * 0.6,
                         ),
                         Column(

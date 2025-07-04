@@ -8,10 +8,7 @@ class AboutPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Image(
-          image: NetworkImage("https://i.imgur.com/0FHQKN4.png"),
-          height: 40,
-        ),
+        title: Image(image: AssetImage("assets/logo.png"), height: 40),
         centerTitle: true,
       ),
       body: SingleChildScrollView(

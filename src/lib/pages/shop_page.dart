@@ -247,17 +247,24 @@ class _ShopPageState extends State<ShopPage> {
             color: Theme.of(context).primaryColorDark,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed(
-                "/shop",
-                arguments: {"cart": true, "quantity": quantity},
-              );
-            },
-            icon: Icon(Icons.shopping_cart_outlined, color: Theme.of(context).primaryColorDark)
-          )
-        ]
+        actions:
+            (cart)
+                ? []
+                : [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(
+                        "/shop",
+                        arguments: {"cart": true, "quantity": quantity},
+                      );
+                    },
+                    icon: Icon(
+                      Icons.shopping_cart_outlined,
+                      color: Theme.of(context).primaryColorDark,
+                      size: 28,
+                    ),
+                  ),
+                ],
       ),
       body:
           (cart && quantity.isEmpty)
