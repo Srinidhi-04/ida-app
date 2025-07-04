@@ -351,7 +351,6 @@ class _EventsPageState extends State<EventsPage> {
                                             "event_id": event_id.toString(),
                                           },
                                         );
-                                        await getNotifications();
                                       },
                                       icon: Icon(
                                         (notifs.contains(event_id))

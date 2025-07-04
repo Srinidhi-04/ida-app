@@ -125,7 +125,7 @@ def change_password(request: HttpRequest):
     user.set_password(password)
     user.save()
 
-    settings = UserSettings.objects.get(user = user)
+    settings = user.user_settings
 
     return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin, "reminders": settings.reminders})
 
@@ -162,7 +162,7 @@ def login(request: HttpRequest):
         user.last_login = datetime.datetime.now()
         user.save()
 
-        settings = UserSettings.objects.get(user = user)
+        settings = user.user_settings
 
         return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin, "reminders": settings.reminders})
     
@@ -293,7 +293,7 @@ def edit_event(request: HttpRequest):
     event.essential = essential
     event.body = body
 
-    if event_date > datetime.datetime.now():
+    if event_date.astimezone(tz = datetime.timezone.utc) > datetime.datetime.now(tz = datetime.timezone.utc):
         event.completed = False
 
     event.save()
@@ -338,7 +338,7 @@ def get_events(request: HttpRequest):
     completed = request.GET.get("completed")
     essential = request.GET.get("essential")
 
-    Events.objects.filter(date__lte = datetime.datetime.now().astimezone(tz = datetime.timezone.utc)).update(completed = True)
+    Events.objects.filter(date__lte = datetime.datetime.now(tz = datetime.timezone.utc)).update(completed = True)
     
     if not completed:
         events = list(Events.objects.all().values())
@@ -375,7 +375,7 @@ def toggle_notification(request: HttpRequest):
         return JsonResponse({"error": "An event with that event ID does not exist"}, status = 400)
     
     try:
-        notif = UserNotifications.objects.get(user = user, event = event)
+        notif = user.user_notifications.get(event = event)
         notif.delete()
     except:
         notif = UserNotifications(user = user, event = event)
@@ -397,7 +397,7 @@ def get_notifications(request: HttpRequest):
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
 
-    notifs = UserNotifications.objects.filter(user = user).only("event_id")
+    notifs = user.user_notifications.only("event_id")
     
     return JsonResponse({"data": [x["event_id"] for x in list(notifs.values("event_id"))]})
 
@@ -439,7 +439,7 @@ def change_settings(request: HttpRequest):
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
     
-    settings = UserSettings.objects.get(user = user)
+    settings = user.user_settings
     settings.announcements = announcements
     settings.updates = updates
     settings.merch = merch
@@ -463,7 +463,7 @@ def get_settings(request: HttpRequest):
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
     
-    settings = UserSettings.objects.get(user = user).__dict__
+    settings = user.user_settings.__dict__
     settings.pop("_state")
 
     return JsonResponse({"data": settings})

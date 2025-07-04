@@ -207,7 +207,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                 "reminders": alert,
                               },
                             );
-                            getSettings();
                             if (alert != original_alert) {
                               SecureStorage.writeOne("reminders", alert);
                               var response = await get(

@@ -66,16 +66,30 @@ class Events(models.Model):
     completed = models.BooleanField(default = False, null = False)
     essential = models.BooleanField(default = False, null = False)
 
+
 class UserNotifications(models.Model):
     notification_id = models.AutoField(primary_key = True, unique = True, null = False)
-    user = models.ForeignKey(UserCredentials, related_name = "user", on_delete = models.CASCADE, null = False)
-    event = models.ForeignKey(Events, related_name = "event", on_delete = models.CASCADE, null = False)
+    user = models.ForeignKey(UserCredentials, related_name = "user_notifications", on_delete = models.CASCADE, null = False)
+    event = models.ForeignKey(Events, related_name = "event_notifications", on_delete = models.CASCADE, null = False)
 
 
 class UserSettings(models.Model):
-    user = models.OneToOneField(UserCredentials, on_delete = models.CASCADE, primary_key = True, null = False)
+    user = models.OneToOneField(UserCredentials, related_name = "user_settings", on_delete = models.CASCADE, primary_key = True, null = False)
     announcements = models.BooleanField(default = True, null = False)
     updates = models.BooleanField(default = True, null = False)
     merch = models.BooleanField(default = True, null = False)
     status = models.BooleanField(default = True, null = False)
     reminders = models.TextField(choices = [("Off", "Off"), ("30 minutes before", "30 minutes before"), ("2 hours before", "2 hours before"), ("6 hours before", "6 hours before")], default = "30 minutes before", null = False)
+
+
+class ShopItems(models.Model):
+    item_id = models.AutoField(primary_key = True, unique = True, null = False)
+    name = models.TextField(unique = False, null = False)
+    price = models.FloatField(unique = False, null = False)
+
+
+class UserCarts(models.Model):
+    record_id = models.AutoField(primary_key = True, unique = True, null = False)
+    user = models.ForeignKey(UserCredentials, related_name = "user_carts", on_delete = models.CASCADE, null = False)
+    item = models.ForeignKey(ShopItems, related_name = "item_carts", on_delete = models.CASCADE, null = False)
+    quantity = models.IntegerField(unique = True, null = True)
