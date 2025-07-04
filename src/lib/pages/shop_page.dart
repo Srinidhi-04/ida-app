@@ -431,7 +431,7 @@ class _ShopPageState extends State<ShopPage> {
             (cart)
                 ? []
                 : [
-                  IconButton(
+                  TextButton(
                     onPressed: () {
                       Navigator.of(context)
                           .pushNamed(
@@ -442,10 +442,38 @@ class _ShopPageState extends State<ShopPage> {
                             getCart();
                           });
                     },
-                    icon: Icon(
-                      Icons.shopping_cart_outlined,
-                      color: Theme.of(context).primaryColorDark,
-                      size: 28,
+                    child: Stack(
+                      children: [
+                        Icon(
+                          Icons.shopping_cart_outlined,
+                          color: Theme.of(context).primaryColorDark,
+                          size: 32,
+                        ),
+                        (quantity.length > 0)
+                            ? Positioned(
+                              right: 0,
+                              top: 0,
+                              child: Container(
+                                width: 15,
+                                height: 15,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.red,
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    quantity.length.toString(),
+                                    style: Theme.of(context)
+                                        .typography
+                                        .white
+                                        .labelSmall!
+                                        .apply(fontSizeDelta: -2),
+                                  ),
+                                ),
+                              ),
+                            )
+                            : Container(),
+                      ],
                     ),
                   ),
                 ],

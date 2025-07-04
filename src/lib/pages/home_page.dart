@@ -14,6 +14,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late int user_id;
+
   List<String> months = [
     "JAN",
     "FEB",
@@ -30,6 +32,8 @@ class _HomePageState extends State<HomePage> {
   ];
 
   List<Map> events = [];
+
+  Map<int, int> quantity = {};
 
   bool loadingEvents = false;
 
@@ -240,6 +244,23 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future<void> getCart() async {
+    var response = await get(
+      Uri.parse(baseUrl + "/get-cart?user_id=${user_id}"),
+    );
+    Map info = jsonDecode(response.body);
+    List data = info["data"];
+
+    Map<int, int> cart = {};
+    for (var item in data) {
+      cart[item["item_id"]] = item["quantity"];
+    }
+
+    setState(() {
+      quantity = cart;
+    });
+  }
+
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
     if (info["last_login"] != null) {
@@ -250,8 +271,15 @@ class _HomePageState extends State<HomePage> {
         return;
       }
     }
-    if (info["user_id"] == null)
+    if (info["user_id"] == null) {
       await Navigator.popAndPushNamed(context, "/login");
+      return;
+    }
+
+    setState(() {
+      user_id = int.parse(info["user_id"]!);
+    });
+    getCart();
   }
 
   @override
@@ -267,21 +295,58 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Image(image: AssetImage("assets/logo.png"), height: 40),
         actions: [
-          IconButton(
+          TextButton(
             onPressed: () {
-              Navigator.of(context).pushNamed(
-                "/shop",
-                arguments: {"cart": true, "quantity": <int, int>{}},
-              );
+              Navigator.of(context)
+                  .pushNamed(
+                    "/shop",
+                    arguments: {"cart": true, "quantity": quantity},
+                  )
+                  .then((value) {
+                    getCart();
+                  });
             },
-            icon: Icon(Icons.shopping_cart_outlined, size: 28),
+            child: Stack(
+              children: [
+                Icon(
+                  Icons.shopping_cart_outlined,
+                  color: Theme.of(context).primaryColorDark,
+                  size: 32,
+                ),
+                (quantity.length > 0)
+                    ? Positioned(
+                      right: 0,
+                      top: 0,
+                      child: Container(
+                        width: 15,
+                        height: 15,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.red,
+                        ),
+                        child: Center(
+                          child: Text(
+                            quantity.length.toString(),
+                            style: Theme.of(context)
+                                .typography
+                                .white
+                                .labelSmall!
+                                .apply(fontSizeDelta: -2),
+                          ),
+                        ),
+                      ),
+                    )
+                    : Container(),
+              ],
+            ),
           ),
         ],
         centerTitle: true,
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          await getEvents();
+          getEvents();
+          getCart();
         },
         color: Theme.of(context).primaryColorLight,
         backgroundColor: Colors.white,
