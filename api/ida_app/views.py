@@ -192,11 +192,7 @@ def add_event(request: HttpRequest):
     if not image or image == "":
         image = "https://i.imgur.com/Mw85Kfp.png"
 
-    essential = request.POST.get("essential")
-    if not essential:
-        essential = False
-    else:
-        essential = essential == "yes"
+    essential = request.POST.get("essential") == "yes"
 
     if not name:
         return JsonResponse({"error": "'name' field is required"}, status = 400)
@@ -254,11 +250,7 @@ def edit_event(request: HttpRequest):
     if not image or image == "":
         image = "https://i.imgur.com/Mw85Kfp.png"
 
-    essential = request.POST.get("essential")
-    if not essential:
-        essential = False
-    else:
-        essential = essential == "yes"
+    essential = request.POST.get("essential") == "yes"
 
     if not name:
         return JsonResponse({"error": "'name' field is required"}, status = 400)
@@ -490,3 +482,153 @@ def change_name(request: HttpRequest):
     user.save()
 
     return JsonResponse({"message": "Name changed successfully"})
+
+def add_item(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+
+    name = request.POST.get("name")
+    if not name:
+        return JsonResponse({"error": "'name' field is required"}, status = 400)
+
+    try:
+        price = float(request.POST.get("price"))
+    except:
+        return JsonResponse({"error": "'price' field is required as a float"}, status = 400)
+    
+    image = request.POST.get("image")
+    if not image or image == "":
+        image = "https://i.imgur.com/Mw85Kfp.png"
+    
+    try:
+        item = ShopItems(name = name, price = price, image = image)
+        item.save()
+    except:
+        return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
+
+    return JsonResponse({"message": "Item successfully added", "item_id": item.item_id})
+
+def edit_item(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+
+    try:
+        item_id = int(request.POST.get("item_id"))
+    except:
+        return JsonResponse({"error": "'item_id' field is required as an int"}, status = 400)
+
+    name = request.POST.get("name")
+    if not name:
+        return JsonResponse({"error": "'name' field is required"}, status = 400)
+
+    try:
+        price = float(request.POST.get("price"))
+    except:
+        return JsonResponse({"error": "'price' field is required as a float"}, status = 400)
+    
+    image = request.POST.get("image")
+    if not image or image == "":
+        image = "https://i.imgur.com/Mw85Kfp.png"
+
+    try:
+        item = ShopItems.objects.get(item_id = item_id)
+    except:
+        return JsonResponse({"error": "An item with that item ID does not exist"}, status = 400)
+
+    item.name = name
+    item.price = price
+    item.save()
+
+    return JsonResponse({"message": "Item successfully edited", "item_id": item.item_id})
+
+def get_items(request: HttpRequest):
+    if request.method != "GET":
+        return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
+
+    items = list(ShopItems.objects.values())
+
+    return JsonResponse({"data": items})
+
+def delete_item(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+
+    try:
+        item_id = int(request.POST.get("item_id"))
+    except:
+        return JsonResponse({"error": "'item_id' field is required as an int"}, status = 400)
+    
+    try:
+        item = ShopItems.objects.get(item_id = item_id)
+    except:
+        return JsonResponse({"error": "An item with that item ID does not exist"}, status = 400)
+
+    try:
+        item.delete()
+    except:
+        return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
+
+    return JsonResponse({"message": "Item deleted successfully"})
+
+def edit_cart(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+
+    try:
+        user_id = int(request.POST.get("user_id"))
+    except:
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+    
+    try:
+        item_id = int(request.POST.get("item_id"))
+    except:
+        return JsonResponse({"error": "'item_id' field is required as an int"}, status = 400)
+
+    try:
+        quantity = int(request.POST.get("quantity"))
+    except:
+        return JsonResponse({"error": "'quantity' field is required as an int"}, status = 400)
+    
+    try:
+        user = UserCredentials.objects.get(user_id = user_id)
+    except:
+        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    
+    try:
+        item = ShopItems.objects.get(item_id = item_id)
+    except:
+        return JsonResponse({"error": "An item with that item ID does not exist"}, status = 400)
+
+    try:
+        cart_item: UserCarts = user.user_carts.get(item = item)
+        cart_item.quantity = quantity
+    except:
+        cart_item = UserCarts(user = user, item = item, quantity = quantity)
+    
+    try:
+        if cart_item.quantity == 0:
+            cart_item.delete()
+        else:
+            cart_item.save()
+    except:
+        return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
+
+    return JsonResponse({"message": "Cart successfully edited"})
+
+def get_cart(request: HttpRequest):
+    if request.method != "GET":
+        return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
+
+    try:
+        user_id = int(request.GET.get("user_id"))
+    except:
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+    
+    try:
+        user = UserCredentials.objects.get(user_id = user_id)
+    except:
+        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+
+    cart_item = user.user_carts.all().only("item_id", "quantity")
+
+    return JsonResponse({"data": list(cart_item.values("item_id", "quantity"))})

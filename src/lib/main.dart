@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:src/pages/about_page.dart';
 import 'package:src/pages/forgot_page.dart';
+import 'package:src/pages/item_page.dart';
 import 'package:src/pages/manage_page.dart';
 import 'package:src/pages/event_page.dart';
 import 'package:src/pages/events_page.dart';
@@ -87,6 +88,7 @@ void main() async {
         "/manage": (context) => ManagePage(),
         "/about": (context) => AboutPage(),
         "/name": (context) => NamePage(),
+        "/item": (context) => ItemPage(),
       },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

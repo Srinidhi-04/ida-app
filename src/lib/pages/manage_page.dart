@@ -397,143 +397,141 @@ class _ManagePageState extends State<ManagePage> {
                         ],
                       ),
                     ),
-                    Align(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10.0),
-                        child: TextButton(
-                          onPressed: () async {
-                            if (name == "")
-                              errors[0] = "Name is a required field";
-                            else
-                              errors[0] = null;
-
-                            if (event_date == null)
-                              errors[1] = "Date is a required field";
-                            else
-                              errors[1] = null;
-
-                            if (event_time == null)
-                              errors[2] = "Time is a required field";
-                            else
-                              errors[2] = null;
-
-                            if (location == "")
-                              errors[3] = "Location is a required field";
-                            else
-                              errors[3] = null;
-
-                            if (latlng[0] == null)
-                              errors[4] = "Latitude is a required field";
-                            else
-                              errors[4] = null;
-
-                            if (latlng[1] == null)
-                              errors[5] = "Longitude is a required field";
-                            else
-                              errors[5] = null;
-
-                            if (body == "")
-                              errors[6] = "Body is a required field";
-                            else
-                              errors[6] = null;
-
-                            if (errors[0] == null &&
-                                errors[1] == null &&
-                                errors[2] == null &&
-                                errors[3] == null &&
-                                errors[4] == null &&
-                                errors[5] == null &&
-                                errors[6] == null) {
-                              setState(() {
-                                submitted = true;
-                              });
-
-                              DateTime final_date = DateTime(
-                                event_date!.year,
-                                event_date!.month,
-                                event_date!.day,
-                                event_time!.hour,
-                                event_time!.minute,
-                              );
-
-                              if (event_id == null) {
-                                await post(
-                                  Uri.parse(baseUrl + "/add-event/"),
-                                  body: {
-                                    "name": name,
-                                    "date": final_date.toString().split(".")[0],
-                                    "timezone":
-                                        final_date.timeZoneOffset
-                                            .toString()
-                                            .split(".")[0],
-                                    "location": location,
-                                    "latitude": latlng[0].toString(),
-                                    "longitude": latlng[1].toString(),
-                                    "image": image,
-                                    "body": body,
-                                    "essential": (featured ? "yes" : "no"),
-                                  },
-                                );
-                                Navigator.pop(context);
-                                callback();
-                              } else {
-                                await post(
-                                  Uri.parse(baseUrl + "/edit-event/"),
-                                  body: {
-                                    "event_id": event_id.toString(),
-                                    "name": name,
-                                    "date": final_date.toString().split(".")[0],
-                                    "timezone":
-                                        final_date.timeZoneOffset
-                                            .toString()
-                                            .split(".")[0],
-                                    "location": location,
-                                    "latitude": latlng[0].toString(),
-                                    "longitude": latlng[1].toString(),
-                                    "image": image,
-                                    "body": body,
-                                    "essential": (featured ? "yes" : "no"),
-                                  },
-                                );
-                                Navigator.pop(context);
-                                callback(
-                                  name,
-                                  final_date,
-                                  location,
-                                  latlng[0],
-                                  latlng[1],
-                                  (image != "")
-                                      ? image
-                                      : "https://i.imgur.com/Mw85Kfp.png",
-                                  body,
-                                  featured,
-                                );
-                              }
-                            }
-
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: TextButton(
+                        onPressed: () async {
+                          if (name == "")
+                            errors[0] = "Name is a required field";
+                          else
+                            errors[0] = null;
+                    
+                          if (event_date == null)
+                            errors[1] = "Date is a required field";
+                          else
+                            errors[1] = null;
+                    
+                          if (event_time == null)
+                            errors[2] = "Time is a required field";
+                          else
+                            errors[2] = null;
+                    
+                          if (location == "")
+                            errors[3] = "Location is a required field";
+                          else
+                            errors[3] = null;
+                    
+                          if (latlng[0] == null)
+                            errors[4] = "Latitude is a required field";
+                          else
+                            errors[4] = null;
+                    
+                          if (latlng[1] == null)
+                            errors[5] = "Longitude is a required field";
+                          else
+                            errors[5] = null;
+                    
+                          if (body == "")
+                            errors[6] = "Body is a required field";
+                          else
+                            errors[6] = null;
+                    
+                          if (errors[0] == null &&
+                              errors[1] == null &&
+                              errors[2] == null &&
+                              errors[3] == null &&
+                              errors[4] == null &&
+                              errors[5] == null &&
+                              errors[6] == null) {
                             setState(() {
-                              errors = errors;
-                              submitted = false;
+                              submitted = true;
                             });
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Text(
-                              (event_id == null) ? "Create" : "Save",
-                              style: Theme.of(context)
-                                  .typography
-                                  .white
-                                  .labelLarge!
-                                  .apply(fontWeightDelta: 3),
-                            ),
+                    
+                            DateTime final_date = DateTime(
+                              event_date!.year,
+                              event_date!.month,
+                              event_date!.day,
+                              event_time!.hour,
+                              event_time!.minute,
+                            );
+                    
+                            if (event_id == null) {
+                              await post(
+                                Uri.parse(baseUrl + "/add-event/"),
+                                body: {
+                                  "name": name,
+                                  "date": final_date.toString().split(".")[0],
+                                  "timezone":
+                                      final_date.timeZoneOffset
+                                          .toString()
+                                          .split(".")[0],
+                                  "location": location,
+                                  "latitude": latlng[0].toString(),
+                                  "longitude": latlng[1].toString(),
+                                  "image": image,
+                                  "body": body,
+                                  "essential": (featured ? "yes" : "no"),
+                                },
+                              );
+                              Navigator.pop(context);
+                              callback();
+                            } else {
+                              await post(
+                                Uri.parse(baseUrl + "/edit-event/"),
+                                body: {
+                                  "event_id": event_id.toString(),
+                                  "name": name,
+                                  "date": final_date.toString().split(".")[0],
+                                  "timezone":
+                                      final_date.timeZoneOffset
+                                          .toString()
+                                          .split(".")[0],
+                                  "location": location,
+                                  "latitude": latlng[0].toString(),
+                                  "longitude": latlng[1].toString(),
+                                  "image": image,
+                                  "body": body,
+                                  "essential": (featured ? "yes" : "no"),
+                                },
+                              );
+                              Navigator.pop(context);
+                              callback(
+                                name,
+                                final_date,
+                                location,
+                                latlng[0],
+                                latlng[1],
+                                (image != "")
+                                    ? image
+                                    : "https://i.imgur.com/Mw85Kfp.png",
+                                body,
+                                featured,
+                              );
+                            }
+                          }
+                    
+                          setState(() {
+                            errors = errors;
+                            submitted = false;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Text(
+                            (event_id == null) ? "Create" : "Save",
+                            style: Theme.of(context)
+                                .typography
+                                .white
+                                .labelLarge!
+                                .apply(fontWeightDelta: 3),
                           ),
-                          style: ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(
-                              Theme.of(context).primaryColorLight,
-                            ),
-                            foregroundColor: WidgetStatePropertyAll(
-                              Colors.white,
-                            ),
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Theme.of(context).primaryColorLight,
+                          ),
+                          foregroundColor: WidgetStatePropertyAll(
+                            Colors.white,
                           ),
                         ),
                       ),

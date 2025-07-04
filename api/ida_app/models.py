@@ -86,10 +86,10 @@ class ShopItems(models.Model):
     item_id = models.AutoField(primary_key = True, unique = True, null = False)
     name = models.TextField(unique = False, null = False)
     price = models.FloatField(unique = False, null = False)
-
+    image = models.TextField(default = "https://i.imgur.com/Mw85Kfp.png", null = False)
 
 class UserCarts(models.Model):
     record_id = models.AutoField(primary_key = True, unique = True, null = False)
     user = models.ForeignKey(UserCredentials, related_name = "user_carts", on_delete = models.CASCADE, null = False)
     item = models.ForeignKey(ShopItems, related_name = "item_carts", on_delete = models.CASCADE, null = False)
-    quantity = models.IntegerField(unique = True, null = True)
+    quantity = models.IntegerField(unique = False, null = True)

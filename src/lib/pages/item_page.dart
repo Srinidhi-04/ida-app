@@ -1,0 +1,240 @@
+import "package:flutter/material.dart";
+import "package:http/http.dart";
+import "package:loading_animation_widget/loading_animation_widget.dart";
+
+class ItemPage extends StatefulWidget {
+  const ItemPage({super.key});
+
+  @override
+  State<ItemPage> createState() => _ItemPageState();
+}
+
+class _ItemPageState extends State<ItemPage> {
+  int? item_id;
+
+  String name = "";
+  double? price;
+  String image = "";
+  List<String?> errors = [null, null, null];
+  bool initialized = false;
+  late Function callback;
+
+  bool submitted = false;
+
+  TextEditingController name_controller = TextEditingController();
+  TextEditingController price_controller = TextEditingController();
+  TextEditingController image_controller = TextEditingController();
+
+  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (!initialized) {
+      Map args = ModalRoute.of(context)!.settings.arguments as Map;
+
+      if (args.containsKey("item_id")) {
+        setState(() {
+          item_id = args["item_id"];
+
+          name = args["name"];
+          name_controller.text = name;
+
+          price = args["price"];
+          price_controller.text = price.toString();
+
+          image = args["image"];
+          image_controller.text = image;
+        });
+      }
+
+      setState(() {
+        initialized = true;
+        callback = args["callback"];
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: Text(
+              (item_id == null) ? "Add Item" : "Edit Item",
+              style: Theme.of(context).typography.black.headlineMedium!.apply(
+                color: Theme.of(context).primaryColorDark,
+              ),
+            ),
+          ),
+          body: SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(
+                minWidth: MediaQuery.of(context).size.width,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
+                      child: TextFormField(
+                        controller: name_controller,
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.badge_outlined,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          hintText: "Name",
+                          errorText: errors[0],
+                        ),
+                        cursorColor: Theme.of(context).primaryColor,
+                        onChanged:
+                            (value) => setState(() {
+                              name = value;
+                            }),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: TextFormField(
+                        controller: price_controller,
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.attach_money_outlined,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          hintText: "Price",
+                          errorText: errors[1],
+                        ),
+                        cursorColor: Theme.of(context).primaryColor,
+                        onChanged:
+                            (value) => setState(() {
+                              try {
+                                if (value != "")
+                                  price = double.parse(value);
+                                else
+                                  price = null;
+                                errors[1] = null;
+                              } catch (e) {
+                                setState(() {
+                                  errors[1] = "Price must be a float";
+                                });
+                              }
+                            }),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: TextFormField(
+                        controller: image_controller,
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.image_outlined,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          hintText: "Thumbnail",
+                        ),
+                        cursorColor: Theme.of(context).primaryColor,
+                        onChanged:
+                            (value) => setState(() {
+                              image = value;
+                            }),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: TextButton(
+                        onPressed: () async {
+                          if (name == "")
+                            errors[0] = "Name is a required field";
+                          else
+                            errors[0] = null;
+
+                          if (price == null)
+                            errors[1] = "Latitude is a required field";
+                          else
+                            errors[1] = null;
+
+                          if (errors[0] == null && errors[1] == null) {
+                            setState(() {
+                              submitted = true;
+                            });
+
+                            if (item_id == null) {
+                              await post(
+                                Uri.parse(baseUrl + "/add-item/"),
+                                body: {
+                                  "name": name,
+                                  "price": price.toString(),
+                                  "image": image,
+                                },
+                              );
+                              Navigator.pop(context);
+                              callback();
+                            } else {
+                              await post(
+                                Uri.parse(baseUrl + "/edit-item/"),
+                                body: {
+                                  "item_id": item_id.toString(),
+                                  "name": name,
+                                  "price": price.toString(),
+                                  "image": image,
+                                },
+                              );
+                              Navigator.pop(context);
+                              callback();
+                            }
+                          }
+
+                          setState(() {
+                            errors = errors;
+                            submitted = false;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Text(
+                            (item_id == null) ? "Add" : "Save",
+                            style: Theme.of(context)
+                                .typography
+                                .white
+                                .labelLarge!
+                                .apply(fontWeightDelta: 3),
+                          ),
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Theme.of(context).primaryColorLight,
+                          ),
+                          foregroundColor: WidgetStatePropertyAll(Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        (submitted)
+            ? Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: Color(0x99FFFFFF),
+              child: LoadingAnimationWidget.threeArchedCircle(
+                color: Theme.of(context).primaryColorLight,
+                size: 100,
+              ),
+            )
+            : Container(),
+      ],
+    );
+  }
+}

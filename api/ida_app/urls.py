@@ -17,4 +17,10 @@ urlpatterns = [
     path("change-settings/", change_settings),
     path("get-settings/", get_settings),
     path("change-name/", change_name),
+    path("add-item/", add_item),
+    path("edit-item/", edit_item),
+    path("get-items/", get_items),
+    path("delete-item/", delete_item),
+    path("edit-cart/", edit_cart),
+    path("get-cart/", get_cart),
 ]
