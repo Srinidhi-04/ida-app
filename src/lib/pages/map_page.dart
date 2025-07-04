@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -68,6 +70,7 @@ class _MapPageState extends State<MapPage> {
               );
 
               setState(() {
+                center = coordinates;
                 markers = {
                   Marker(markerId: MarkerId("My location"), position: myLoc!),
                   Marker(
@@ -188,10 +191,11 @@ class _MapPageState extends State<MapPage> {
                         );
 
                         setState(() {
+                          center = e["coordinates"];
                           markers = {
                             Marker(
                               markerId: MarkerId("My location"),
-                              position: center!,
+                              position: myLoc!,
                             ),
                             Marker(
                               markerId: MarkerId("Event location"),
@@ -211,7 +215,7 @@ class _MapPageState extends State<MapPage> {
                       ),
                       style: ButtonStyle(
                         shape: WidgetStatePropertyAll(
-                          LinearBorder.bottom(side: BorderSide()),
+                          LinearBorder.top(side: BorderSide()),
                         ),
                       ),
                     ),
@@ -231,12 +235,7 @@ class _MapPageState extends State<MapPage> {
     setState(() {
       myLoc = LatLng(posit.latitude, posit.longitude);
       if (center == null) center = myLoc;
-      markers.add(
-        Marker(
-          markerId: MarkerId("My location"),
-          position: myLoc!,
-        ),
-      );
+      markers.add(Marker(markerId: MarkerId("My location"), position: myLoc!));
     });
   }
 
@@ -259,6 +258,35 @@ class _MapPageState extends State<MapPage> {
     setState(() {
       events = new_events;
     });
+  }
+
+  Widget mapsButton(String name, String link) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5.0),
+      child: TextButton.icon(
+        onPressed: () async {
+          await launchUrl(
+            Uri.parse(link),
+            mode: LaunchMode.externalApplication,
+          );
+        },
+        label: Text(
+          name,
+          style: Theme.of(context).typography.white.labelMedium!.apply(
+            color: Theme.of(context).primaryColorLight,
+          ),
+        ),
+        icon: Icon(Icons.location_on_outlined),
+        style: ButtonStyle(
+          backgroundColor: WidgetStatePropertyAll(
+            Theme.of(context).primaryColorDark,
+          ),
+          foregroundColor: WidgetStatePropertyAll(
+            Theme.of(context).primaryColorLight,
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -298,7 +326,7 @@ class _MapPageState extends State<MapPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (center == null)
+    if (center == null || myLoc == null)
       return Scaffold(
         body: Center(
           child: LoadingAnimationWidget.inkDrop(
@@ -326,50 +354,82 @@ class _MapPageState extends State<MapPage> {
             padding: const EdgeInsets.all(20.0),
             child: Padding(
               padding: const EdgeInsets.all(5.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Column(
                 children: [
-                  Card(
-                    color: Colors.white,
-                    child: IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: Icon(Icons.keyboard_arrow_left),
-                      color: Colors.black,
-                    ),
-                  ),
-                  Expanded(
-                    child: Card(
-                      color: Colors.white,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(left: 10.0),
-                            child: TextFormField(
-                              controller: autocompleteController,
-                              decoration: InputDecoration(
-                                border: InputBorder.none,
-                                focusedBorder: InputBorder.none,
-                                hintText: "Search for events",
-                                hintStyle: Theme.of(context)
-                                    .typography
-                                    .black
-                                    .labelLarge!
-                                    .apply(color: Color(0xFF9C9A9D)),
-                              ),
-                              cursorColor: Theme.of(context).primaryColor,
-                              onChanged: (value) => setState(() {}),
-                            ),
-                          ),
-                          generateAutocomplete(
-                            autocompleteController.text.toLowerCase(),
-                          ),
-                        ],
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Card(
+                        color: Colors.white,
+                        child: IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: Icon(Icons.keyboard_arrow_left),
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
+                      Expanded(
+                        child: Card(
+                          color: Colors.white,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 10.0),
+                                child: TextFormField(
+                                  controller: autocompleteController,
+                                  decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    hintText: "Search for events",
+                                    hintStyle: Theme.of(context)
+                                        .typography
+                                        .black
+                                        .labelLarge!
+                                        .apply(color: Color(0xFF9C9A9D)),
+                                  ),
+                                  cursorColor: Theme.of(context).primaryColor,
+                                  onChanged: (value) => setState(() {}),
+                                ),
+                              ),
+                              generateAutocomplete(
+                                autocompleteController.text.toLowerCase(),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                  (markers.length == 2)
+                      ? Align(
+                        alignment: Alignment.centerRight,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 5.0),
+                          child: Column(
+                            children: [
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: mapsButton(
+                                  "Open in Google Maps",
+                                  "https://www.google.com/maps/dir/?api=1&origin=${myLoc!.latitude},${myLoc!.longitude}&destination=${center!.latitude},${center!.longitude}",
+                                ),
+                              ),
+                              (Platform.isIOS)
+                                  ? Align(
+                                    alignment: Alignment.centerRight,
+                                    child: mapsButton(
+                                      "Open in Apple Maps",
+                                      "http://maps.apple.com/?saddr=${myLoc!.latitude},${myLoc!.longitude}&daddr=${center!.latitude},${center!.longitude}",
+                                    ),
+                                  )
+                                  : Container(),
+                            ],
+                          ),
+                        ),
+                      )
+                      : Container(),
                 ],
               ),
             ),
