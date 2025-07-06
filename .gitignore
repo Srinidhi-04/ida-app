@@ -18,6 +18,7 @@ firebase_key.json
 google-services.json
 firebase_options.dart
 GoogleService-Info.plist
+.vscode
 
 # IntelliJ related
 *.iml
