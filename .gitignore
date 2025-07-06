@@ -17,6 +17,7 @@ __pycache__
 firebase_key.json
 google-services.json
 firebase_options.dart
+GoogleService-Info.plist
 
 # IntelliJ related
 *.iml
