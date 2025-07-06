@@ -19,6 +19,7 @@ google-services.json
 firebase_options.dart
 GoogleService-Info.plist
 .vscode
+temp.py
 
 # IntelliJ related
 *.iml

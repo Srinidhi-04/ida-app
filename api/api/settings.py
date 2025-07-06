@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
+import base64
+import json
 from pathlib import Path
 import firebase_admin
 import os
@@ -31,16 +33,25 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1zg5oajrf+$+gk4=_l$w5#%+65%5)n5uq9hox$s5!rxw4y&^wr'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["0112-223-185-130-192.ngrok-free.app", "127.0.0.1"]
 
-cred_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-cred = firebase_admin.credentials.Certificate(cred_path)
+FIREBASE_KEY = os.getenv("FIREBASE_KEY")
+cred = firebase_admin.credentials.Certificate(json.loads(base64.b64decode(FIREBASE_KEY).decode()))
 firebase_admin.initialize_app(cred)
+
+# Production security
+SECURE_HSTS_SECONDS = 3600
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_PRELOAD = True
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+X_FRAME_OPTIONS = 'DENY'
 
 # Application definition
 
@@ -64,6 +75,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware'
 ]
 
 ROOT_URLCONF = 'api.urls'
