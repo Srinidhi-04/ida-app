@@ -40,6 +40,9 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["0112-223-185-130-192.ngrok-free.app", "127.0.0.1"]
 
+CORS_ALLOWED_ORIGINS = []
+CORS_ALLOW_ALL_ORIGINS = False
+
 FIREBASE_KEY = os.getenv("FIREBASE_KEY")
 cred = firebase_admin.credentials.Certificate(json.loads(base64.b64decode(FIREBASE_KEY).decode()))
 firebase_admin.initialize_app(cred)
@@ -63,12 +66,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_apscheduler',
+    'cors_headers',
     'ida_app'
 ]
 
 APScheduler_DATETIME_FORMAT = "N j, Y, f:s a"
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
