@@ -33,7 +33,7 @@ class _ManagePageState extends State<ManagePage> {
   TextEditingController image_controller = TextEditingController();
   TextEditingController body_controller = TextEditingController();
 
-  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
+  String baseUrl = "https://ida-app.vercel.app/ida-app";
 
   @override
   void didChangeDependencies() {
@@ -405,37 +405,37 @@ class _ManagePageState extends State<ManagePage> {
                             errors[0] = "Name is a required field";
                           else
                             errors[0] = null;
-                    
+
                           if (event_date == null)
                             errors[1] = "Date is a required field";
                           else
                             errors[1] = null;
-                    
+
                           if (event_time == null)
                             errors[2] = "Time is a required field";
                           else
                             errors[2] = null;
-                    
+
                           if (location == "")
                             errors[3] = "Location is a required field";
                           else
                             errors[3] = null;
-                    
+
                           if (latlng[0] == null)
                             errors[4] = "Latitude is a required field";
                           else
                             errors[4] = null;
-                    
+
                           if (latlng[1] == null)
                             errors[5] = "Longitude is a required field";
                           else
                             errors[5] = null;
-                    
+
                           if (body == "")
                             errors[6] = "Body is a required field";
                           else
                             errors[6] = null;
-                    
+
                           if (errors[0] == null &&
                               errors[1] == null &&
                               errors[2] == null &&
@@ -446,7 +446,7 @@ class _ManagePageState extends State<ManagePage> {
                             setState(() {
                               submitted = true;
                             });
-                    
+
                             DateTime final_date = DateTime(
                               event_date!.year,
                               event_date!.month,
@@ -454,7 +454,7 @@ class _ManagePageState extends State<ManagePage> {
                               event_time!.hour,
                               event_time!.minute,
                             );
-                    
+
                             if (event_id == null) {
                               await post(
                                 Uri.parse(baseUrl + "/add-event/"),
@@ -509,7 +509,7 @@ class _ManagePageState extends State<ManagePage> {
                               );
                             }
                           }
-                    
+
                           setState(() {
                             errors = errors;
                             submitted = false;
@@ -530,9 +530,7 @@ class _ManagePageState extends State<ManagePage> {
                           backgroundColor: WidgetStatePropertyAll(
                             Theme.of(context).primaryColorLight,
                           ),
-                          foregroundColor: WidgetStatePropertyAll(
-                            Colors.white,
-                          ),
+                          foregroundColor: WidgetStatePropertyAll(Colors.white),
                         ),
                       ),
                     ),

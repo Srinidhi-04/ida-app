@@ -41,7 +41,7 @@ class _MapPageState extends State<MapPage> {
   TextEditingController autocompleteController = TextEditingController();
   GoogleMapController? mapController;
 
-  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
+  String baseUrl = "https://ida-app.vercel.app/ida-app";
 
   Widget eventCard(
     String name,

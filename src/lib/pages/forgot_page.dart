@@ -43,7 +43,7 @@ class _ForgotPageState extends State<ForgotPage> {
 
   TextEditingController emailController = TextEditingController();
 
-  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
+  String baseUrl = "https://ida-app.vercel.app/ida-app";
 
   Future<void> sendCode() async {
     setState(() {

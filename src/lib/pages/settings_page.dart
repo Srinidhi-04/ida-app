@@ -44,7 +44,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   bool changed = false;
 
-  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
+  String baseUrl = "https://ida-app.vercel.app/ida-app";
 
   Widget notificationOption(String name) {
     return Row(
@@ -210,21 +210,22 @@ class _SettingsPageState extends State<SettingsPage> {
                             if (alert != original_alert) {
                               SecureStorage.writeOne("reminders", alert);
                               var response = await get(
-                                Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
+                                Uri.parse(
+                                  baseUrl +
+                                      "/get-notifications?user_id=${user_id}",
+                                ),
                               );
                               Map info = jsonDecode(response.body);
                               List notifs = info["data"];
 
                               for (int event_id in notifs) {
-                                FirebaseMessaging.instance
-                                  .unsubscribeFromTopic(
-                                    "ida-event-${event_id}-${alerts.indexOf(original_alert)-1}",
-                                  );
+                                FirebaseMessaging.instance.unsubscribeFromTopic(
+                                  "ida-event-${event_id}-${alerts.indexOf(original_alert) - 1}",
+                                );
 
-                                FirebaseMessaging.instance
-                                  .subscribeToTopic(
-                                    "ida-event-${event_id}-${alerts.indexOf(alert)-1}",
-                                  );
+                                FirebaseMessaging.instance.subscribeToTopic(
+                                  "ida-event-${event_id}-${alerts.indexOf(alert) - 1}",
+                                );
                               }
                             }
                           },

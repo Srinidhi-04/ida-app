@@ -45,7 +45,7 @@ class _EventPageState extends State<EventPage> {
     "Dec",
   ];
 
-  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
+  String baseUrl = "https://ida-app.vercel.app/ida-app";
 
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();

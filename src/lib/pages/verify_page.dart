@@ -40,7 +40,7 @@ class _VerifyPageState extends State<VerifyPage> {
   String top_text = "";
   bool submitted = false;
 
-  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
+  String baseUrl = "https://ida-app.vercel.app/ida-app";
 
   Future<bool> verify() async {
     setState(() {

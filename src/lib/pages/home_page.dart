@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
 
   bool loadingEvents = false;
 
-  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
+  String baseUrl = "https://ida-app.vercel.app/ida-app";
 
   Widget mainButton(Color color, String text, String route) {
     return Padding(

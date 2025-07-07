@@ -25,7 +25,7 @@ class _ItemPageState extends State<ItemPage> {
   TextEditingController price_controller = TextEditingController();
   TextEditingController image_controller = TextEditingController();
 
-  String baseUrl = "https://0112-223-185-130-192.ngrok-free.app/ida-app";
+  String baseUrl = "https://ida-app.vercel.app/ida-app";
 
   @override
   void didChangeDependencies() {
