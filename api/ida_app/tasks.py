@@ -65,6 +65,7 @@ def send_verification_code(name: str, code: int, email: str):
         <br><br>
         This email was sent automatically, do not reply to it.
         </p>
+        <br>
         <img src="https://i.imgur.com/0FHQKN4.png" alt="image">
     </body>
     </html>
