@@ -44,6 +44,7 @@ class _MapPageState extends State<MapPage> {
   List<Map> events = [];
   TextEditingController autocompleteController = TextEditingController();
   GoogleMapController? mapController;
+  String? mapKey;
 
   String baseUrl = "https://ida-app.vercel.app/ida-app";
 
@@ -342,6 +343,7 @@ class _MapPageState extends State<MapPage> {
 
       setState(() {
         initialized = true;
+        mapKey = "map-${DateTime.now().millisecondsSinceEpoch}";
       });
     }
   }
@@ -370,6 +372,7 @@ class _MapPageState extends State<MapPage> {
         alignment: Alignment.topCenter,
         children: [
           GoogleMap(
+            key: ValueKey(mapKey),
             onMapCreated: (controller) {
               setState(() {
                 mapController = controller;
