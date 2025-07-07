@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MapPage extends StatefulWidget {
@@ -16,6 +17,9 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  late int user_id;
+  late String token;
+
   bool initialized = false;
 
   LatLng? center;
@@ -240,7 +244,10 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> getEvents() async {
-    var response = await get(Uri.parse(baseUrl + "/get-events"));
+    var response = await get(
+      Uri.parse(baseUrl + "/get-events?user_id=${user_id}"),
+      headers: {"Authorization": "Token ${token}"},
+    );
     Map info = jsonDecode(response.body);
     List all_events = info["data"];
 
@@ -289,6 +296,28 @@ class _MapPageState extends State<MapPage> {
     );
   }
 
+  Future<void> checkLogin() async {
+    Map<String, String> info = await SecureStorage.read();
+    if (info["last_login"] != null) {
+      DateTime date = DateTime.parse(info["last_login"]!);
+      if (DateTime.now().subtract(Duration(days: 30)).compareTo(date) >= 0) {
+        await SecureStorage.delete();
+        await Navigator.popAndPushNamed(context, "/login");
+        return;
+      }
+    }
+    if (info["user_id"] == null) {
+      await Navigator.popAndPushNamed(context, "/login");
+      return;
+    }
+
+    setState(() {
+      user_id = int.parse(info["user_id"]!);
+      token = info["token"]!;
+    });
+    await getEvents();
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -321,7 +350,6 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     getPosition();
-    getEvents();
   }
 
   @override

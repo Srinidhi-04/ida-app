@@ -48,6 +48,7 @@ class UserCredentials(AbstractBaseUser, PermissionsMixin):
     admin = models.BooleanField(default = False, null = False)
     signup_code = models.IntegerField(unique = True, null = True)
     forgot_code = models.IntegerField(unique = True, null = True)
+    token = models.CharField(max_length = 50, unique = True, null = True)
 
     USERNAME_FIELD = "email"
 

@@ -13,6 +13,7 @@ class NamePage extends StatefulWidget {
 
 class _NamePageState extends State<NamePage> {
   late int user_id;
+  late String token;
   late String name;
   String original = "";
   bool loaded = false;
@@ -37,6 +38,7 @@ class _NamePageState extends State<NamePage> {
     }
     setState(() {
       user_id = int.parse(info["user_id"]!);
+      token = info["token"]!;
       name = info["name"]!;
       loaded = true;
       controller.text = name;
@@ -126,6 +128,7 @@ class _NamePageState extends State<NamePage> {
                         SecureStorage.writeOne("name", name);
                         await post(
                           Uri.parse(baseUrl + "/change-name/"),
+                          headers: {"Authorization": "Token ${token}"},
                           body: {"user_id": user_id.toString(), "name": name},
                         );
                       },

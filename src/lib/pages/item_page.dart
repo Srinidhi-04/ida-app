@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:http/http.dart";
 import "package:loading_animation_widget/loading_animation_widget.dart";
+import "package:src/services/secure_storage.dart";
 
 class ItemPage extends StatefulWidget {
   const ItemPage({super.key});
@@ -10,6 +11,9 @@ class ItemPage extends StatefulWidget {
 }
 
 class _ItemPageState extends State<ItemPage> {
+  late int user_id;
+  late String token;
+
   int? item_id;
 
   String name = "";
@@ -26,6 +30,27 @@ class _ItemPageState extends State<ItemPage> {
   TextEditingController image_controller = TextEditingController();
 
   String baseUrl = "https://ida-app.vercel.app/ida-app";
+
+  Future<void> checkLogin() async {
+    Map<String, String> info = await SecureStorage.read();
+    if (info["last_login"] != null) {
+      DateTime date = DateTime.parse(info["last_login"]!);
+      if (DateTime.now().subtract(Duration(days: 30)).compareTo(date) >= 0) {
+        await SecureStorage.delete();
+        await Navigator.popAndPushNamed(context, "/login");
+        return;
+      }
+    }
+    if (info["user_id"] == null) {
+      await Navigator.popAndPushNamed(context, "/login");
+      return;
+    }
+
+    setState(() {
+      user_id = int.parse(info["user_id"]!);
+      token = info["token"]!;
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -54,6 +79,12 @@ class _ItemPageState extends State<ItemPage> {
         callback = args["callback"];
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkLogin();
   }
 
   @override
@@ -170,7 +201,9 @@ class _ItemPageState extends State<ItemPage> {
                             if (item_id == null) {
                               await post(
                                 Uri.parse(baseUrl + "/add-item/"),
+                                headers: {"Authorization": "Token ${token}"},
                                 body: {
+                                  "user_id": user_id.toString(),
                                   "name": name,
                                   "price": price.toString(),
                                   "image": image,
@@ -181,7 +214,9 @@ class _ItemPageState extends State<ItemPage> {
                             } else {
                               await post(
                                 Uri.parse(baseUrl + "/edit-item/"),
+                                headers: {"Authorization": "Token ${token}"},
                                 body: {
+                                  "user_id": user_id.toString(),
                                   "item_id": item_id.toString(),
                                   "name": name,
                                   "price": price.toString(),

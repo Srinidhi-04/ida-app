@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late int user_id;
+  late String token;
 
   List<String> months = [
     "JAN",
@@ -219,7 +220,10 @@ class _HomePageState extends State<HomePage> {
       loadingEvents = true;
     });
 
-    var response = await get(Uri.parse(baseUrl + "/get-events?completed=no"));
+    var response = await get(
+      Uri.parse(baseUrl + "/get-events?completed=no&user_id=${user_id}"),
+      headers: {"Authorization": "Token ${token}"},
+    );
     Map info = jsonDecode(response.body);
     List all_events = info["data"];
 
@@ -247,6 +251,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> getCart() async {
     var response = await get(
       Uri.parse(baseUrl + "/get-cart?user_id=${user_id}"),
+      headers: {"Authorization": "Token ${token}"},
     );
     Map info = jsonDecode(response.body);
     List data = info["data"];
@@ -278,6 +283,7 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
+      token = info["token"]!;
     });
     getCart();
   }

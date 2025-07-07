@@ -67,6 +67,7 @@ class _VerifyPageState extends State<VerifyPage> {
       "name": info["name"].toString(),
       "admin": info["admin"].toString(),
       "reminders": info["reminders"].toString(),
+      "token": info["token"].toString(),
     });
     Navigator.popAndPushNamed(context, "/home");
     return true;

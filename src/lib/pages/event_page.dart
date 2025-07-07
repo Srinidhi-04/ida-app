@@ -15,6 +15,8 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
+  late int user_id;
+  late String token;
   late bool admin;
   bool loaded = false;
   bool initialized = false;
@@ -63,6 +65,8 @@ class _EventPageState extends State<EventPage> {
     }
 
     setState(() {
+      user_id = int.parse(info["user_id"]!);
+      token = info["token"]!;
       admin = bool.parse(info["admin"]!);
       loaded = true;
     });
@@ -182,7 +186,11 @@ class _EventPageState extends State<EventPage> {
                             onTap: () async {
                               await post(
                                 Uri.parse(baseUrl + "/delete-event/"),
-                                body: {"event_id": event_id.toString()},
+                                headers: {"Authorization": "Token ${token}"},
+                                body: {
+                                  "user_id": user_id.toString(),
+                                  "event_id": event_id.toString(),
+                                },
                               );
                               callback();
                               Navigator.pop(context);

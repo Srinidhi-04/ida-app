@@ -16,6 +16,7 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   late int user_id;
+  late String token;
   bool loaded = false;
 
   Map notifs = {
@@ -72,6 +73,7 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> getSettings() async {
     var response = await get(
       Uri.parse(baseUrl + "/get-settings?user_id=${user_id}"),
+      headers: {"Authorization": "Token ${token}"},
     );
     Map info = jsonDecode(response.body);
     setState(() {
@@ -99,6 +101,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
+      token = info["token"]!;
     });
     await getSettings();
   }
@@ -197,6 +200,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             });
                             await post(
                               Uri.parse(baseUrl + "/change-settings/"),
+                              headers: {"Authorization": "Token ${token}"},
                               body: {
                                 "user_id": user_id.toString(),
                                 "announcements":
@@ -214,6 +218,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   baseUrl +
                                       "/get-notifications?user_id=${user_id}",
                                 ),
+                                headers: {"Authorization": "Token ${token}"},
                               );
                               Map info = jsonDecode(response.body);
                               List notifs = info["data"];

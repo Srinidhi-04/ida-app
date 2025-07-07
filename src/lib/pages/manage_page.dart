@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import "package:http/http.dart";
 import "package:loading_animation_widget/loading_animation_widget.dart";
+import "package:src/services/secure_storage.dart";
 
 class ManagePage extends StatefulWidget {
   const ManagePage({super.key});
@@ -10,6 +11,9 @@ class ManagePage extends StatefulWidget {
 }
 
 class _ManagePageState extends State<ManagePage> {
+  late int user_id;
+  late String token;
+
   int? event_id;
 
   String name = "";
@@ -34,6 +38,27 @@ class _ManagePageState extends State<ManagePage> {
   TextEditingController body_controller = TextEditingController();
 
   String baseUrl = "https://ida-app.vercel.app/ida-app";
+
+  Future<void> checkLogin() async {
+    Map<String, String> info = await SecureStorage.read();
+    if (info["last_login"] != null) {
+      DateTime date = DateTime.parse(info["last_login"]!);
+      if (DateTime.now().subtract(Duration(days: 30)).compareTo(date) >= 0) {
+        await SecureStorage.delete();
+        await Navigator.popAndPushNamed(context, "/login");
+        return;
+      }
+    }
+    if (info["user_id"] == null) {
+      await Navigator.popAndPushNamed(context, "/login");
+      return;
+    }
+
+    setState(() {
+      user_id = int.parse(info["user_id"]!);
+      token = info["token"]!;
+    });
+  }
 
   @override
   void didChangeDependencies() {
@@ -76,6 +101,12 @@ class _ManagePageState extends State<ManagePage> {
         callback = args["callback"];
       });
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkLogin();
   }
 
   @override
@@ -458,7 +489,9 @@ class _ManagePageState extends State<ManagePage> {
                             if (event_id == null) {
                               await post(
                                 Uri.parse(baseUrl + "/add-event/"),
+                                headers: {"Authorization": "Token ${token}"},
                                 body: {
+                                  "user_id": user_id.toString(),
                                   "name": name,
                                   "date": final_date.toString().split(".")[0],
                                   "timezone":
@@ -478,7 +511,9 @@ class _ManagePageState extends State<ManagePage> {
                             } else {
                               await post(
                                 Uri.parse(baseUrl + "/edit-event/"),
+                                headers: {"Authorization": "Token ${token}"},
                                 body: {
+                                  "user_id": user_id.toString(),
                                   "event_id": event_id.toString(),
                                   "name": name,
                                   "date": final_date.toString().split(".")[0],

@@ -16,6 +16,7 @@ class ShopPage extends StatefulWidget {
 
 class _ShopPageState extends State<ShopPage> {
   late int user_id;
+  late String token;
   late bool admin;
 
   Map<int, int> quantity = {};
@@ -52,7 +53,11 @@ class _ShopPageState extends State<ShopPage> {
                 });
                 await post(
                   Uri.parse(baseUrl + "/delete-item/"),
-                  body: {"item_id": item_id.toString()},
+                  headers: {"Authorization": "Token ${token}"},
+                  body: {
+                    "user_id": user_id.toString,
+                    "item_id": item_id.toString(),
+                  },
                 );
                 getItems();
                 getCart();
@@ -87,7 +92,11 @@ class _ShopPageState extends State<ShopPage> {
                   });
                   await post(
                     Uri.parse(baseUrl + "/delete-item/"),
-                    body: {"item_id": item_id.toString()},
+                    headers: {"Authorization": "Token ${token}"},
+                    body: {
+                      "user_id": user_id.toString(),
+                      "item_id": item_id.toString(),
+                    },
                   );
                   getItems();
                   getCart();
@@ -169,6 +178,7 @@ class _ShopPageState extends State<ShopPage> {
                                         });
                                         await post(
                                           Uri.parse(baseUrl + "/edit-cart/"),
+                                          headers: {"Authorization": "Token ${token}"},
                                           body: {
                                             "user_id": user_id.toString(),
                                             "item_id": item_id.toString(),
@@ -233,6 +243,7 @@ class _ShopPageState extends State<ShopPage> {
                                                 Uri.parse(
                                                   baseUrl + "/edit-cart/",
                                                 ),
+                                                headers: {"Authorization": "Token ${token}"},
                                                 body: {
                                                   "user_id": user_id.toString(),
                                                   "item_id": item_id.toString(),
@@ -269,6 +280,7 @@ class _ShopPageState extends State<ShopPage> {
                                                 Uri.parse(
                                                   baseUrl + "/edit-cart/",
                                                 ),
+                                                headers: {"Authorization": "Token ${token}"},
                                                 body: {
                                                   "user_id": user_id.toString(),
                                                   "item_id": item_id.toString(),
@@ -330,7 +342,10 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   Future<void> getItems() async {
-    var response = await get(Uri.parse(baseUrl + "/get-items"));
+    var response = await get(
+      Uri.parse(baseUrl + "/get-items?user_id=${user_id}"),
+      headers: {"Authorization": "Token ${token}"},
+    );
     Map info = jsonDecode(response.body);
     List all_items = info["data"];
 
@@ -343,6 +358,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> getCart() async {
     var response = await get(
       Uri.parse(baseUrl + "/get-cart?user_id=${user_id}"),
+      headers: {"Authorization": "Token ${token}"},
     );
     Map info = jsonDecode(response.body);
     List data = info["data"];
@@ -375,6 +391,7 @@ class _ShopPageState extends State<ShopPage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
+      token = info["token"]!;
       admin = bool.parse(info["admin"]!);
     });
     getCart();

@@ -18,6 +18,7 @@ class EventsPage extends StatefulWidget {
 
 class _EventsPageState extends State<EventsPage> {
   late int user_id;
+  late String token;
   late bool admin;
   late String reminders;
   List<bool> loaded = [false, false];
@@ -119,7 +120,11 @@ class _EventsPageState extends State<EventsPage> {
                 });
                 await post(
                   Uri.parse(baseUrl + "/delete-event/"),
-                  body: {"event_id": event_id.toString()},
+                  headers: {"Authorization": "Token ${token}"},
+                  body: {
+                    "user_id": user_id.toString(),
+                    "event_id": event_id.toString(),
+                  },
                 );
                 getEvents();
                 getNotifications();
@@ -174,7 +179,11 @@ class _EventsPageState extends State<EventsPage> {
                   });
                   await post(
                     Uri.parse(baseUrl + "/delete-event/"),
-                    body: {"event_id": event_id.toString()},
+                    headers: {"Authorization": "Token ${token}"},
+                    body: {
+                      "user_id": user_id.toString(),
+                      "event_id": event_id.toString(),
+                    },
                   );
                   getEvents();
                   getNotifications();
@@ -346,6 +355,9 @@ class _EventsPageState extends State<EventsPage> {
                                           Uri.parse(
                                             baseUrl + "/toggle-notification/",
                                           ),
+                                          headers: {
+                                            "Authorization": "Token ${token}",
+                                          },
                                           body: {
                                             "user_id": user_id.toString(),
                                             "event_id": event_id.toString(),
@@ -439,7 +451,10 @@ class _EventsPageState extends State<EventsPage> {
   }
 
   Future<void> getEvents() async {
-    var response = await get(Uri.parse(baseUrl + "/get-events"));
+    var response = await get(
+      Uri.parse(baseUrl + "/get-events?user_id=${user_id}"),
+      headers: {"Authorization": "Token ${token}"},
+    );
     Map info = jsonDecode(response.body);
     List all_events = info["data"];
 
@@ -471,6 +486,7 @@ class _EventsPageState extends State<EventsPage> {
   Future<void> getNotifications() async {
     var response = await get(
       Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
+      headers: {"Authorization": "Token ${token}"},
     );
     Map info = jsonDecode(response.body);
     setState(() {
@@ -496,6 +512,7 @@ class _EventsPageState extends State<EventsPage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
+      token = info["token"]!;
       admin = bool.parse(info["admin"]!);
       reminders = info["reminders"]!;
     });
