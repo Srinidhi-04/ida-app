@@ -40,7 +40,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ["ida-app.vercel.app"]
 
-CORS_ALLOWED_ORIGINS = []
+CORS_ALLOWED_ORIGINS = ["https://ida-app.vercel.app"]
 CORS_ALLOW_ALL_ORIGINS = False
 
 FIREBASE_KEY = os.getenv("FIREBASE_KEY")
