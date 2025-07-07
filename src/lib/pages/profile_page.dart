@@ -24,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
         width: MediaQuery.of(context).size.width * 0.6,
         child: TextButton(
           onPressed: () {
-            Navigator.pushNamed(context, route);
+            Navigator.pushNamed(context, route).then((value) => checkLogin());
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

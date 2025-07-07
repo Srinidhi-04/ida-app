@@ -516,14 +516,14 @@ class _EventsPageState extends State<EventsPage> {
       admin = bool.parse(info["admin"]!);
       reminders = info["reminders"]!;
     });
-    await getNotifications();
+    getNotifications();
+    getEvents();
   }
 
   @override
   void initState() {
     super.initState();
     checkLogin();
-    getEvents();
   }
 
   @override

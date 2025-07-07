@@ -394,6 +394,7 @@ class _ShopPageState extends State<ShopPage> {
       token = info["token"]!;
       admin = bool.parse(info["admin"]!);
     });
+    getItems();
     getCart();
   }
 
@@ -421,7 +422,6 @@ class _ShopPageState extends State<ShopPage> {
   void initState() {
     super.initState();
     checkLogin();
-    getItems();
   }
 
   @override

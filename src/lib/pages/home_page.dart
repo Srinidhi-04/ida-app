@@ -286,13 +286,13 @@ class _HomePageState extends State<HomePage> {
       token = info["token"]!;
     });
     getCart();
+    getEvents();
   }
 
   @override
   void initState() {
     super.initState();
     checkLogin();
-    getEvents();
   }
 
   @override

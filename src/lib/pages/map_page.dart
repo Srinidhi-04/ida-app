@@ -349,6 +349,7 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
+    checkLogin();
     getPosition();
   }
 
