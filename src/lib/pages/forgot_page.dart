@@ -43,7 +43,7 @@ class _ForgotPageState extends State<ForgotPage> {
 
   TextEditingController emailController = TextEditingController();
 
-  String baseUrl = "https://ida-app.vercel.app/ida-app";
+  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Future<void> sendCode() async {
     setState(() {

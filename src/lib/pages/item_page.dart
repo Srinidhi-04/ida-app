@@ -29,7 +29,7 @@ class _ItemPageState extends State<ItemPage> {
   TextEditingController price_controller = TextEditingController();
   TextEditingController image_controller = TextEditingController();
 
-  String baseUrl = "https://ida-app.vercel.app/ida-app";
+  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();

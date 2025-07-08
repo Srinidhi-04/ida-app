@@ -37,7 +37,7 @@ class _ManagePageState extends State<ManagePage> {
   TextEditingController image_controller = TextEditingController();
   TextEditingController body_controller = TextEditingController();
 
-  String baseUrl = "https://ida-app.vercel.app/ida-app";
+  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();

@@ -43,7 +43,7 @@ class _EventsPageState extends State<EventsPage> {
   List<Map> past = [];
   List notifs = [];
 
-  String baseUrl = "https://ida-app.vercel.app/ida-app";
+  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Widget switchOption(int index, String text) {
     return Padding(

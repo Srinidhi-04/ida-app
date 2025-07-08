@@ -38,9 +38,9 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["ida-app.vercel.app"]
+ALLOWED_HOSTS = ["ida-app-api-afb7906d4986.herokuapp.com"]
 
-CORS_ALLOWED_ORIGINS = ["https://ida-app.vercel.app"]
+CORS_ALLOWED_ORIGINS = ["https://ida-app-api-afb7906d4986.herokuapp.com"]
 CORS_ALLOW_ALL_ORIGINS = False
 
 FIREBASE_KEY = os.getenv("FIREBASE_KEY")

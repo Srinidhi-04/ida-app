@@ -40,7 +40,7 @@ class _VerifyPageState extends State<VerifyPage> {
   String top_text = "";
   bool submitted = false;
 
-  String baseUrl = "https://ida-app.vercel.app/ida-app";
+  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Future<bool> verify() async {
     setState(() {

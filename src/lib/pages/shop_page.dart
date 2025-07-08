@@ -27,7 +27,7 @@ class _ShopPageState extends State<ShopPage> {
 
   List<bool> loaded = [false, false];
 
-  String baseUrl = "https://ida-app.vercel.app/ida-app";
+  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Widget shopItem(
     int index,
@@ -178,7 +178,9 @@ class _ShopPageState extends State<ShopPage> {
                                         });
                                         await post(
                                           Uri.parse(baseUrl + "/edit-cart/"),
-                                          headers: {"Authorization": "Token ${token}"},
+                                          headers: {
+                                            "Authorization": "Token ${token}",
+                                          },
                                           body: {
                                             "user_id": user_id.toString(),
                                             "item_id": item_id.toString(),
@@ -243,7 +245,10 @@ class _ShopPageState extends State<ShopPage> {
                                                 Uri.parse(
                                                   baseUrl + "/edit-cart/",
                                                 ),
-                                                headers: {"Authorization": "Token ${token}"},
+                                                headers: {
+                                                  "Authorization":
+                                                      "Token ${token}",
+                                                },
                                                 body: {
                                                   "user_id": user_id.toString(),
                                                   "item_id": item_id.toString(),
@@ -280,7 +285,10 @@ class _ShopPageState extends State<ShopPage> {
                                                 Uri.parse(
                                                   baseUrl + "/edit-cart/",
                                                 ),
-                                                headers: {"Authorization": "Token ${token}"},
+                                                headers: {
+                                                  "Authorization":
+                                                      "Token ${token}",
+                                                },
                                                 body: {
                                                   "user_id": user_id.toString(),
                                                   "item_id": item_id.toString(),

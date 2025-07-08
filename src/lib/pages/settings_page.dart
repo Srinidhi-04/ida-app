@@ -45,7 +45,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
   bool changed = false;
 
-  String baseUrl = "https://ida-app.vercel.app/ida-app";
+  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Widget notificationOption(String name) {
     return Row(

@@ -46,7 +46,7 @@ class _MapPageState extends State<MapPage> {
   GoogleMapController? mapController;
   String? mapKey;
 
-  String baseUrl = "https://ida-app.vercel.app/ida-app";
+  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Widget eventCard(
     String name,
