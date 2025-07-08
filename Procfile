@@ -1,1 +1,1 @@
-web: gunicorn api.wsgi:application --chdir api
+web: gunicorn api.wsgi:app --chdir api
