@@ -1,10 +1,10 @@
 import 'dart:convert';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -299,70 +299,7 @@ class _EventsPageState extends State<EventsPage> {
                                             notifs.add(event_id);
                                         });
 
-                                        if (notifs.contains(event_id)) {
-                                          FirebaseMessaging.instance
-                                              .subscribeToTopic(
-                                                "ida-event-${event_id}",
-                                              );
-
-                                          if (reminders ==
-                                              "30 minutes before") {
-                                            FirebaseMessaging.instance
-                                                .subscribeToTopic(
-                                                  "ida-event-${event_id}-0",
-                                                );
-                                          } else if (reminders ==
-                                              "2 hours before") {
-                                            FirebaseMessaging.instance
-                                                .subscribeToTopic(
-                                                  "ida-event-${event_id}-1",
-                                                );
-                                          } else if (reminders ==
-                                              "6 hours before") {
-                                            FirebaseMessaging.instance
-                                                .subscribeToTopic(
-                                                  "ida-event-${event_id}-2",
-                                                );
-                                          }
-                                        } else {
-                                          FirebaseMessaging.instance
-                                              .unsubscribeFromTopic(
-                                                "ida-event-${event_id}",
-                                              );
-
-                                          if (reminders ==
-                                              "30 minutes before") {
-                                            FirebaseMessaging.instance
-                                                .unsubscribeFromTopic(
-                                                  "ida-event-${event_id}-0",
-                                                );
-                                          } else if (reminders ==
-                                              "2 hours before") {
-                                            FirebaseMessaging.instance
-                                                .unsubscribeFromTopic(
-                                                  "ida-event-${event_id}-1",
-                                                );
-                                          } else if (reminders ==
-                                              "6 hours before") {
-                                            FirebaseMessaging.instance
-                                                .unsubscribeFromTopic(
-                                                  "ida-event-${event_id}-2",
-                                                );
-                                          }
-                                        }
-
-                                        await post(
-                                          Uri.parse(
-                                            baseUrl + "/toggle-notification/",
-                                          ),
-                                          headers: {
-                                            "Authorization": "Token ${token}",
-                                          },
-                                          body: {
-                                            "user_id": user_id.toString(),
-                                            "event_id": event_id.toString(),
-                                          },
-                                        );
+                                        NotificationsManager.toggleNotifications(user_id, token, event_id, reminders, notifs.contains(event_id));
                                       },
                                       icon: Icon(
                                         (notifs.contains(event_id))

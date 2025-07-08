@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import "package:http/http.dart";
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 
 class CirclePainter extends CustomPainter {
@@ -38,6 +39,13 @@ class _LoginPageState extends State<LoginPage> {
   String error = "";
   bool submitted = false;
 
+  List<String> alerts = [
+    "Off",
+    "30 minutes before",
+    "2 hours before",
+    "6 hours before",
+  ];
+
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Future<bool> login() async {
@@ -49,12 +57,10 @@ class _LoginPageState extends State<LoginPage> {
       body: {"email": email, "password": password},
     );
     Map info = jsonDecode(response.body);
-    setState(() {
-      submitted = false;
-    });
     if (info.containsKey("error")) {
       setState(() {
         error = info["error"];
+        submitted = false;
       });
       return false;
     }
@@ -65,6 +71,9 @@ class _LoginPageState extends State<LoginPage> {
         "email": info["email"],
       });
       Navigator.popAndPushNamed(context, "/verify");
+      setState(() {
+        submitted = false;
+      });
       return true;
     }
 
@@ -78,7 +87,13 @@ class _LoginPageState extends State<LoginPage> {
       "token": info["token"].toString(),
     });
 
+    await NotificationsManager.subscribeAllNotifications(info["user_id"], info["token"], info["reminders"]);
+
     Navigator.popAndPushNamed(context, "/home");
+
+    setState(() {
+      submitted = false;
+    });
     return true;
   }
 
@@ -255,6 +270,8 @@ class _LoginPageState extends State<LoginPage> {
                           children: [
                             TextButton(
                               onPressed: () async {
+                                FocusScope.of(context).unfocus();
+
                                 if (email.isEmpty) {
                                   setState(() {
                                     error = "Email cannot be empty";

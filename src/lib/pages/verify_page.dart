@@ -51,12 +51,10 @@ class _VerifyPageState extends State<VerifyPage> {
       body: {"user_id": user_id.toString(), "code": code},
     );
     Map info = jsonDecode(response.body);
-    setState(() {
-      submitted = false;
-    });
     if (info.containsKey("error")) {
       setState(() {
         error = info["error"];
+        submitted = false;
       });
       return false;
     }
@@ -70,6 +68,9 @@ class _VerifyPageState extends State<VerifyPage> {
       "token": info["token"].toString(),
     });
     Navigator.popAndPushNamed(context, "/home");
+    setState(() {
+      submitted = false;
+    });
     return true;
   }
 
@@ -252,6 +253,8 @@ class _VerifyPageState extends State<VerifyPage> {
                           children: [
                             TextButton(
                               onPressed: () async {
+                                FocusScope.of(context).unfocus();
+
                                 if (code.length != 6) {
                                   setState(() {
                                     error =

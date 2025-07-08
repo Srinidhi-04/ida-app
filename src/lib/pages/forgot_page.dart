@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 
 class CirclePainter extends CustomPainter {
@@ -80,12 +81,10 @@ class _ForgotPageState extends State<ForgotPage> {
       body: {"email": email, "password": password, "code": code},
     );
     Map info = jsonDecode(response.body);
-    setState(() {
-      submitted = false;
-    });
     if (info.containsKey("error")) {
       setState(() {
         error = info["error"];
+        submitted = false;
       });
       return false;
     }
@@ -98,7 +97,15 @@ class _ForgotPageState extends State<ForgotPage> {
       "reminders": info["reminders"].toString(),
       "token": info["token"].toString(),
     });
+
+    await NotificationsManager.subscribeAllNotifications(info["user_id"], info["token"], info["reminders"]);
+
     Navigator.popAndPushNamed(context, "/home");
+
+    setState(() {
+      submitted = false;
+    });
+
     return true;
   }
 
@@ -253,6 +260,7 @@ class _ForgotPageState extends State<ForgotPage> {
                                         10,
                                       ),
                                       child: TextFormField(
+                                        keyboardType: TextInputType.number,
                                         textAlignVertical:
                                             TextAlignVertical.center,
                                         decoration: InputDecoration(
@@ -340,6 +348,8 @@ class _ForgotPageState extends State<ForgotPage> {
                           children: [
                             TextButton(
                               onPressed: () async {
+                                FocusScope.of(context).unfocus();
+
                                 if (email.isEmpty) {
                                   setState(() {
                                     error = "Email cannot be empty";

@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
 
@@ -96,8 +96,10 @@ class _SettingsPageState extends State<SettingsPage> {
         return;
       }
     }
-    if (info["user_id"] == null)
+    if (info["user_id"] == null) {
       await Navigator.popAndPushNamed(context, "/login");
+      return;
+    }
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
@@ -213,25 +215,8 @@ class _SettingsPageState extends State<SettingsPage> {
                             );
                             if (alert != original_alert) {
                               SecureStorage.writeOne("reminders", alert);
-                              var response = await get(
-                                Uri.parse(
-                                  baseUrl +
-                                      "/get-notifications?user_id=${user_id}",
-                                ),
-                                headers: {"Authorization": "Token ${token}"},
-                              );
-                              Map info = jsonDecode(response.body);
-                              List notifs = info["data"];
-
-                              for (int event_id in notifs) {
-                                FirebaseMessaging.instance.unsubscribeFromTopic(
-                                  "ida-event-${event_id}-${alerts.indexOf(original_alert) - 1}",
-                                );
-
-                                FirebaseMessaging.instance.subscribeToTopic(
-                                  "ida-event-${event_id}-${alerts.indexOf(alert) - 1}",
-                                );
-                              }
+                              
+                              NotificationsManager.changeInterval(user_id, token, original_alert, alert);
                             }
                           },
                           child: Text(

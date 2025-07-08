@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
 
@@ -11,11 +12,15 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  late int user_id;
+  late String token;
   late bool admin;
   late String name;
   late String email;
+  late String reminders;
 
   bool loaded = false;
+  bool submitted = false;
 
   Widget profileButton(String name, String route) {
     return Padding(
@@ -56,9 +61,12 @@ class _ProfilePageState extends State<ProfilePage> {
       return;
     }
     setState(() {
+      user_id = int.parse(info["user_id"]!);
+      token = info["token"]!;
       email = info["email"]!;
       name = info["name"]!;
       admin = bool.parse(info["admin"]!);
+      reminders = info["reminders"]!;
       loaded = true;
     });
   }
@@ -81,113 +89,140 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       );
 
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        foregroundColor: Colors.white,
-        elevation: 0,
-      ),
-      extendBodyBehindAppBar: true,
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await checkLogin();
-        },
-        color: Theme.of(context).primaryColorLight,
-        backgroundColor: Colors.white,
-        child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Container(
-            constraints: BoxConstraints(
-              minWidth: MediaQuery.of(context).size.width,
-              minHeight:
-                  MediaQuery.of(context).size.height -
-                  kToolbarHeight -
-                  kBottomNavigationBarHeight,
-            ),
-            child: Column(
-              children: [
-                Container(
-                  color: Theme.of(context).primaryColorDark,
-                  width: MediaQuery.of(context).size.width,
-                  height: 100,
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            foregroundColor: Colors.white,
+            elevation: 0,
+          ),
+          extendBodyBehindAppBar: true,
+          body: RefreshIndicator(
+            onRefresh: () async {
+              await checkLogin();
+            },
+            color: Theme.of(context).primaryColorLight,
+            backgroundColor: Colors.white,
+            child: SingleChildScrollView(
+              physics: AlwaysScrollableScrollPhysics(),
+              child: Container(
+                constraints: BoxConstraints(
+                  minWidth: MediaQuery.of(context).size.width,
+                  minHeight:
+                      MediaQuery.of(context).size.height -
+                      kToolbarHeight -
+                      kBottomNavigationBarHeight,
                 ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                  child: Text(
-                    "Profile",
-                    style: Theme.of(
-                      context,
-                    ).typography.black.headlineLarge!.apply(fontWeightDelta: 3),
-                  ),
-                ),
-                (admin)
-                    ? Padding(
+                child: Column(
+                  children: [
+                    Container(
+                      color: Theme.of(context).primaryColorDark,
+                      width: MediaQuery.of(context).size.width,
+                      height: 100,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                      child: Text(
+                        "Profile",
+                        style: Theme.of(context).typography.black.headlineLarge!
+                            .apply(fontWeightDelta: 3),
+                      ),
+                    ),
+                    (admin)
+                        ? Padding(
+                          padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
+                          child: Text(
+                            "Admin",
+                            style:
+                                Theme.of(context).typography.black.labelSmall,
+                          ),
+                        )
+                        : Container(),
+                    Padding(
                       padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                       child: Text(
-                        "Admin",
-                        style: Theme.of(context).typography.black.labelSmall,
+                        name,
+                        style: Theme.of(context).typography.black.labelMedium,
                       ),
-                    )
-                    : Container(),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
-                  child: Text(
-                    name,
-                    style: Theme.of(context).typography.black.labelMedium,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
-                  child: Text(
-                    email,
-                    style: Theme.of(context).typography.black.labelMedium,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      profileButton("Notification Settings", "/settings"),
-                      Divider(
-                        color: Theme.of(context).primaryColor,
-                        indent: 75,
-                        endIndent: 75,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 5, 10, 10),
+                      child: Text(
+                        email,
+                        style: Theme.of(context).typography.black.labelMedium,
                       ),
-                      profileButton("Profile Settings", "/name"),
-                    ],
-                  ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          profileButton("Notification Settings", "/settings"),
+                          Divider(
+                            color: Theme.of(context).primaryColor,
+                            indent: 75,
+                            endIndent: 75,
+                          ),
+                          profileButton("Profile Settings", "/name"),
+                        ],
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        setState(() {
+                          submitted = true;
+                        });
+
+                        await NotificationsManager.unsubscribeAllNotifications(
+                          user_id,
+                          token,
+                          reminders,
+                        );
+
+                        await SecureStorage.delete();
+                        await Navigator.of(
+                          context,
+                        ).pushNamedAndRemoveUntil("/login", (route) => false);
+
+                        setState(() {
+                          submitted = false;
+                        });
+                      },
+                      child: Text(
+                        "LOG OUT",
+                        style: Theme.of(context).typography.white.labelLarge!
+                            .apply(fontSizeDelta: 2, fontWeightDelta: 3),
+                      ),
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          Theme.of(context).primaryColor,
+                        ),
+                        fixedSize: WidgetStatePropertyAll(
+                          Size(0.6 * MediaQuery.of(context).size.width, 50),
+                        ),
+                        elevation: WidgetStatePropertyAll(10),
+                      ),
+                    ),
+                  ],
                 ),
-                TextButton(
-                  onPressed: () async {
-                    await SecureStorage.delete();
-                    await Navigator.of(
-                      context,
-                    ).pushNamedAndRemoveUntil("/login", (route) => false);
-                  },
-                  child: Text(
-                    "LOG OUT",
-                    style: Theme.of(context).typography.white.labelLarge!.apply(
-                      fontSizeDelta: 2,
-                      fontWeightDelta: 3,
-                    ),
-                  ),
-                  style: ButtonStyle(
-                    backgroundColor: WidgetStatePropertyAll(
-                      Theme.of(context).primaryColor,
-                    ),
-                    fixedSize: WidgetStatePropertyAll(
-                      Size(0.6 * MediaQuery.of(context).size.width, 50),
-                    ),
-                    elevation: WidgetStatePropertyAll(10),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
+          bottomNavigationBar: Navigation(selected: 4),
         ),
-      ),
-      bottomNavigationBar: Navigation(selected: 4),
+        (submitted)
+            ? Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: Color(0x99FFFFFF),
+              child: LoadingAnimationWidget.threeArchedCircle(
+                color: Theme.of(context).primaryColorLight,
+                size: 100,
+              ),
+            )
+            : Container(),
+      ],
     );
   }
 }

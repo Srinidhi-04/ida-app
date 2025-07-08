@@ -50,12 +50,10 @@ class _SignupPageState extends State<SignupPage> {
       body: {"name": name, "email": email, "password": password},
     );
     Map info = jsonDecode(response.body);
-    setState(() {
-      submitted = false;
-    });
     if (info.containsKey("error")) {
       setState(() {
         error = info["error"];
+        submitted = false;
       });
       return false;
     }
@@ -64,6 +62,9 @@ class _SignupPageState extends State<SignupPage> {
       "email": info["email"],
     });
     Navigator.popAndPushNamed(context, "/verify");
+    setState(() {
+      submitted = false;
+    });
     return true;
   }
 
@@ -230,6 +231,8 @@ class _SignupPageState extends State<SignupPage> {
                           children: [
                             TextButton(
                               onPressed: () async {
+                                FocusScope.of(context).unfocus();
+
                                 if (name.isEmpty) {
                                   setState(() {
                                     error = "Name cannot be empty";

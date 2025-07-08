@@ -440,6 +440,8 @@ class _ManagePageState extends State<ManagePage> {
                       padding: const EdgeInsets.only(right: 10.0),
                       child: TextButton(
                         onPressed: () async {
+                          FocusScope.of(context).unfocus();
+
                           if (name == "")
                             errors[0] = "Name is a required field";
                           else
