@@ -298,6 +298,10 @@ class _ManagePageState extends State<ManagePage> {
                             child: Padding(
                               padding: const EdgeInsets.only(right: 10),
                               child: TextFormField(
+                                keyboardType: TextInputType.numberWithOptions(
+                                  signed: true,
+                                  decimal: true,
+                                ),
                                 controller: lat_controller,
                                 textAlignVertical: TextAlignVertical.center,
                                 decoration: InputDecoration(
@@ -331,6 +335,10 @@ class _ManagePageState extends State<ManagePage> {
                             child: Padding(
                               padding: const EdgeInsets.only(left: 10),
                               child: TextFormField(
+                                keyboardType: TextInputType.numberWithOptions(
+                                  signed: true,
+                                  decimal: true,
+                                ),
                                 controller: long_controller,
                                 textAlignVertical: TextAlignVertical.center,
                                 decoration: InputDecoration(

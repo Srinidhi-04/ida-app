@@ -16,6 +16,7 @@ scheduler = BackgroundScheduler()
 def start_scheduler():
     scheduler.add_jobstore(DjangoJobStore(), "default")
     scheduler.start()
+    print("Scheduler started successfully")
 
 def send_topic_notification(topic: str, title: str, body: str):
     message = messaging.Message(
@@ -44,7 +45,6 @@ def schedule_topic_notification(topic: str, title: str, body: str, run_time: dat
         start_scheduler()
     
     print(f"Successfully scheduled notification to topic '{topic}'")
-    print(f"Scheduler status: {'' if scheduler.running else "not "}running")
 
 def delete_topic_notification(topic: str):
     job_id = f"notif_{topic}"
@@ -57,8 +57,6 @@ def delete_topic_notification(topic: str):
 
     if not scheduler.running:
         start_scheduler()
-    
-    print(f"Scheduler status: {'' if scheduler.running else "not "}running")
 
 def send_verification_code(name: str, code: int, email: str):
     text = f"""

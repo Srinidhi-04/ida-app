@@ -133,6 +133,10 @@ class _ItemPageState extends State<ItemPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: TextFormField(
+                        keyboardType: TextInputType.numberWithOptions(
+                          signed: false,
+                          decimal: true,
+                        ),
                         controller: price_controller,
                         textAlignVertical: TextAlignVertical.center,
                         decoration: InputDecoration(
