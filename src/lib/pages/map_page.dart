@@ -236,9 +236,20 @@ class _MapPageState extends State<MapPage> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
     }
-    Position posit = await Geolocator.getCurrentPosition();
+
+    Position? posit;
+    try {
+      posit = await Geolocator.getCurrentPosition();
+    } catch (e) {
+      print("Couldn't get location: ${e}");
+      posit = await Geolocator.getLastKnownPosition();
+    }
+
     setState(() {
-      myLoc = LatLng(posit.latitude, posit.longitude);
+      myLoc =
+          (posit != null)
+              ? LatLng(posit.latitude, posit.longitude)
+              : LatLng(40.105833, -88.227222);
       if (center == null) center = myLoc;
       markers.add(Marker(markerId: MarkerId("My location"), position: myLoc!));
     });
