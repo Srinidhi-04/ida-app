@@ -44,6 +44,7 @@ def schedule_topic_notification(topic: str, title: str, body: str, run_time: dat
         start_scheduler()
     
     print(f"Successfully scheduled notification to topic '{topic}'")
+    print(f"Scheduler status: {'' if scheduler.running else "not "}running")
 
 def delete_topic_notification(topic: str):
     job_id = f"notif_{topic}"
@@ -53,6 +54,11 @@ def delete_topic_notification(topic: str):
         print(f"Job {job_id} successully deleted")
     except:
         print("Job does not exist")
+
+    if not scheduler.running:
+        start_scheduler()
+    
+    print(f"Scheduler status: {'' if scheduler.running else "not "}running")
 
 def send_verification_code(name: str, code: int, email: str):
     text = f"""
@@ -81,3 +87,5 @@ def send_verification_code(name: str, code: int, email: str):
     session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
     session.sendmail("illinidadsassociation@gmail.com", email, message.as_string())
     session.quit()
+
+    print("Verification code sent successfully")
