@@ -15,9 +15,9 @@ import json
 from pathlib import Path
 import firebase_admin
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 DATABASE_NAME = os.getenv("DB_NAME")
 DATABASE_USER = os.getenv("DB_USER")

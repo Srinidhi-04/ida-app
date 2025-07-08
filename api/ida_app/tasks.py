@@ -5,9 +5,9 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore
 import datetime
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 GMAIL_PASSWORD = os.getenv("GMAIL_PASSWORD")
 
