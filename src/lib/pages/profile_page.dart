@@ -116,10 +116,40 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
                 child: Column(
                   children: [
-                    Container(
-                      color: Theme.of(context).primaryColorDark,
-                      width: MediaQuery.of(context).size.width,
-                      height: 100,
+                    Stack(
+                      alignment: Alignment.bottomCenter,
+                      children: [
+                        Column(
+                          children: [
+                            Container(
+                              color: Theme.of(context).primaryColorDark,
+                              width: MediaQuery.of(context).size.width,
+                              height: 150,
+                            ),
+                            Container(
+                              color: Colors.white,
+                              width: MediaQuery.of(context).size.width,
+                              height: 70,
+                            ),
+                          ],
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white,
+                          ),
+                          width: 140,
+                          height: 140,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Image(
+                            image: AssetImage("assets/avatar_1.png"),
+                            width: 130,
+                            height: 130,
+                          ),
+                        ),
+                      ],
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
