@@ -26,25 +26,22 @@ class _SettingsPageState extends State<SettingsPage> {
   late int selected;
 
   Widget avatarOption(int option) {
-    return Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: GestureDetector(
-        onTap:
-            () => setState(() {
-              selected = option;
-            }),
-        child: Container(
-          width: MediaQuery.of(context).size.width * 0.12,
-          height: MediaQuery.of(context).size.width * 0.12,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            image: DecorationImage(
-              image: AssetImage("assets/avatar_${option}.png"),
-              colorFilter:
-                  (option == selected)
-                      ? ColorFilter.mode(Color(0x88000000), BlendMode.darken)
-                      : null,
-            ),
+    return GestureDetector(
+      onTap:
+          () => setState(() {
+            selected = option;
+          }),
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.12,
+        height: MediaQuery.of(context).size.width * 0.12,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          image: DecorationImage(
+            image: AssetImage("assets/avatar_${option}.png"),
+            colorFilter:
+                (option == selected)
+                    ? ColorFilter.mode(Color(0x88000000), BlendMode.darken)
+                    : null,
           ),
         ),
       ),
@@ -149,25 +146,31 @@ class _SettingsPageState extends State<SettingsPage> {
                     ),
                   ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    avatarOption(1),
-                    avatarOption(6),
-                    avatarOption(2),
-                    avatarOption(7),
-                    avatarOption(3),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      avatarOption(1),
+                      avatarOption(6),
+                      avatarOption(2),
+                      avatarOption(7),
+                      avatarOption(3),
+                    ],
+                  ),
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    avatarOption(8),
-                    avatarOption(4),
-                    avatarOption(9),
-                    avatarOption(5),
-                    avatarOption(10),
-                  ],
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      avatarOption(8),
+                      avatarOption(4),
+                      avatarOption(9),
+                      avatarOption(5),
+                      avatarOption(10),
+                    ],
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 20, 0, 5),
