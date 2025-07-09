@@ -5,6 +5,7 @@ import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -40,12 +41,15 @@ class _HomePageState extends State<HomePage> {
 
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
-  Widget mainButton(Color color, String text, String route) {
+  Widget mainButton(Color color, String text, String path, bool external) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: TextButton(
         onPressed: () {
-          Navigator.of(context).pushNamed(route);
+          if (external)
+            launchUrl(Uri.parse(path), mode: LaunchMode.externalApplication);
+          else
+            Navigator.of(context).pushNamed(path);
         },
         child: Text(
           text,
@@ -388,22 +392,26 @@ class _HomePageState extends State<HomePage> {
                           mainButton(
                             Theme.of(context).primaryColorDark,
                             "Tickets",
-                            "/tickets",
+                            "https://www.gofevo.com/group/Illinidads",
+                            true,
                           ),
                           mainButton(
                             Theme.of(context).primaryColorLight,
                             "Donate",
-                            "/donate",
+                            "https://www.illinidads.com/donation",
+                            true,
                           ),
                           mainButton(
                             Theme.of(context).primaryColorDark,
                             "Shop",
                             "/shop",
+                            false,
                           ),
                           mainButton(
                             Theme.of(context).primaryColorLight,
                             "About Us",
                             "/about",
+                            false,
                           ),
                         ],
                       ),
@@ -510,13 +518,28 @@ class _HomePageState extends State<HomePage> {
                                 ),
                                 SizedBox(height: 20),
                                 TextButton(
-                                  onPressed: () {},
-                                  child: Text(
-                                    "Learn More",
-                                    style:
-                                        Theme.of(
-                                          context,
-                                        ).typography.white.labelMedium,
+                                  onPressed: () async {
+                                    await launchUrl(
+                                      Uri.parse(
+                                        "https://www.illinidads.com/centennial-plaza",
+                                      ),
+                                      mode: LaunchMode.externalApplication,
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      5,
+                                      0,
+                                      5,
+                                      0,
+                                    ),
+                                    child: Text(
+                                      "Learn More",
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).typography.white.labelMedium,
+                                    ),
                                   ),
                                   style: ButtonStyle(
                                     backgroundColor: WidgetStatePropertyAll(

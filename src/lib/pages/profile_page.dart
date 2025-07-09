@@ -99,7 +99,7 @@ class _ProfilePageState extends State<ProfilePage> {
               "Profile",
               style: Theme.of(
                 context,
-              ).typography.white.headlineLarge!.apply(fontWeightDelta: 3),
+              ).typography.white.headlineMedium!.apply(fontWeightDelta: 3),
             ),
             backgroundColor: Colors.transparent,
             foregroundColor: Colors.white,
