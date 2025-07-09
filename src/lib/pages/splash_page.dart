@@ -31,12 +31,6 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  @override
-  void initState() {
-    super.initState();
-    checkLogin();
-  }
-
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
     if (info["last_login"] != null) {
@@ -51,6 +45,12 @@ class _SplashPageState extends State<SplashPage> {
       await Navigator.popAndPushNamed(context, "/home");
     else
       await Navigator.popAndPushNamed(context, "/login");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkLogin();
   }
 
   @override

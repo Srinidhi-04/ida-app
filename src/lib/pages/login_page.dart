@@ -82,6 +82,7 @@ class _LoginPageState extends State<LoginPage> {
       "last_login": DateTime.now().toString(),
       "email": info["email"].toString(),
       "name": info["name"].toString(),
+      "avatar": info["avatar"].toString(),
       "admin": info["admin"].toString(),
       "reminders": info["reminders"].toString(),
       "token": info["token"].toString(),

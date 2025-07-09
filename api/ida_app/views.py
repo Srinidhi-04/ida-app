@@ -1,5 +1,6 @@
 import uuid
 import datetime
+import random as rd
 from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.contrib.auth import authenticate
 from ida_app.tasks import *
@@ -24,7 +25,7 @@ def signup(request: HttpRequest):
         return JsonResponse({"error": "'password' field is required"}, status = 400)
 
     try:
-        user: UserCredentials = UserCredentials.objects.create_user(email = email, name = name, password = password)
+        user: UserCredentials = UserCredentials.objects.create_user(email = email, name = name, password = password, avatar = rd.randint(1, 10))
     except Exception:
         return JsonResponse({"error": "A user with that email already exists"}, status = 400)
 
@@ -65,7 +66,7 @@ def verify_code(request: HttpRequest):
     settings = UserSettings(user = user, announcements = True, updates = True, merch = True, status = True, reminders = "2 hours before")
     settings.save()
 
-    return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin, "reminders": settings.reminders, "token": user.token})
+    return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "admin": user.admin, "reminders": settings.reminders, "token": user.token})
 
 def send_code(request: HttpRequest):
     if request.method != "POST":
@@ -136,7 +137,7 @@ def change_password(request: HttpRequest):
 
     settings: UserSettings = user.user_settings
 
-    return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin, "reminders": settings.reminders, "token": user.token})
+    return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "admin": user.admin, "reminders": settings.reminders, "token": user.token})
 
 def login(request: HttpRequest):
     if request.method != "POST":
@@ -176,7 +177,7 @@ def login(request: HttpRequest):
 
         settings: UserSettings = user.user_settings
 
-        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "admin": user.admin, "reminders": settings.reminders, "token": user.token})
+        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "admin": user.admin, "reminders": settings.reminders, "token": user.token})
     
     return JsonResponse({"error": "Email or password is incorrect"}, status = 400)
 

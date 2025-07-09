@@ -307,7 +307,7 @@ class _EventPageState extends State<EventPage> {
                                   ],
                                 ),
                               ),
-                              GestureDetector(
+                              InkWell(
                                 onTap: () {
                                   Navigator.pushNamed(
                                     context,

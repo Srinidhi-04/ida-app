@@ -16,6 +16,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late String token;
   late bool admin;
   late String name;
+  late int avatar;
   late String email;
   late String reminders;
 
@@ -65,6 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
       token = info["token"]!;
       email = info["email"]!;
       name = info["name"]!;
+      avatar = int.parse(info["avatar"]!);
       admin = bool.parse(info["admin"]!);
       reminders = info["reminders"]!;
       loaded = true;
@@ -140,13 +142,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           width: 140,
                           height: 140,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Image(
-                            image: AssetImage("assets/avatar_1.png"),
-                            width: 130,
-                            height: 130,
+                          child: Padding(
+                            padding: const EdgeInsets.all(5.0),
+                            child: Image(
+                              image: AssetImage("assets/avatar_${avatar}.png"),
+                              width: 130,
+                              height: 130,
+                            ),
                           ),
                         ),
                       ],
