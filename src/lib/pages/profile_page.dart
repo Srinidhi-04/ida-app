@@ -95,9 +95,16 @@ class _ProfilePageState extends State<ProfilePage> {
       children: [
         Scaffold(
           appBar: AppBar(
+            title: Text(
+              "Profile",
+              style: Theme.of(
+                context,
+              ).typography.white.headlineLarge!.apply(fontWeightDelta: 3),
+            ),
             backgroundColor: Colors.transparent,
             foregroundColor: Colors.white,
             elevation: 0,
+            centerTitle: true,
           ),
           extendBodyBehindAppBar: true,
           body: RefreshIndicator(
@@ -126,7 +133,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Container(
                               color: Theme.of(context).primaryColorDark,
                               width: MediaQuery.of(context).size.width,
-                              height: 150,
+                              height: 175,
                             ),
                             Container(
                               color: Colors.white,
@@ -136,7 +143,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           ],
                         ),
                         GestureDetector(
-                          onTap: () => Navigator.pushNamed(context, "/settings").then((value) => checkLogin()),
+                          onTap:
+                              () => Navigator.pushNamed(
+                                context,
+                                "/settings",
+                              ).then((value) => checkLogin()),
                           child: Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
@@ -147,7 +158,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: Image(
-                                image: AssetImage("assets/avatar_${avatar}.png"),
+                                image: AssetImage(
+                                  "assets/avatar_${avatar}.png",
+                                ),
                                 width: 140,
                                 height: 140,
                               ),
@@ -155,14 +168,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       ],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                      child: Text(
-                        "Profile",
-                        style: Theme.of(context).typography.black.headlineLarge!
-                            .apply(fontWeightDelta: 3),
-                      ),
                     ),
                     (admin)
                         ? Padding(
@@ -193,7 +198,10 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          profileButton("Notification Settings", "/notifications"),
+                          profileButton(
+                            "Notification Settings",
+                            "/notifications",
+                          ),
                           Divider(
                             color: Theme.of(context).primaryColor,
                             indent: 75,

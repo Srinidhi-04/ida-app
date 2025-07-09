@@ -221,6 +221,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
                         setState(() {
                           original = name;
+                          avatar = selected;
                           error = null;
                         });
                         SecureStorage.writeMany({
@@ -233,7 +234,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           body: {
                             "user_id": user_id.toString(),
                             "name": name,
-                            "avatar": selected,
+                            "avatar": selected.toString(),
                           },
                         );
                       },
