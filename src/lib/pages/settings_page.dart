@@ -150,6 +150,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ),
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     avatarOption(1),
                     avatarOption(6),
@@ -159,6 +160,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   ],
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     avatarOption(8),
                     avatarOption(4),
