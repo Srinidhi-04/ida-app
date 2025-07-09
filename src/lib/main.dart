@@ -9,9 +9,9 @@ import 'package:src/pages/events_page.dart';
 import 'package:src/pages/home_page.dart';
 import 'package:src/pages/login_page.dart';
 import 'package:src/pages/map_page.dart';
-import 'package:src/pages/name_page.dart';
-import 'package:src/pages/profile_page.dart';
 import 'package:src/pages/settings_page.dart';
+import 'package:src/pages/profile_page.dart';
+import 'package:src/pages/notifications_page.dart';
 import 'package:src/pages/shop_page.dart';
 import 'package:src/pages/signup_page.dart';
 import 'package:src/pages/splash_page.dart';
@@ -84,10 +84,10 @@ void main() async {
         "/event": (context) => EventPage(),
         "/map": (context) => MapPage(),
         "/profile": (context) => ProfilePage(),
-        "/settings": (context) => SettingsPage(),
+        "/notifications": (context) => NotificationsPage(),
         "/manage": (context) => ManagePage(),
         "/about": (context) => AboutPage(),
-        "/name": (context) => NamePage(),
+        "/settings": (context) => SettingsPage(),
         "/item": (context) => ItemPage(),
       },
       theme: ThemeData(

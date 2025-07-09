@@ -16,7 +16,7 @@ urlpatterns = [
     path("get-notifications/", get_notifications),
     path("change-settings/", change_settings),
     path("get-settings/", get_settings),
-    path("change-name/", change_name),
+    path("edit-profile/", edit_profile),
     path("add-item/", add_item),
     path("edit-item/", edit_item),
     path("get-items/", get_items),

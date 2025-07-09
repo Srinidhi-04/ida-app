@@ -131,23 +131,26 @@ class _ProfilePageState extends State<ProfilePage> {
                             Container(
                               color: Colors.white,
                               width: MediaQuery.of(context).size.width,
-                              height: 70,
+                              height: 75,
                             ),
                           ],
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                          ),
-                          width: 140,
-                          height: 140,
-                          child: Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: Image(
-                              image: AssetImage("assets/avatar_${avatar}.png"),
-                              width: 130,
-                              height: 130,
+                        GestureDetector(
+                          onTap: () => Navigator.pushNamed(context, "/settings").then((value) => checkLogin()),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                            ),
+                            width: 150,
+                            height: 150,
+                            child: Padding(
+                              padding: const EdgeInsets.all(5.0),
+                              child: Image(
+                                image: AssetImage("assets/avatar_${avatar}.png"),
+                                width: 140,
+                                height: 140,
+                              ),
                             ),
                           ),
                         ),
@@ -190,13 +193,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          profileButton("Notification Settings", "/settings"),
+                          profileButton("Notification Settings", "/notifications"),
                           Divider(
                             color: Theme.of(context).primaryColor,
                             indent: 75,
                             endIndent: 75,
                           ),
-                          profileButton("Profile Settings", "/name"),
+                          profileButton("Profile Settings", "/settings"),
                         ],
                       ),
                     ),

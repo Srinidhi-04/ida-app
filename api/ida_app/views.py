@@ -591,7 +591,7 @@ def get_settings(request: HttpRequest):
 
     return JsonResponse({"data": settings})
 
-def change_name(request: HttpRequest):
+def edit_profile(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
     
@@ -618,10 +618,16 @@ def change_name(request: HttpRequest):
     if not name:
         return JsonResponse({"error": "'name' field is required"}, status = 400)
     
+    try:
+        avatar = int(request.POST.get("avatar"))
+    except:
+        return JsonResponse({"error": "'avatar' is required as an int"}, status = 400)
+    
     user.name = name
+    user.avatar = avatar
     user.save()
 
-    return JsonResponse({"message": "Name changed successfully"})
+    return JsonResponse({"message": "Profile edited successfully"})
 
 def add_item(request: HttpRequest):
     if request.method != "POST":
