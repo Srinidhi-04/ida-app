@@ -239,7 +239,9 @@ class _MapPageState extends State<MapPage> {
 
     Position? posit;
     try {
-      posit = await Geolocator.getCurrentPosition(locationSettings: LocationSettings(timeLimit: Duration(seconds: 10)));
+      posit = await Geolocator.getCurrentPosition(
+        locationSettings: LocationSettings(timeLimit: Duration(seconds: 10)),
+      );
     } catch (e) {
       print("Couldn't get location: ${e}");
       posit = await Geolocator.getLastKnownPosition();

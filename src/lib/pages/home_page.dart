@@ -104,6 +104,7 @@ class _HomePageState extends State<HomePage> {
                 "title": title,
                 "body": body,
                 "event_id": event_id,
+                "rsvp": rsvp,
                 "callback": () async {
                   await getEvents();
                 },

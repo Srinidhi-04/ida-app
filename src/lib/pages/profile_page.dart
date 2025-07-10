@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
@@ -23,28 +27,244 @@ class _ProfilePageState extends State<ProfilePage> {
   bool loaded = false;
   bool submitted = false;
 
+  List registered = [];
+  List past = [];
+
+  List<String> months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+  List<String> days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
+
   Widget profileButton(String name, String route) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 5.0),
-      child: Container(
-        width: MediaQuery.of(context).size.width * 0.6,
-        child: TextButton(
-          onPressed: () {
-            Navigator.pushNamed(context, route).then((value) => checkLogin());
-          },
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                name,
-                style: Theme.of(context).typography.black.labelMedium!.apply(),
+    return Container(
+      width: MediaQuery.of(context).size.width * 0.9,
+      child: TextButton(
+        style: ButtonStyle(visualDensity: VisualDensity.compact),
+        onPressed: () {
+          Navigator.pushNamed(context, route).then((value) => checkLogin());
+        },
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              name,
+              style: Theme.of(context).typography.black.labelMedium!.apply(),
+            ),
+            Icon(Icons.keyboard_arrow_right_outlined, color: Colors.black),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget eventCard(
+    int event_id,
+    String name,
+    String location,
+    DateTime date,
+    String image,
+    String body,
+    LatLng coordinates,
+    bool featured,
+    bool rsvp,
+  ) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      height: 170,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+        child: Card(
+          elevation: 5,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: TextButton(
+            onPressed: () {
+              Navigator.pushNamed(
+                context,
+                "/event",
+                arguments: {
+                  "image": image,
+                  "date": date,
+                  "location": location,
+                  "title": name,
+                  "body": body,
+                  "event_id": event_id,
+                  "rsvp": rsvp,
+                  "callback": () {
+                    getEvents();
+                  },
+                  "latitude": coordinates.latitude,
+                  "longitude": coordinates.longitude,
+                  "featured": featured,
+                },
+              );
+            },
+            style: ButtonStyle(
+              padding: WidgetStatePropertyAll(EdgeInsets.zero),
+              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              shape: WidgetStatePropertyAll(
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
-              Icon(Icons.keyboard_arrow_right_outlined, color: Colors.black),
-            ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image(
+                      width: MediaQuery.of(context).size.width / 5,
+                      height: 170,
+                      image: NetworkImage(image),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: Container(
+                      width: 0.6 * MediaQuery.of(context).size.width - 20,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 10.0),
+                                child: Text(
+                                  "${days[date.weekday - 1]}, ${months[date.month - 1]} ${(date.day < 10) ? 0 : ""}${date.day} • ${(date.hour % 12 < 10 && date.hour % 12 != 0) ? 0 : ""}${(date.hour % 12 == 0) ? 12 : date.hour % 12}:${(date.minute < 10) ? 0 : ""}${date.minute} ${(date.hour >= 12) ? "PM" : "AM"}",
+                                  style: Theme.of(
+                                    context,
+                                  ).typography.white.labelSmall!.apply(
+                                    color: Theme.of(context).primaryColorLight,
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                name,
+                                style: Theme.of(
+                                  context,
+                                ).typography.black.labelLarge!.apply(
+                                  color: Theme.of(context).primaryColorDark,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.location_on,
+                                    color: Theme.of(context).primaryColor,
+                                  ),
+                                  Container(
+                                    constraints: BoxConstraints(
+                                      maxWidth:
+                                          0.3 *
+                                          MediaQuery.of(context).size.width,
+                                    ),
+                                    child: Text(
+                                      location,
+                                      style: Theme.of(
+                                        context,
+                                      ).typography.black.labelSmall!.apply(
+                                        color: Theme.of(context).primaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(
+                                    context,
+                                    "/map",
+                                    arguments: {"coordinates": coordinates},
+                                  );
+                                },
+                                child: Text(
+                                  "View on map",
+                                  style:
+                                      Theme.of(
+                                        context,
+                                      ).typography.white.labelSmall,
+                                ),
+                                style: ButtonStyle(
+                                  backgroundColor: WidgetStatePropertyAll(
+                                    Theme.of(context).primaryColorDark,
+                                  ),
+                                  shape: WidgetStatePropertyAll(
+                                    RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> getEvents() async {
+    var response = await get(
+      Uri.parse(baseUrl + "/get-rsvp?user_id=${user_id}"),
+      headers: {"Authorization": "Token ${token}"},
+    );
+    Map info = jsonDecode(response.body);
+    List all_events = info["data"];
+
+    List upcoming = [];
+    List old = [];
+
+    for (int i = 0; i < all_events.length; i++) {
+      all_events[i]["coordinates"] = LatLng(
+        all_events[i]["latitude"],
+        all_events[i]["longitude"],
+      );
+      all_events[i]["date"] = DateTime.parse(all_events[i]["date"]).toLocal();
+
+      if (all_events[i]["completed"]) {
+        old.add(all_events[i]);
+      } else {
+        upcoming.add(all_events[i]);
+      }
+    }
+
+    setState(() {
+      registered = upcoming;
+      past = old;
+      loaded = true;
+    });
   }
 
   Future<void> checkLogin() async {
@@ -69,8 +289,8 @@ class _ProfilePageState extends State<ProfilePage> {
       avatar = int.parse(info["avatar"]!);
       admin = bool.parse(info["admin"]!);
       reminders = info["reminders"]!;
-      loaded = true;
     });
+    getEvents();
   }
 
   @override
@@ -101,12 +321,11 @@ class _ProfilePageState extends State<ProfilePage> {
                 context,
               ).typography.white.headlineMedium!.apply(fontWeightDelta: 3),
             ),
-            backgroundColor: Colors.transparent,
+            backgroundColor: Theme.of(context).primaryColorDark,
             foregroundColor: Colors.white,
             elevation: 0,
             centerTitle: true,
           ),
-          extendBodyBehindAppBar: true,
           body: RefreshIndicator(
             onRefresh: () async {
               await checkLogin();
@@ -133,7 +352,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Container(
                               color: Theme.of(context).primaryColorDark,
                               width: MediaQuery.of(context).size.width,
-                              height: 175,
+                              height: 100,
                             ),
                             Container(
                               color: Colors.white,
@@ -194,6 +413,116 @@ class _ProfilePageState extends State<ProfilePage> {
                       ),
                     ),
                     Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          (registered.isNotEmpty || past.isNotEmpty)
+                              ? Padding(
+                                padding: const EdgeInsets.fromLTRB(
+                                  0,
+                                  10,
+                                  0,
+                                  10,
+                                ),
+                                child: Text(
+                                  "Event Participation",
+                                  style: Theme.of(context)
+                                      .typography
+                                      .black
+                                      .labelLarge!
+                                      .apply(fontWeightDelta: 3),
+                                ),
+                              )
+                              : Container(),
+                          (registered.isNotEmpty)
+                              ? Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      5,
+                                      0,
+                                      0,
+                                      5,
+                                    ),
+                                    child: Text(
+                                      "Registered",
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).typography.black.labelMedium,
+                                    ),
+                                  ),
+                                  Column(
+                                    children:
+                                        registered
+                                            .map(
+                                              (e) => eventCard(
+                                                e["event_id"],
+                                                e["name"],
+                                                e["location"],
+                                                e["date"],
+                                                e["image"],
+                                                e["body"],
+                                                e["coordinates"],
+                                                e["essential"],
+                                                true,
+                                              ),
+                                            )
+                                            .toList(),
+                                  ),
+                                ],
+                              )
+                              : Container(),
+
+                          (past.isNotEmpty)
+                              ? Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      5,
+                                      0,
+                                      0,
+                                      5,
+                                    ),
+                                    child: Text(
+                                      "Past",
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).typography.black.labelMedium,
+                                    ),
+                                  ),
+                                  Column(
+                                    children:
+                                        past
+                                            .map(
+                                              (e) => eventCard(
+                                                e["event_id"],
+                                                e["name"],
+                                                e["location"],
+                                                e["date"],
+                                                e["image"],
+                                                e["body"],
+                                                e["coordinates"],
+                                                e["essential"],
+                                                true,
+                                              ),
+                                            )
+                                            .toList(),
+                                  ),
+                                ],
+                              )
+                              : Container(),
+                        ],
+                      ),
+                    ),
+                    Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -204,47 +533,50 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           Divider(
                             color: Theme.of(context).primaryColor,
-                            indent: 75,
-                            endIndent: 75,
+                            indent: 20,
+                            endIndent: 20,
                           ),
                           profileButton("Profile Settings", "/settings"),
                         ],
                       ),
                     ),
-                    TextButton(
-                      onPressed: () async {
-                        setState(() {
-                          submitted = true;
-                        });
+                    Padding(
+                      padding: const EdgeInsets.all(10),
+                      child: TextButton(
+                        onPressed: () async {
+                          setState(() {
+                            submitted = true;
+                          });
 
-                        await NotificationsManager.unsubscribeAllNotifications(
-                          user_id,
-                          token,
-                          reminders,
-                        );
+                          await NotificationsManager.unsubscribeAllNotifications(
+                            user_id,
+                            token,
+                            reminders,
+                          );
 
-                        await SecureStorage.delete();
-                        await Navigator.of(
-                          context,
-                        ).pushNamedAndRemoveUntil("/login", (route) => false);
+                          await SecureStorage.delete();
+                          await Navigator.of(
+                            context,
+                          ).pushNamedAndRemoveUntil("/login", (route) => false);
 
-                        setState(() {
-                          submitted = false;
-                        });
-                      },
-                      child: Text(
-                        "LOG OUT",
-                        style: Theme.of(context).typography.white.labelLarge!
-                            .apply(fontSizeDelta: 2, fontWeightDelta: 3),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(
-                          Theme.of(context).primaryColor,
+                          setState(() {
+                            submitted = false;
+                          });
+                        },
+                        child: Text(
+                          "LOG OUT",
+                          style: Theme.of(context).typography.white.labelLarge!
+                              .apply(fontSizeDelta: 2, fontWeightDelta: 3),
                         ),
-                        fixedSize: WidgetStatePropertyAll(
-                          Size(0.6 * MediaQuery.of(context).size.width, 50),
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Theme.of(context).primaryColor,
+                          ),
+                          fixedSize: WidgetStatePropertyAll(
+                            Size(0.7 * MediaQuery.of(context).size.width, 50),
+                          ),
+                          elevation: WidgetStatePropertyAll(10),
                         ),
-                        elevation: WidgetStatePropertyAll(10),
                       ),
                     ),
                   ],

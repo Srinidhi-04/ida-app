@@ -396,14 +396,17 @@ class _EventPageState extends State<EventPage> {
                   post(
                     Uri.parse(baseUrl + "/toggle-rsvp/"),
                     headers: {"Authorization": "Token ${token}"},
-                    body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
+                    body: {
+                      "user_id": user_id.toString(),
+                      "event_id": event_id.toString(),
+                    },
                   );
                   setState(() {
                     rsvp = !rsvp;
                   });
                 },
                 child: Text(
-                  "RSVP",
+                  (!rsvp) ? "RSVP" : "UNREGISTER",
                   style: Theme.of(context).typography.white.labelLarge!.apply(
                     fontSizeDelta: 2,
                     fontWeightDelta: 3,
@@ -411,7 +414,9 @@ class _EventPageState extends State<EventPage> {
                 ),
                 style: ButtonStyle(
                   backgroundColor: WidgetStatePropertyAll(
-                    Theme.of(context).primaryColorLight,
+                    (!rsvp)
+                        ? Theme.of(context).primaryColorLight
+                        : Theme.of(context).primaryColor,
                   ),
                   fixedSize: WidgetStatePropertyAll(
                     Size(0.6 * MediaQuery.of(context).size.width, 50),

@@ -214,6 +214,7 @@ class _EventsPageState extends State<EventsPage> {
                     "title": name,
                     "body": body,
                     "event_id": event_id,
+                    "rsvp": rsvp,
                     "callback": () {
                       getEvents();
                       getNotifications();
