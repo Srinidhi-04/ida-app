@@ -3,6 +3,7 @@ import datetime
 import random as rd
 from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.contrib.auth import authenticate
+from django.db.models import Q, Prefetch
 from ida_app.tasks import *
 from ida_app.models import *
 
@@ -434,8 +435,55 @@ def get_events(request: HttpRequest):
         if completed != "yes" and essential:
             events = events.filter(essential = essential == "yes").order_by("-essential")
         events = list(events.values())
+    
+    rsvp = list(EventRsvp.objects.filter(user = user).only("event_id").values("event_id"))
+
+    for i in range(len(events)):
+        events[i]["rsvp"] = {"event_id": events[i]["event_id"]} in rsvp
 
     return JsonResponse({"data": events})
+
+def toggle_rsvp(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+
+    try:
+        user_id = int(request.POST.get("user_id"))
+    except:
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+
+    token = request.headers.get("authorization")
+    if not token:
+        return JsonResponse({"error": "Authorization token is required"}, status = 400)
+    if not token.startswith("Token "):
+        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
+    token = token[6:]
+
+    try:
+        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+        if user.token != token:
+            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
+    except:
+        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    
+    try:
+        event_id = int(request.POST.get("event_id"))
+    except:
+        return JsonResponse({"error": "'event_id' field is required as an int"}, status = 400)
+    
+    try:
+        event = Events.objects.get(event_id = event_id)
+    except:
+        return JsonResponse({"error": "An event with that event ID does not exist"}, status = 400)
+    
+    try:
+        rsvp: EventRsvp = user.user_rsvp.get(event = event)
+        rsvp.delete()
+    except:
+        rsvp = EventRsvp(user = user, event = event)
+        rsvp.save()
+    
+    return JsonResponse({"message": "Event successfully RSVPed"})
 
 def toggle_notification(request: HttpRequest):
     if request.method != "POST":

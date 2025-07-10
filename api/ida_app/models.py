@@ -95,3 +95,9 @@ class UserCarts(models.Model):
     user = models.ForeignKey(UserCredentials, related_name = "user_carts", on_delete = models.CASCADE, null = False)
     item = models.ForeignKey(ShopItems, related_name = "item_carts", on_delete = models.CASCADE, null = False)
     quantity = models.IntegerField(unique = False, null = True)
+
+
+class EventRsvp(models.Model):
+    record_id = models.AutoField(primary_key = True, unique = True, null = False)
+    user = models.ForeignKey(UserCredentials, related_name = "user_rsvp", on_delete = models.CASCADE, null = False)
+    event = models.ForeignKey(Events, related_name = "event_rsvp", on_delete = models.CASCADE, null = False)
