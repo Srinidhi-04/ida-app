@@ -134,7 +134,7 @@ class _SignupPageState extends State<SignupPage> {
                                 context,
                               ).typography.black.headlineLarge!.apply(
                                 color: Theme.of(context).primaryColorDark,
-                                fontWeightDelta: 7,
+                                fontWeightDelta: 3,
                               ),
                             ),
                             Padding(
@@ -284,7 +284,7 @@ class _SignupPageState extends State<SignupPage> {
                                     .typography
                                     .white
                                     .labelMedium!
-                                    .apply(fontWeightDelta: 7),
+                                    .apply(fontWeightDelta: 3),
                               ),
                               style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll(
@@ -332,7 +332,7 @@ class _SignupPageState extends State<SignupPage> {
                                       ).typography.black.bodyLarge!.apply(
                                         color:
                                             Theme.of(context).primaryColorDark,
-                                        fontWeightDelta: 7,
+                                        fontWeightDelta: 3,
                                         decoration: TextDecoration.underline,
                                       ),
                                     ),

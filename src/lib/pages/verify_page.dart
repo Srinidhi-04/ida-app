@@ -167,7 +167,7 @@ class _VerifyPageState extends State<VerifyPage> {
                                 context,
                               ).typography.black.headlineLarge!.apply(
                                 color: Theme.of(context).primaryColorDark,
-                                fontWeightDelta: 7,
+                                fontWeightDelta: 3,
                               ),
                             ),
                             Padding(
@@ -223,7 +223,7 @@ class _VerifyPageState extends State<VerifyPage> {
                                       context,
                                     ).typography.black.bodyLarge!.apply(
                                       color: Theme.of(context).primaryColorDark,
-                                      fontWeightDelta: 7,
+                                      fontWeightDelta: 3,
                                       decoration: TextDecoration.underline,
                                     ),
                                   ),
@@ -272,7 +272,7 @@ class _VerifyPageState extends State<VerifyPage> {
                                     .typography
                                     .white
                                     .labelMedium!
-                                    .apply(fontWeightDelta: 7),
+                                    .apply(fontWeightDelta: 3),
                               ),
                               style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll(

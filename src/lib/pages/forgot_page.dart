@@ -99,7 +99,11 @@ class _ForgotPageState extends State<ForgotPage> {
       "token": info["token"].toString(),
     });
 
-    await NotificationsManager.subscribeAllNotifications(info["user_id"], info["token"], info["reminders"]);
+    await NotificationsManager.subscribeAllNotifications(
+      info["user_id"],
+      info["token"],
+      info["reminders"],
+    );
 
     Navigator.popAndPushNamed(context, "/home");
 
@@ -196,7 +200,7 @@ class _ForgotPageState extends State<ForgotPage> {
                                 context,
                               ).typography.black.headlineLarge!.apply(
                                 color: Theme.of(context).primaryColorDark,
-                                fontWeightDelta: 7,
+                                fontWeightDelta: 3,
                               ),
                             ),
                             Padding(
@@ -314,7 +318,7 @@ class _ForgotPageState extends State<ForgotPage> {
                                                   Theme.of(
                                                     context,
                                                   ).primaryColorDark,
-                                              fontWeightDelta: 7,
+                                              fontWeightDelta: 3,
                                               decoration:
                                                   TextDecoration.underline,
                                             ),
@@ -402,7 +406,7 @@ class _ForgotPageState extends State<ForgotPage> {
                                     .typography
                                     .white
                                     .labelMedium!
-                                    .apply(fontWeightDelta: 7),
+                                    .apply(fontWeightDelta: 3),
                               ),
                               style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll(
@@ -450,7 +454,7 @@ class _ForgotPageState extends State<ForgotPage> {
                                       ).typography.black.bodyLarge!.apply(
                                         color:
                                             Theme.of(context).primaryColorDark,
-                                        fontWeightDelta: 7,
+                                        fontWeightDelta: 3,
                                         decoration: TextDecoration.underline,
                                       ),
                                     ),

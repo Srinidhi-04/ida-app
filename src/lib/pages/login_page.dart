@@ -88,7 +88,11 @@ class _LoginPageState extends State<LoginPage> {
       "token": info["token"].toString(),
     });
 
-    await NotificationsManager.subscribeAllNotifications(info["user_id"], info["token"], info["reminders"]);
+    await NotificationsManager.subscribeAllNotifications(
+      info["user_id"],
+      info["token"],
+      info["reminders"],
+    );
 
     Navigator.popAndPushNamed(context, "/home");
 
@@ -164,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                                 context,
                               ).typography.black.headlineLarge!.apply(
                                 color: Theme.of(context).primaryColorDark,
-                                fontWeightDelta: 7,
+                                fontWeightDelta: 3,
                               ),
                             ),
                             Padding(
@@ -294,7 +298,7 @@ class _LoginPageState extends State<LoginPage> {
                                     .typography
                                     .white
                                     .labelMedium!
-                                    .apply(fontWeightDelta: 7),
+                                    .apply(fontWeightDelta: 3),
                               ),
                               style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll(
@@ -342,7 +346,7 @@ class _LoginPageState extends State<LoginPage> {
                                       ).typography.black.bodyLarge!.apply(
                                         color:
                                             Theme.of(context).primaryColorDark,
-                                        fontWeightDelta: 7,
+                                        fontWeightDelta: 3,
                                         decoration: TextDecoration.underline,
                                       ),
                                     ),
