@@ -485,6 +485,42 @@ def toggle_rsvp(request: HttpRequest):
     
     return JsonResponse({"message": "Event successfully RSVPed"})
 
+def get_rsvp(request: HttpRequest):
+    if request.method != "GET":
+        return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
+    
+    try:
+        user_id = int(request.GET.get("user_id"))
+    except:
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+
+    token = request.headers.get("authorization")
+    if not token:
+        return JsonResponse({"error": "Authorization token is required"}, status = 400)
+    if not token.startswith("Token "):
+        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
+    token = token[6:]
+
+    try:
+        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+        if user.token != token:
+            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
+    except:
+        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+
+    Events.objects.filter(date__lte = datetime.datetime.now(tz = datetime.timezone.utc)).update(completed = True)
+    
+    all_events = list(Events.objects.all().values())
+    
+    rsvp = list(EventRsvp.objects.filter(user = user).only("event_id").values("event_id"))
+
+    events = []
+    for event in all_events:
+        if {"event_id": event["event_id"]} in rsvp:
+            events.append(event)
+
+    return JsonResponse({"data": events})
+
 def toggle_notification(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
