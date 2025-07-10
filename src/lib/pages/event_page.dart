@@ -31,6 +31,7 @@ class _EventPageState extends State<EventPage> {
   late double latitude;
   late double longitude;
   late bool featured;
+  late bool rsvp;
 
   List<String> months = [
     "Jan",
@@ -89,6 +90,7 @@ class _EventPageState extends State<EventPage> {
         latitude = args["latitude"];
         longitude = args["longitude"];
         featured = args["featured"];
+        rsvp = args["rsvp"];
         initialized = true;
       });
     }
@@ -390,7 +392,16 @@ class _EventPageState extends State<EventPage> {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: TextButton(
-                onPressed: () {},
+                onPressed: () async {
+                  post(
+                    Uri.parse(baseUrl + "/toggle-rsvp/"),
+                    headers: {"Authorization": "Token ${token}"},
+                    body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
+                  );
+                  setState(() {
+                    rsvp = !rsvp;
+                  });
+                },
                 child: Text(
                   "RSVP",
                   style: Theme.of(context).typography.white.labelLarge!.apply(

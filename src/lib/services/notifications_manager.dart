@@ -56,12 +56,11 @@ class NotificationsManager {
     }
   }
 
-  static Future<void> toggleNotifications(
+  static Future<void> subscribeNotification(
     int user_id,
     String token,
     int event_id,
     String reminders,
-    bool notify,
   ) async {
     post(
       Uri.parse(baseUrl + "/toggle-notification/"),
@@ -69,32 +68,37 @@ class NotificationsManager {
       body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
     );
 
-    if (notify) {
-      FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}");
+    FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}");
 
-      if (reminders == "30 minutes before") {
-        FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-0");
-      } else if (reminders == "2 hours before") {
-        FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-1");
-      } else if (reminders == "6 hours before") {
-        FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-2");
-      }
-    } else {
-      FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}");
+    if (reminders == "30 minutes before") {
+      FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-0");
+    } else if (reminders == "2 hours before") {
+      FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-1");
+    } else if (reminders == "6 hours before") {
+      FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-2");
+    }
+  }
+  
+  static Future<void> unsubscribeNotification(
+    int user_id,
+    String token,
+    int event_id,
+    String reminders,
+  ) async {
+    post(
+      Uri.parse(baseUrl + "/toggle-notification/"),
+      headers: {"Authorization": "Token ${token}"},
+      body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
+    );
 
-      if (reminders == "30 minutes before") {
-        FirebaseMessaging.instance.unsubscribeFromTopic(
-          "ida-event-${event_id}-0",
-        );
-      } else if (reminders == "2 hours before") {
-        FirebaseMessaging.instance.unsubscribeFromTopic(
-          "ida-event-${event_id}-1",
-        );
-      } else if (reminders == "6 hours before") {
-        FirebaseMessaging.instance.unsubscribeFromTopic(
-          "ida-event-${event_id}-2",
-        );
-      }
+    FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}");
+
+    if (reminders == "30 minutes before") {
+      FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}-0");
+    } else if (reminders == "2 hours before") {
+      FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}-1");
+    } else if (reminders == "6 hours before") {
+      FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}-2");
     }
   }
 

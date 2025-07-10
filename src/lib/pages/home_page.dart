@@ -79,6 +79,7 @@ class _HomePageState extends State<HomePage> {
     double latitude,
     double longitude,
     bool featured,
+    bool rsvp
   ) {
     return Padding(
       padding: const EdgeInsets.only(right: 20),
@@ -243,6 +244,7 @@ class _HomePageState extends State<HomePage> {
         "latitude": event["latitude"],
         "longitude": event["longitude"],
         "featured": event["essential"],
+        "rsvp": event["rsvp"]
       });
     }
 
@@ -472,6 +474,7 @@ class _HomePageState extends State<HomePage> {
                                     e["latitude"],
                                     e["longitude"],
                                     e["featured"],
+                                    e["rsvp"]
                                   ),
                                 )
                                 .toList(),

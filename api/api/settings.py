@@ -15,9 +15,9 @@ import json
 from pathlib import Path
 import firebase_admin
 import os
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 
-load_dotenv()
+# load_dotenv()
 
 DATABASE_NAME = os.getenv("DB_NAME")
 DATABASE_USER = os.getenv("DB_USER")
@@ -38,9 +38,9 @@ SECRET_KEY = os.getenv("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["ida-app-api-afb7906d4986.herokuapp.com", "127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["ida-app-api-afb7906d4986.herokuapp.com"]
 
-CORS_ALLOWED_ORIGINS = ["https://ida-app-api-afb7906d4986.herokuapp.com", "http://127.0.0.1", "http://localhost"]
+CORS_ALLOWED_ORIGINS = ["https://ida-app-api-afb7906d4986.herokuapp.com"]
 CORS_ALLOW_ALL_ORIGINS = False
 
 FIREBASE_KEY = os.getenv("FIREBASE_KEY")
@@ -51,9 +51,9 @@ firebase_admin.initialize_app(cred)
 SECURE_HSTS_SECONDS = 3600
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
-SECURE_SSL_REDIRECT = False
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = False
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 X_FRAME_OPTIONS = 'DENY'
 
 # Application definition

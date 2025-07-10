@@ -96,6 +96,7 @@ class _EventsPageState extends State<EventsPage> {
     LatLng coordinates,
     int type,
     bool featured,
+    bool rsvp
   ) {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -299,7 +300,11 @@ class _EventsPageState extends State<EventsPage> {
                                             notifs.add(event_id);
                                         });
 
-                                        NotificationsManager.toggleNotifications(user_id, token, event_id, reminders, notifs.contains(event_id));
+                                        if (notifs.contains(event_id)) {
+                                          NotificationsManager.subscribeNotification(user_id, token, event_id, reminders);
+                                        } else {
+                                          NotificationsManager.unsubscribeNotification(user_id, token, event_id, reminders);
+                                        }
                                       },
                                       icon: Icon(
                                         (notifs.contains(event_id))
@@ -570,6 +575,7 @@ class _EventsPageState extends State<EventsPage> {
                                       0,
                                       (upcoming["essential"]!.isNotEmpty &&
                                           upcoming["essential"]!.contains(e)),
+                                      e["rsvp"]
                                     ),
                                   )
                                   .toList())
@@ -601,6 +607,7 @@ class _EventsPageState extends State<EventsPage> {
                                       e["coordinates"],
                                       2,
                                       false,
+                                      e["rsvp"]
                                     ),
                                   )
                                   .toList()),
@@ -654,6 +661,7 @@ class _EventsPageState extends State<EventsPage> {
                                       e["coordinates"],
                                       1,
                                       true,
+                                      e["rsvp"]
                                     ),
                                   )
                                   .toList()),
