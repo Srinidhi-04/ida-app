@@ -339,6 +339,10 @@ class _DonatePageState extends State<DonatePage> {
                                         await Stripe.instance
                                             .presentPaymentSheet();
 
+                                        setState(() {
+                                          submitted = true;
+                                        });
+
                                         await post(
                                           Uri.parse(baseUrl + "/log-donation/"),
                                           headers: {
