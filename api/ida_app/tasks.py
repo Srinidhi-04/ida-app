@@ -77,13 +77,13 @@ def send_verification_code(name: str, code: int, email: str):
 
     message = MIMEText(text, "html")
     message["Subject"] = "IDA App Verification Code"
-    message["From"] = "illinidadsassociation@gmail.com"
+    message["From"] = "communications@illinidads.com"
     message["To"] = email
 
     session = smtplib.SMTP("smtp.gmail.com", 587)
     session.starttls()
-    session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
-    session.sendmail("illinidadsassociation@gmail.com", email, message.as_string())
+    session.login("communications@illinidads.com", GMAIL_PASSWORD)
+    session.sendmail("communications@illinidads.com", email, message.as_string())
     session.quit()
 
     print("Verification code sent successfully")
