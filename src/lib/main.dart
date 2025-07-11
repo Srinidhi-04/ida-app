@@ -59,7 +59,7 @@ void main() async {
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
   const AndroidInitializationSettings androidInit =
-      AndroidInitializationSettings('@drawable/ic_stat_notification_icon');
+      AndroidInitializationSettings('@drawable/ic_stat_notification');
   final DarwinInitializationSettings iosInit = DarwinInitializationSettings();
 
   await flutterLocalNotificationsPlugin.initialize(
