@@ -499,7 +499,7 @@ class _ManagePageState extends State<ManagePage> {
                             if (event_id == null) {
                               await post(
                                 Uri.parse(baseUrl + "/add-event/"),
-                                headers: {"Authorization": "Token ${token}"},
+                                headers: {"Authorization": "Bearer ${token}"},
                                 body: {
                                   "user_id": user_id.toString(),
                                   "name": name,
@@ -521,7 +521,7 @@ class _ManagePageState extends State<ManagePage> {
                             } else {
                               await post(
                                 Uri.parse(baseUrl + "/edit-event/"),
-                                headers: {"Authorization": "Token ${token}"},
+                                headers: {"Authorization": "Bearer ${token}"},
                                 body: {
                                   "user_id": user_id.toString(),
                                   "event_id": event_id.toString(),

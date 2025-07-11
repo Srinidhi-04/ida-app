@@ -112,7 +112,7 @@ class _HomePageState extends State<HomePage> {
                 "latitude": latitude,
                 "longitude": longitude,
                 "featured": featured,
-                "past": past
+                "past": past,
               },
             );
           },
@@ -230,7 +230,7 @@ class _HomePageState extends State<HomePage> {
 
     var response = await get(
       Uri.parse(baseUrl + "/get-events?completed=no&user_id=${user_id}"),
-      headers: {"Authorization": "Token ${token}"},
+      headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
     List all_events = info["data"];
@@ -261,7 +261,7 @@ class _HomePageState extends State<HomePage> {
   Future<void> getCart() async {
     var response = await get(
       Uri.parse(baseUrl + "/get-cart?user_id=${user_id}"),
-      headers: {"Authorization": "Token ${token}"},
+      headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
     List data = info["data"];
@@ -479,7 +479,7 @@ class _HomePageState extends State<HomePage> {
                                     e["longitude"],
                                     e["featured"],
                                     e["rsvp"],
-                                    e["past"]
+                                    e["past"],
                                   ),
                                 )
                                 .toList(),

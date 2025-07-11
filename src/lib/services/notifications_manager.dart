@@ -21,7 +21,7 @@ class NotificationsManager {
   ) async {
     var response = await get(
       Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
-      headers: {"Authorization": "Token ${token}"},
+      headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
     List notifs = info["data"];
@@ -42,7 +42,7 @@ class NotificationsManager {
   ) async {
     var response = await get(
       Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
-      headers: {"Authorization": "Token ${token}"},
+      headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
     List notifs = info["data"];
@@ -64,7 +64,7 @@ class NotificationsManager {
   ) async {
     post(
       Uri.parse(baseUrl + "/toggle-notification/"),
-      headers: {"Authorization": "Token ${token}"},
+      headers: {"Authorization": "Bearer ${token}"},
       body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
     );
 
@@ -78,7 +78,7 @@ class NotificationsManager {
       FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-2");
     }
   }
-  
+
   static Future<void> unsubscribeNotification(
     int user_id,
     String token,
@@ -87,18 +87,24 @@ class NotificationsManager {
   ) async {
     post(
       Uri.parse(baseUrl + "/toggle-notification/"),
-      headers: {"Authorization": "Token ${token}"},
+      headers: {"Authorization": "Bearer ${token}"},
       body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
     );
 
     FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}");
 
     if (reminders == "30 minutes before") {
-      FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}-0");
+      FirebaseMessaging.instance.unsubscribeFromTopic(
+        "ida-event-${event_id}-0",
+      );
     } else if (reminders == "2 hours before") {
-      FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}-1");
+      FirebaseMessaging.instance.unsubscribeFromTopic(
+        "ida-event-${event_id}-1",
+      );
     } else if (reminders == "6 hours before") {
-      FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}-2");
+      FirebaseMessaging.instance.unsubscribeFromTopic(
+        "ida-event-${event_id}-2",
+      );
     }
   }
 
@@ -110,7 +116,7 @@ class NotificationsManager {
   ) async {
     var response = await get(
       Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
-      headers: {"Authorization": "Token ${token}"},
+      headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
     List notifs = info["data"];

@@ -53,7 +53,7 @@ class _ShopPageState extends State<ShopPage> {
                 });
                 await post(
                   Uri.parse(baseUrl + "/delete-item/"),
-                  headers: {"Authorization": "Token ${token}"},
+                  headers: {"Authorization": "Bearer ${token}"},
                   body: {
                     "user_id": user_id.toString,
                     "item_id": item_id.toString(),
@@ -92,7 +92,7 @@ class _ShopPageState extends State<ShopPage> {
                   });
                   await post(
                     Uri.parse(baseUrl + "/delete-item/"),
-                    headers: {"Authorization": "Token ${token}"},
+                    headers: {"Authorization": "Bearer ${token}"},
                     body: {
                       "user_id": user_id.toString(),
                       "item_id": item_id.toString(),
@@ -179,7 +179,7 @@ class _ShopPageState extends State<ShopPage> {
                                         await post(
                                           Uri.parse(baseUrl + "/edit-cart/"),
                                           headers: {
-                                            "Authorization": "Token ${token}",
+                                            "Authorization": "Bearer ${token}",
                                           },
                                           body: {
                                             "user_id": user_id.toString(),
@@ -247,7 +247,7 @@ class _ShopPageState extends State<ShopPage> {
                                                 ),
                                                 headers: {
                                                   "Authorization":
-                                                      "Token ${token}",
+                                                      "Bearer ${token}",
                                                 },
                                                 body: {
                                                   "user_id": user_id.toString(),
@@ -287,7 +287,7 @@ class _ShopPageState extends State<ShopPage> {
                                                 ),
                                                 headers: {
                                                   "Authorization":
-                                                      "Token ${token}",
+                                                      "Bearer ${token}",
                                                 },
                                                 body: {
                                                   "user_id": user_id.toString(),
@@ -352,7 +352,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> getItems() async {
     var response = await get(
       Uri.parse(baseUrl + "/get-items?user_id=${user_id}"),
-      headers: {"Authorization": "Token ${token}"},
+      headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
     List all_items = info["data"];
@@ -366,7 +366,7 @@ class _ShopPageState extends State<ShopPage> {
   Future<void> getCart() async {
     var response = await get(
       Uri.parse(baseUrl + "/get-cart?user_id=${user_id}"),
-      headers: {"Authorization": "Token ${token}"},
+      headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
     List data = info["data"];

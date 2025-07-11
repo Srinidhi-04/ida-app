@@ -260,7 +260,7 @@ class _MapPageState extends State<MapPage> {
   Future<void> getEvents() async {
     var response = await get(
       Uri.parse(baseUrl + "/get-events?user_id=${user_id}"),
-      headers: {"Authorization": "Token ${token}"},
+      headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
     List all_events = info["data"];

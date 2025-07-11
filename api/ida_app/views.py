@@ -194,9 +194,9 @@ def add_event(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -268,9 +268,9 @@ def edit_event(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -365,9 +365,9 @@ def delete_event(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -412,9 +412,9 @@ def get_events(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -455,9 +455,9 @@ def toggle_rsvp(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -497,9 +497,9 @@ def get_rsvp(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -533,9 +533,9 @@ def toggle_notification(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -575,9 +575,9 @@ def get_notifications(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -602,9 +602,9 @@ def change_settings(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -659,9 +659,9 @@ def get_settings(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -687,9 +687,9 @@ def edit_profile(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -725,9 +725,9 @@ def add_item(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -771,9 +771,9 @@ def edit_item(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -825,9 +825,9 @@ def get_items(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -852,9 +852,9 @@ def delete_item(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -894,9 +894,9 @@ def edit_cart(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
@@ -948,9 +948,9 @@ def get_cart(request: HttpRequest):
     token = request.headers.get("authorization")
     if not token:
         return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Token "):
+    if not token.startswith("Bearer "):
         return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[6:]
+    token = token[7:]
 
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)

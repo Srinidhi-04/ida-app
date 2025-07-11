@@ -235,7 +235,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         });
                         await post(
                           Uri.parse(baseUrl + "/edit-profile/"),
-                          headers: {"Authorization": "Token ${token}"},
+                          headers: {"Authorization": "Bearer ${token}"},
                           body: {
                             "user_id": user_id.toString(),
                             "name": name,

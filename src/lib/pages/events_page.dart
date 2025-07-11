@@ -96,7 +96,7 @@ class _EventsPageState extends State<EventsPage> {
     LatLng coordinates,
     int type,
     bool featured,
-    bool rsvp
+    bool rsvp,
   ) {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -121,7 +121,7 @@ class _EventsPageState extends State<EventsPage> {
                 });
                 await post(
                   Uri.parse(baseUrl + "/delete-event/"),
-                  headers: {"Authorization": "Token ${token}"},
+                  headers: {"Authorization": "Bearer ${token}"},
                   body: {
                     "user_id": user_id.toString(),
                     "event_id": event_id.toString(),
@@ -180,7 +180,7 @@ class _EventsPageState extends State<EventsPage> {
                   });
                   await post(
                     Uri.parse(baseUrl + "/delete-event/"),
-                    headers: {"Authorization": "Token ${token}"},
+                    headers: {"Authorization": "Bearer ${token}"},
                     body: {
                       "user_id": user_id.toString(),
                       "event_id": event_id.toString(),
@@ -222,7 +222,7 @@ class _EventsPageState extends State<EventsPage> {
                     "latitude": coordinates.latitude,
                     "longitude": coordinates.longitude,
                     "featured": featured,
-                    "past": (type == 2)
+                    "past": (type == 2),
                   },
                 );
               },
@@ -303,9 +303,19 @@ class _EventsPageState extends State<EventsPage> {
                                         });
 
                                         if (notifs.contains(event_id)) {
-                                          NotificationsManager.subscribeNotification(user_id, token, event_id, reminders);
+                                          NotificationsManager.subscribeNotification(
+                                            user_id,
+                                            token,
+                                            event_id,
+                                            reminders,
+                                          );
                                         } else {
-                                          NotificationsManager.unsubscribeNotification(user_id, token, event_id, reminders);
+                                          NotificationsManager.unsubscribeNotification(
+                                            user_id,
+                                            token,
+                                            event_id,
+                                            reminders,
+                                          );
                                         }
                                       },
                                       icon: Icon(
@@ -397,7 +407,7 @@ class _EventsPageState extends State<EventsPage> {
   Future<void> getEvents() async {
     var response = await get(
       Uri.parse(baseUrl + "/get-events?user_id=${user_id}"),
-      headers: {"Authorization": "Token ${token}"},
+      headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
     List all_events = info["data"];
@@ -430,7 +440,7 @@ class _EventsPageState extends State<EventsPage> {
   Future<void> getNotifications() async {
     var response = await get(
       Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
-      headers: {"Authorization": "Token ${token}"},
+      headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
     setState(() {
@@ -576,7 +586,7 @@ class _EventsPageState extends State<EventsPage> {
                                       e["coordinates"],
                                       0,
                                       e["essential"],
-                                      e["rsvp"]
+                                      e["rsvp"],
                                     ),
                                   )
                                   .toList())
@@ -608,7 +618,7 @@ class _EventsPageState extends State<EventsPage> {
                                       e["coordinates"],
                                       2,
                                       e["essential"],
-                                      e["rsvp"]
+                                      e["rsvp"],
                                     ),
                                   )
                                   .toList()),
@@ -662,7 +672,7 @@ class _EventsPageState extends State<EventsPage> {
                                       e["coordinates"],
                                       1,
                                       e["essential"],
-                                      e["rsvp"]
+                                      e["rsvp"],
                                     ),
                                   )
                                   .toList()),

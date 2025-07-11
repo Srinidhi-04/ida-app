@@ -73,7 +73,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Future<void> getSettings() async {
     var response = await get(
       Uri.parse(baseUrl + "/get-settings?user_id=${user_id}"),
-      headers: {"Authorization": "Token ${token}"},
+      headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
     setState(() {
@@ -202,7 +202,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             });
                             await post(
                               Uri.parse(baseUrl + "/change-settings/"),
-                              headers: {"Authorization": "Token ${token}"},
+                              headers: {"Authorization": "Bearer ${token}"},
                               body: {
                                 "user_id": user_id.toString(),
                                 "announcements":

@@ -193,7 +193,7 @@ class _EventPageState extends State<EventPage> {
                             onTap: () async {
                               await post(
                                 Uri.parse(baseUrl + "/delete-event/"),
-                                headers: {"Authorization": "Token ${token}"},
+                                headers: {"Authorization": "Bearer ${token}"},
                                 body: {
                                   "user_id": user_id.toString(),
                                   "event_id": event_id.toString(),
@@ -401,7 +401,7 @@ class _EventPageState extends State<EventPage> {
                     onPressed: () async {
                       post(
                         Uri.parse(baseUrl + "/toggle-rsvp/"),
-                        headers: {"Authorization": "Token ${token}"},
+                        headers: {"Authorization": "Bearer ${token}"},
                         body: {
                           "user_id": user_id.toString(),
                           "event_id": event_id.toString(),

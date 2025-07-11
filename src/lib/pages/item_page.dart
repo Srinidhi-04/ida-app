@@ -207,7 +207,7 @@ class _ItemPageState extends State<ItemPage> {
                             if (item_id == null) {
                               await post(
                                 Uri.parse(baseUrl + "/add-item/"),
-                                headers: {"Authorization": "Token ${token}"},
+                                headers: {"Authorization": "Bearer ${token}"},
                                 body: {
                                   "user_id": user_id.toString(),
                                   "name": name,
@@ -220,7 +220,7 @@ class _ItemPageState extends State<ItemPage> {
                             } else {
                               await post(
                                 Uri.parse(baseUrl + "/edit-item/"),
-                                headers: {"Authorization": "Token ${token}"},
+                                headers: {"Authorization": "Bearer ${token}"},
                                 body: {
                                   "user_id": user_id.toString(),
                                   "item_id": item_id.toString(),
