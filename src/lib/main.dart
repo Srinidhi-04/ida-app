@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:src/pages/about_page.dart';
+import 'package:src/pages/donate_page.dart';
 import 'package:src/pages/forgot_page.dart';
 import 'package:src/pages/item_page.dart';
 import 'package:src/pages/manage_page.dart';
@@ -70,6 +72,8 @@ void main() async {
 
   await FirebaseMessaging.instance.subscribeToTopic("ida-app-default");
 
+  Stripe.publishableKey = "pk_test_51Rjh8ERxXVR7luJWI8mgxhGiR6aKig0aRJqdYYAFFPrJOuIQ2LE4O35WLQY4h8WqWkkxtLysoBbrhJciJxt5IVrq00FIw2Exxi";
+
   runApp(
     MaterialApp(
       routes: {
@@ -89,6 +93,7 @@ void main() async {
         "/about": (context) => AboutPage(),
         "/settings": (context) => SettingsPage(),
         "/item": (context) => ItemPage(),
+        "/donate": (context) => DonatePage()
       },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

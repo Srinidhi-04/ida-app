@@ -404,8 +404,8 @@ class _HomePageState extends State<HomePage> {
                           mainButton(
                             Theme.of(context).primaryColorLight,
                             "Donate",
-                            "https://www.illinidads.com/donation",
-                            true,
+                            "/donate",
+                            false,
                           ),
                           mainButton(
                             Theme.of(context).primaryColorDark,

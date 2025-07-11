@@ -4,6 +4,7 @@ import random as rd
 from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.contrib.auth import authenticate
 from django.db.models import Q, Prefetch
+import stripe
 from ida_app.tasks import *
 from ida_app.models import *
 
@@ -962,3 +963,83 @@ def get_cart(request: HttpRequest):
     cart_item = user.user_carts.all().only("item_id", "quantity")
 
     return JsonResponse({"data": list(cart_item.values("item_id", "quantity"))})
+
+def stripe_payment(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+
+    try:
+        user_id = int(request.POST.get("user_id"))
+    except:
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+
+    token = request.headers.get("authorization")
+    if not token:
+        return JsonResponse({"error": "Authorization token is required"}, status = 400)
+    if not token.startswith("Bearer "):
+        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
+    token = token[7:]
+
+    try:
+        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+        if user.token != token:
+            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
+    except:
+        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+
+    try:
+        amount = int(float(request.POST.get("amount")) * 100)
+    except:
+        return JsonResponse({"error": "'amount' is required as a float"}, status = 400)
+
+    payment_intent = stripe.PaymentIntent.create(
+        amount = amount,
+        currency = "usd",
+        payment_method_types = ["card"]
+    )
+
+    return JsonResponse({"message": "Stripe payment sheet successfully created", "payment_intent": payment_intent.client_secret, "publishable_key": "pk_test_51Rjh8ERxXVR7luJWI8mgxhGiR6aKig0aRJqdYYAFFPrJOuIQ2LE4O35WLQY4h8WqWkkxtLysoBbrhJciJxt5IVrq00FIw2Exxi"})
+
+def log_donation(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+
+    try:
+        user_id = int(request.POST.get("user_id"))
+    except:
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+
+    token = request.headers.get("authorization")
+    if not token:
+        return JsonResponse({"error": "Authorization token is required"}, status = 400)
+    if not token.startswith("Bearer "):
+        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
+    token = token[7:]
+
+    try:
+        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+        if user.token != token:
+            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
+    except:
+        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    
+    name = request.POST.get("name")
+    if not name:
+        return JsonResponse({"error": "'name' field is required"}, status = 400)
+    
+    email = request.POST.get("email")
+    if not email:
+        return JsonResponse({"error": "'email' field is required"}, status = 400)
+
+    try:
+        amount = float(request.POST.get("amount"))
+    except:
+        return JsonResponse({"error": "'amount' is required as a float"}, status = 400)
+    
+    try:
+        receipt: DonationReceipts = DonationReceipts(user = user, name = name, email = email, amount = amount)
+        receipt.save()
+    except:
+        return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
+
+    return JsonResponse({"message": "Donation successfully logged"})

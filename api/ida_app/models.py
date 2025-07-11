@@ -101,3 +101,11 @@ class EventRsvp(models.Model):
     record_id = models.AutoField(primary_key = True, unique = True, null = False)
     user = models.ForeignKey(UserCredentials, related_name = "user_rsvp", on_delete = models.CASCADE, null = False)
     event = models.ForeignKey(Events, related_name = "event_rsvp", on_delete = models.CASCADE, null = False)
+
+
+class DonationReceipts(models.Model):
+    record_id = models.AutoField(primary_key = True, unique = True, null = False)
+    user = models.ForeignKey(UserCredentials, related_name = "user_donations", on_delete = models.CASCADE, null = False)
+    name = models.TextField(unique = False, null = False)
+    email = models.TextField(unique = False, null = False)
+    amount = models.FloatField(unique = False, null = False)

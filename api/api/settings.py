@@ -14,6 +14,7 @@ import base64
 import json
 from pathlib import Path
 import firebase_admin
+import stripe
 import os
 # from dotenv import load_dotenv
 
@@ -46,6 +47,9 @@ CORS_ALLOW_ALL_ORIGINS = False
 FIREBASE_KEY = os.getenv("FIREBASE_KEY")
 cred = firebase_admin.credentials.Certificate(json.loads(base64.b64decode(FIREBASE_KEY).decode()))
 firebase_admin.initialize_app(cred)
+
+STRIPE_SECRET = os.getenv("STRIPE_SECRET")
+stripe.api_key = STRIPE_SECRET
 
 # Production security
 SECURE_HSTS_SECONDS = 3600

@@ -184,7 +184,7 @@ class _ItemPageState extends State<ItemPage> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(right: 10.0),
+                      padding: const EdgeInsets.only(top: 10.0),
                       child: TextButton(
                         onPressed: () async {
                           FocusScope.of(context).unfocus();
