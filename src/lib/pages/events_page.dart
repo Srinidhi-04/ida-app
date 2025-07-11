@@ -575,8 +575,7 @@ class _EventsPageState extends State<EventsPage> {
                                       e["body"],
                                       e["coordinates"],
                                       0,
-                                      (upcoming["essential"]!.isNotEmpty &&
-                                          upcoming["essential"]!.contains(e)),
+                                      e["essential"],
                                       e["rsvp"]
                                     ),
                                   )
@@ -608,7 +607,7 @@ class _EventsPageState extends State<EventsPage> {
                                       e["body"],
                                       e["coordinates"],
                                       2,
-                                      false,
+                                      e["essential"],
                                       e["rsvp"]
                                     ),
                                   )
@@ -662,7 +661,7 @@ class _EventsPageState extends State<EventsPage> {
                                       e["body"],
                                       e["coordinates"],
                                       1,
-                                      true,
+                                      e["essential"],
                                       e["rsvp"]
                                     ),
                                   )
