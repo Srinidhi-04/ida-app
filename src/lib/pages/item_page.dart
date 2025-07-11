@@ -19,7 +19,7 @@ class _ItemPageState extends State<ItemPage> {
   String name = "";
   double? price;
   String image = "";
-  List<String?> errors = [null, null, null];
+  List<String?> errors = [null, null];
   bool initialized = false;
   late Function callback;
 
@@ -151,15 +151,19 @@ class _ItemPageState extends State<ItemPage> {
                         onChanged:
                             (value) => setState(() {
                               try {
-                                if (value != "")
+                                if (value != "") {
                                   price = double.parse(value);
-                                else
+                                  if (price! <= 0) {
+                                    errors[1] = "Price must be positive";
+                                  } else {
+                                    errors[1] = null;
+                                  }
+                                } else {
                                   price = null;
-                                errors[1] = null;
+                                  errors[1] = null;
+                                }
                               } catch (e) {
-                                setState(() {
-                                  errors[1] = "Price must be a float";
-                                });
+                                errors[1] = "Price must be a float";
                               }
                             }),
                       ),
@@ -187,6 +191,11 @@ class _ItemPageState extends State<ItemPage> {
                       padding: const EdgeInsets.only(top: 10.0),
                       child: TextButton(
                         onPressed: () async {
+                          if (errors[0] != null ||
+                              errors[1] != null) {
+                            return;
+                          }
+
                           FocusScope.of(context).unfocus();
 
                           if (name == "")

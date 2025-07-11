@@ -259,16 +259,20 @@ class _DonatePageState extends State<DonatePage> {
                                   onChanged:
                                       (value) => setState(() {
                                         try {
-                                          if (value != "")
+                                          if (value != "") {
                                             amount = double.parse(value);
-                                          else
+                                            if (amount! <= 0) {
+                                              errors[2] =
+                                                  "Amount must be positive";
+                                            } else {
+                                              errors[2] = null;
+                                            }
+                                          } else {
                                             amount = null;
-                                          errors[1] = null;
+                                            errors[2] = null;
+                                          }
                                         } catch (e) {
-                                          setState(() {
-                                            errors[1] =
-                                                "Amount must be a float";
-                                          });
+                                          errors[2] = "Amount must be a float";
                                         }
                                       }),
                                 ),
@@ -277,6 +281,12 @@ class _DonatePageState extends State<DonatePage> {
                                 padding: const EdgeInsets.only(top: 10.0),
                                 child: TextButton(
                                   onPressed: () async {
+                                    if (errors[0] != null ||
+                                        errors[1] != null ||
+                                        errors[2] != null) {
+                                      return;
+                                    }
+
                                     FocusScope.of(context).unfocus();
 
                                     if (name == "")

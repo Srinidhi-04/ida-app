@@ -322,10 +322,7 @@ class _ManagePageState extends State<ManagePage> {
                                           latlng[0] = null;
                                         errors[4] = null;
                                       } catch (e) {
-                                        setState(() {
-                                          errors[4] =
-                                              "Latitude must be a float";
-                                        });
+                                        errors[4] = "Latitude must be a float";
                                       }
                                     }),
                               ),
@@ -359,10 +356,7 @@ class _ManagePageState extends State<ManagePage> {
                                           latlng[1] = null;
                                         errors[5] = null;
                                       } catch (e) {
-                                        setState(() {
-                                          errors[5] =
-                                              "Longitude must be a float";
-                                        });
+                                        errors[5] = "Longitude must be a float";
                                       }
                                     }),
                               ),
@@ -440,6 +434,16 @@ class _ManagePageState extends State<ManagePage> {
                       padding: const EdgeInsets.only(top: 10.0),
                       child: TextButton(
                         onPressed: () async {
+                          if (errors[0] != null ||
+                              errors[1] != null ||
+                              errors[2] != null ||
+                              errors[3] != null ||
+                              errors[4] != null ||
+                              errors[5] != null ||
+                              errors[6] != null) {
+                            return;
+                          }
+
                           FocusScope.of(context).unfocus();
 
                           if (name == "")
