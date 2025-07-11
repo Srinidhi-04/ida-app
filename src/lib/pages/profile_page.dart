@@ -80,6 +80,7 @@ class _ProfilePageState extends State<ProfilePage> {
     LatLng coordinates,
     bool featured,
     bool rsvp,
+    bool past,
   ) {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -111,6 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   "latitude": coordinates.latitude,
                   "longitude": coordinates.longitude,
                   "featured": featured,
+                  "past": past,
                 },
               );
             },
@@ -470,6 +472,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 e["coordinates"],
                                                 e["essential"],
                                                 true,
+                                                e["completed"]
                                               ),
                                             )
                                             .toList(),
@@ -512,6 +515,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 e["coordinates"],
                                                 e["essential"],
                                                 true,
+                                                e["completed"]
                                               ),
                                             )
                                             .toList(),

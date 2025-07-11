@@ -32,6 +32,7 @@ class _EventPageState extends State<EventPage> {
   late double longitude;
   late bool featured;
   late bool rsvp;
+  late bool past;
 
   List<String> months = [
     "Jan",
@@ -91,6 +92,7 @@ class _EventPageState extends State<EventPage> {
         longitude = args["longitude"];
         featured = args["featured"];
         rsvp = args["rsvp"];
+        past = args["past"];
         initialized = true;
       });
     }
@@ -164,6 +166,9 @@ class _EventPageState extends State<EventPage> {
                                       image = new_image;
                                       body = new_body;
                                       featured = new_featured;
+                                      past =
+                                          (new_date.compareTo(DateTime.now()) <=
+                                              0);
                                     });
                                     callback();
                                   },
@@ -389,42 +394,42 @@ class _EventPageState extends State<EventPage> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: TextButton(
-                onPressed: () async {
-                  post(
-                    Uri.parse(baseUrl + "/toggle-rsvp/"),
-                    headers: {"Authorization": "Token ${token}"},
-                    body: {
-                      "user_id": user_id.toString(),
-                      "event_id": event_id.toString(),
+            (!past)
+                ? Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: TextButton(
+                    onPressed: () async {
+                      post(
+                        Uri.parse(baseUrl + "/toggle-rsvp/"),
+                        headers: {"Authorization": "Token ${token}"},
+                        body: {
+                          "user_id": user_id.toString(),
+                          "event_id": event_id.toString(),
+                        },
+                      );
+                      setState(() {
+                        rsvp = !rsvp;
+                      });
                     },
-                  );
-                  setState(() {
-                    rsvp = !rsvp;
-                  });
-                },
-                child: Text(
-                  (!rsvp) ? "RSVP" : "UNREGISTER",
-                  style: Theme.of(context).typography.white.labelLarge!.apply(
-                    fontSizeDelta: 2,
-                    fontWeightDelta: 3,
+                    child: Text(
+                      (!rsvp) ? "RSVP" : "UNREGISTER",
+                      style: Theme.of(context).typography.white.labelLarge!
+                          .apply(fontSizeDelta: 2, fontWeightDelta: 3),
+                    ),
+                    style: ButtonStyle(
+                      backgroundColor: WidgetStatePropertyAll(
+                        (!rsvp)
+                            ? Theme.of(context).primaryColorLight
+                            : Theme.of(context).primaryColor,
+                      ),
+                      fixedSize: WidgetStatePropertyAll(
+                        Size(0.6 * MediaQuery.of(context).size.width, 50),
+                      ),
+                      elevation: WidgetStatePropertyAll(10),
+                    ),
                   ),
-                ),
-                style: ButtonStyle(
-                  backgroundColor: WidgetStatePropertyAll(
-                    (!rsvp)
-                        ? Theme.of(context).primaryColorLight
-                        : Theme.of(context).primaryColor,
-                  ),
-                  fixedSize: WidgetStatePropertyAll(
-                    Size(0.6 * MediaQuery.of(context).size.width, 50),
-                  ),
-                  elevation: WidgetStatePropertyAll(10),
-                ),
-              ),
-            ),
+                )
+                : SizedBox(),
           ],
         ),
       ),

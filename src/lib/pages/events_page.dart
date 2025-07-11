@@ -222,6 +222,7 @@ class _EventsPageState extends State<EventsPage> {
                     "latitude": coordinates.latitude,
                     "longitude": coordinates.longitude,
                     "featured": featured,
+                    "past": (type == 2)
                   },
                 );
               },
