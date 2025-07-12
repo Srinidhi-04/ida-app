@@ -537,278 +537,310 @@ class _EventsPageState extends State<EventsPage> {
         },
         color: Theme.of(context).primaryColorLight,
         backgroundColor: Colors.white,
-        child: SingleChildScrollView(
-          physics: AlwaysScrollableScrollPhysics(),
-          child: Container(
-            constraints: BoxConstraints(
-              minHeight:
-                  MediaQuery.of(context).size.height -
-                  kToolbarHeight -
-                  kBottomNavigationBarHeight,
-              minWidth: MediaQuery.of(context).size.width,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                (searching)
-                    ? Padding(
-                      padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
-                      child: TextFormField(
-                        textAlignVertical: TextAlignVertical.center,
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.search_outlined,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                          hintText: "Search",
-                        ),
-                        cursorColor: Theme.of(context).primaryColor,
-                        onChanged:
-                            (value) => setState(() {
-                              search = value;
-                            }),
+        child: Column(
+          children: [
+            (searching)
+                ? Padding(
+                  padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                  child: TextFormField(
+                    textAlignVertical: TextAlignVertical.center,
+                    decoration: InputDecoration(
+                      prefixIcon: Icon(
+                        Icons.search_outlined,
+                        color: Theme.of(context).primaryColor,
                       ),
-                    )
-                    : Container(),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Color(0xFFC8C6C7),
-                      borderRadius: BorderRadius.circular(30),
+                      hintText: "Search",
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        switchOption(0, "UPCOMING"),
-                        switchOption(1, "PAST"),
-                      ],
-                    ),
+                    cursorColor: Theme.of(context).primaryColor,
+                    onChanged:
+                        (value) => setState(() {
+                          search = value;
+                        }),
                   ),
-                ),
-                ((selected == 0 && upcoming["all"]!.isNotEmpty && !searching) ||
-                        selected == 0 &&
-                            searching &&
-                            upcoming["all"]!
-                                .where(
-                                  (e) => (e["name"].toLowerCase().startsWith(
-                                    search.toLowerCase(),
-                                  )),
-                                )
-                                .isNotEmpty)
-                    ? Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "All Events",
-                          style: Theme.of(
-                            context,
-                          ).typography.black.labelLarge!.apply(
-                            color: Theme.of(context).primaryColorDark,
-                            fontWeightDelta: 3,
+                )
+                : Container(),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  constraints: BoxConstraints(
+                    minHeight:
+                        MediaQuery.of(context).size.height -
+                        kToolbarHeight -
+                        kBottomNavigationBarHeight,
+                    minWidth: MediaQuery.of(context).size.width,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xFFC8C6C7),
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              switchOption(0, "UPCOMING"),
+                              switchOption(1, "PAST"),
+                            ],
                           ),
                         ),
                       ),
-                    )
-                    : Container(),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children:
-                      (selected == 0)
-                          ? ((upcoming["all"]!.isEmpty)
-                              ? [
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: Text(
-                                      "No upcoming events",
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).typography.black.headlineLarge,
-                                    ),
-                                  ),
-                                ),
-                              ]
-                              : (searching &&
+                      ((selected == 0 &&
+                                  upcoming["all"]!.isNotEmpty &&
+                                  !searching) ||
+                              selected == 0 &&
+                                  searching &&
                                   upcoming["all"]!
                                       .where(
                                         (e) => (e["name"]
                                             .toLowerCase()
                                             .startsWith(search.toLowerCase())),
                                       )
-                                      .isEmpty)
-                              ? [
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: Text(
-                                      "No matching events",
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).typography.black.headlineLarge,
-                                    ),
-                                  ),
+                                      .isNotEmpty)
+                          ? Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "All Events",
+                                style: Theme.of(
+                                  context,
+                                ).typography.black.labelLarge!.apply(
+                                  color: Theme.of(context).primaryColorDark,
+                                  fontWeightDelta: 3,
                                 ),
-                              ]
-                              : upcoming["all"]!
-                                  .where(
-                                    (e) =>
-                                        (!searching ||
-                                            e["name"].toLowerCase().startsWith(
-                                              search.toLowerCase(),
-                                            )),
-                                  )
-                                  .map(
-                                    (e) => eventCard(
-                                      upcoming["all"]!.indexOf(e),
-                                      e["event_id"],
-                                      e["name"],
-                                      e["location"],
-                                      e["date"],
-                                      e["image"],
-                                      e["body"],
-                                      e["coordinates"],
-                                      0,
-                                      e["essential"],
-                                      e["rsvp"],
-                                    ),
-                                  )
-                                  .toList())
-                          : ((past.isEmpty)
-                              ? [
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: Text(
-                                      "No past events",
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).typography.black.headlineLarge,
-                                    ),
-                                  ),
-                                ),
-                              ]
-                              : (searching &&
-                                  past
-                                      .where(
-                                        (e) => (e["name"]
-                                            .toLowerCase()
-                                            .startsWith(search.toLowerCase())),
-                                      )
-                                      .isEmpty)
-                              ? [
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: Text(
-                                      "No matching events",
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).typography.black.headlineLarge,
-                                    ),
-                                  ),
-                                ),
-                              ]
-                              : past
-                                  .where(
-                                    (e) =>
-                                        (!searching ||
-                                            e["name"].toLowerCase().startsWith(
-                                              search.toLowerCase(),
-                                            )),
-                                  )
-                                  .map(
-                                    (e) => eventCard(
-                                      past.indexOf(e),
-                                      e["event_id"],
-                                      e["name"],
-                                      e["location"],
-                                      e["date"],
-                                      e["image"],
-                                      e["body"],
-                                      e["coordinates"],
-                                      2,
-                                      e["essential"],
-                                      e["rsvp"],
-                                    ),
-                                  )
-                                  .toList()),
-                ),
-                ((selected == 0 &&
-                            upcoming["essential"]!.isNotEmpty &&
-                            !searching) ||
-                        (selected == 0 &&
-                            searching &&
-                            upcoming["essential"]!
-                                .where(
-                                  (e) => (e["name"].toLowerCase().startsWith(
-                                    search.toLowerCase(),
-                                  )),
-                                )
-                                .isNotEmpty))
-                    ? Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Don't Miss These",
-                          style: Theme.of(
-                            context,
-                          ).typography.black.labelLarge!.apply(
-                            color: Theme.of(context).primaryColorDark,
-                            fontWeightDelta: 3,
-                          ),
-                        ),
+                              ),
+                            ),
+                          )
+                          : Container(),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children:
+                            (selected == 0)
+                                ? ((upcoming["all"]!.isEmpty)
+                                    ? [
+                                      Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 20,
+                                          ),
+                                          child: Text(
+                                            "No upcoming events",
+                                            style:
+                                                Theme.of(context)
+                                                    .typography
+                                                    .black
+                                                    .headlineLarge,
+                                          ),
+                                        ),
+                                      ),
+                                    ]
+                                    : (searching &&
+                                        upcoming["all"]!
+                                            .where(
+                                              (e) => (e["name"]
+                                                  .toLowerCase()
+                                                  .startsWith(
+                                                    search.toLowerCase(),
+                                                  )),
+                                            )
+                                            .isEmpty)
+                                    ? [
+                                      Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 20,
+                                          ),
+                                          child: Text(
+                                            "No matching events",
+                                            style:
+                                                Theme.of(context)
+                                                    .typography
+                                                    .black
+                                                    .headlineLarge,
+                                          ),
+                                        ),
+                                      ),
+                                    ]
+                                    : upcoming["all"]!
+                                        .where(
+                                          (e) =>
+                                              (!searching ||
+                                                  e["name"]
+                                                      .toLowerCase()
+                                                      .startsWith(
+                                                        search.toLowerCase(),
+                                                      )),
+                                        )
+                                        .map(
+                                          (e) => eventCard(
+                                            upcoming["all"]!.indexOf(e),
+                                            e["event_id"],
+                                            e["name"],
+                                            e["location"],
+                                            e["date"],
+                                            e["image"],
+                                            e["body"],
+                                            e["coordinates"],
+                                            0,
+                                            e["essential"],
+                                            e["rsvp"],
+                                          ),
+                                        )
+                                        .toList())
+                                : ((past.isEmpty)
+                                    ? [
+                                      Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 20,
+                                          ),
+                                          child: Text(
+                                            "No past events",
+                                            style:
+                                                Theme.of(context)
+                                                    .typography
+                                                    .black
+                                                    .headlineLarge,
+                                          ),
+                                        ),
+                                      ),
+                                    ]
+                                    : (searching &&
+                                        past
+                                            .where(
+                                              (e) => (e["name"]
+                                                  .toLowerCase()
+                                                  .startsWith(
+                                                    search.toLowerCase(),
+                                                  )),
+                                            )
+                                            .isEmpty)
+                                    ? [
+                                      Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 20,
+                                          ),
+                                          child: Text(
+                                            "No matching events",
+                                            style:
+                                                Theme.of(context)
+                                                    .typography
+                                                    .black
+                                                    .headlineLarge,
+                                          ),
+                                        ),
+                                      ),
+                                    ]
+                                    : past
+                                        .where(
+                                          (e) =>
+                                              (!searching ||
+                                                  e["name"]
+                                                      .toLowerCase()
+                                                      .startsWith(
+                                                        search.toLowerCase(),
+                                                      )),
+                                        )
+                                        .map(
+                                          (e) => eventCard(
+                                            past.indexOf(e),
+                                            e["event_id"],
+                                            e["name"],
+                                            e["location"],
+                                            e["date"],
+                                            e["image"],
+                                            e["body"],
+                                            e["coordinates"],
+                                            2,
+                                            e["essential"],
+                                            e["rsvp"],
+                                          ),
+                                        )
+                                        .toList()),
                       ),
-                    )
-                    : Container(),
-                (selected == 0 && upcoming["essential"]!.isNotEmpty)
-                    ? Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children:
-                          ((searching &&
+                      ((selected == 0 &&
+                                  upcoming["essential"]!.isNotEmpty &&
+                                  !searching) ||
+                              (selected == 0 &&
+                                  searching &&
                                   upcoming["essential"]!
                                       .where(
                                         (e) => (e["name"]
                                             .toLowerCase()
                                             .startsWith(search.toLowerCase())),
                                       )
-                                      .isEmpty)
-                              ? [Container()]
-                              : upcoming["essential"]!
-                                  .where(
-                                    (e) =>
-                                        (!searching ||
-                                            e["name"].toLowerCase().startsWith(
-                                              search.toLowerCase(),
-                                            )),
-                                  )
-                                  .map(
-                                    (e) => eventCard(
-                                      upcoming["essential"]!.indexOf(e),
-                                      e["event_id"],
-                                      e["name"],
-                                      e["location"],
-                                      e["date"],
-                                      e["image"],
-                                      e["body"],
-                                      e["coordinates"],
-                                      1,
-                                      e["essential"],
-                                      e["rsvp"],
-                                    ),
-                                  )
-                                  .toList()),
-                    )
-                    : Container(),
-              ],
+                                      .isNotEmpty))
+                          ? Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Don't Miss These",
+                                style: Theme.of(
+                                  context,
+                                ).typography.black.labelLarge!.apply(
+                                  color: Theme.of(context).primaryColorDark,
+                                  fontWeightDelta: 3,
+                                ),
+                              ),
+                            ),
+                          )
+                          : Container(),
+                      (selected == 0 && upcoming["essential"]!.isNotEmpty)
+                          ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children:
+                                ((searching &&
+                                        upcoming["essential"]!
+                                            .where(
+                                              (e) => (e["name"]
+                                                  .toLowerCase()
+                                                  .startsWith(
+                                                    search.toLowerCase(),
+                                                  )),
+                                            )
+                                            .isEmpty)
+                                    ? [Container()]
+                                    : upcoming["essential"]!
+                                        .where(
+                                          (e) =>
+                                              (!searching ||
+                                                  e["name"]
+                                                      .toLowerCase()
+                                                      .startsWith(
+                                                        search.toLowerCase(),
+                                                      )),
+                                        )
+                                        .map(
+                                          (e) => eventCard(
+                                            upcoming["essential"]!.indexOf(e),
+                                            e["event_id"],
+                                            e["name"],
+                                            e["location"],
+                                            e["date"],
+                                            e["image"],
+                                            e["body"],
+                                            e["coordinates"],
+                                            1,
+                                            e["essential"],
+                                            e["rsvp"],
+                                          ),
+                                        )
+                                        .toList()),
+                          )
+                          : Container(),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
       floatingActionButton:
