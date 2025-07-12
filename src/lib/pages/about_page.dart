@@ -29,7 +29,7 @@ class AboutPage extends StatelessWidget {
                       decoration: BoxDecoration(
                         image: DecorationImage(
                           fit: BoxFit.cover,
-                          image: AssetImage("assets/about_1.png"),
+                          image: AssetImage("assets/pages/about_1.png"),
                           colorFilter: ColorFilter.mode(
                             Color(0x88000000),
                             BlendMode.darken,
@@ -41,7 +41,7 @@ class AboutPage extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(bottom: 15.0),
                     child: Image(
-                      image: AssetImage("assets/about_2.png"),
+                      image: AssetImage("assets/pages/about_2.png"),
                       width: MediaQuery.of(context).size.width * 0.7,
                       fit: BoxFit.cover,
                     ),

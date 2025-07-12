@@ -380,7 +380,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               padding: const EdgeInsets.all(5.0),
                               child: Image(
                                 image: AssetImage(
-                                  "assets/avatar_${avatar}.png",
+                                  "assets/avatars/avatar_${avatar}.png",
                                 ),
                                 width: 140,
                                 height: 140,

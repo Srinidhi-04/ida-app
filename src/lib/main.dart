@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:src/pages/about_page.dart';
+import 'package:src/pages/board_page.dart';
 import 'package:src/pages/donate_page.dart';
 import 'package:src/pages/forgot_page.dart';
 import 'package:src/pages/item_page.dart';
@@ -93,7 +94,8 @@ void main() async {
         "/about": (context) => AboutPage(),
         "/settings": (context) => SettingsPage(),
         "/item": (context) => ItemPage(),
-        "/donate": (context) => DonatePage()
+        "/donate": (context) => DonatePage(),
+        "/board": (context) => BoardPage(),
       },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

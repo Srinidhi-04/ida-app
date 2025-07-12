@@ -82,10 +82,8 @@ class _DonatePageState extends State<DonatePage> {
       children: [
         Scaffold(
           appBar: AppBar(
-            title: Text(
-              "Donate",
-              style: Theme.of(context).typography.black.headlineMedium,
-            ),
+            title: Image(image: AssetImage("assets/logo.png"), height: 40),
+            centerTitle: true,
           ),
           body:
               (receipt != null)

@@ -37,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           image: DecorationImage(
-            image: AssetImage("assets/avatar_${option}.png"),
+            image: AssetImage("assets/avatars/avatar_${option}.png"),
             colorFilter:
                 (option == selected)
                     ? ColorFilter.mode(Color(0x88000000), BlendMode.darken)
@@ -139,7 +139,9 @@ class _SettingsPageState extends State<SettingsPage> {
                     child: Padding(
                       padding: const EdgeInsets.all(5.0),
                       child: Image(
-                        image: AssetImage("assets/avatar_${selected}.png"),
+                        image: AssetImage(
+                          "assets/avatars/avatar_${selected}.png",
+                        ),
                         height: 140,
                         width: 140,
                       ),

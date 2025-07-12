@@ -386,7 +386,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Image(
                           width: MediaQuery.of(context).size.width,
-                          image: AssetImage("assets/home_1.png"),
+                          image: AssetImage("assets/pages/home_1.png"),
                         ),
                         SizedBox(height: 20),
                       ],
@@ -417,6 +417,12 @@ class _HomePageState extends State<HomePage> {
                             Theme.of(context).primaryColorLight,
                             "About Us",
                             "/about",
+                            false,
+                          ),
+                          mainButton(
+                            Theme.of(context).primaryColorDark,
+                            "Board",
+                            "/board",
                             false,
                           ),
                         ],
@@ -505,7 +511,7 @@ class _HomePageState extends State<HomePage> {
                         ClipRRect(
                           borderRadius: BorderRadius.circular(20),
                           child: Image(
-                            image: AssetImage("assets/home_2.jpeg"),
+                            image: AssetImage("assets/pages/home_2.jpeg"),
                             color: Color(0x88000000),
                             colorBlendMode: BlendMode.darken,
                           ),
