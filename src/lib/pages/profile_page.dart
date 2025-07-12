@@ -292,7 +292,7 @@ class _ProfilePageState extends State<ProfilePage> {
       admin = bool.parse(info["admin"]!);
       reminders = info["reminders"]!;
     });
-    getEvents();
+    await getEvents();
   }
 
   @override

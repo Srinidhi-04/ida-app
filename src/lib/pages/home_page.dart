@@ -295,8 +295,7 @@ class _HomePageState extends State<HomePage> {
       user_id = int.parse(info["user_id"]!);
       token = info["token"]!;
     });
-    getCart();
-    getEvents();
+    await Future.wait([getCart(), getEvents()]);
   }
 
   @override
@@ -361,8 +360,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          getEvents();
-          getCart();
+          await checkLogin();
         },
         color: Theme.of(context).primaryColorLight,
         backgroundColor: Colors.white,

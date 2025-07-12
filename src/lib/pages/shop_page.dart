@@ -402,8 +402,7 @@ class _ShopPageState extends State<ShopPage> {
       token = info["token"]!;
       admin = bool.parse(info["admin"]!);
     });
-    getItems();
-    getCart();
+    await Future.wait([getItems(), getCart()]);
   }
 
   @override
@@ -513,8 +512,7 @@ class _ShopPageState extends State<ShopPage> {
               )
               : RefreshIndicator(
                 onRefresh: () async {
-                  getItems();
-                  getCart();
+                  await checkLogin();
                 },
                 color: Theme.of(context).primaryColorLight,
                 backgroundColor: Colors.white,

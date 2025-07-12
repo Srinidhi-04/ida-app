@@ -137,7 +137,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          await getSettings();
+          await checkLogin();
         },
         color: Theme.of(context).primaryColorLight,
         backgroundColor: Colors.white,

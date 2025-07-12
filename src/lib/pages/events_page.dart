@@ -484,8 +484,7 @@ class _EventsPageState extends State<EventsPage> {
       admin = bool.parse(info["admin"]!);
       reminders = info["reminders"]!;
     });
-    getNotifications();
-    getEvents();
+    await Future.wait([getNotifications(), getEvents()]);
   }
 
   @override
@@ -534,8 +533,7 @@ class _EventsPageState extends State<EventsPage> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
-          getEvents();
-          getNotifications();
+          await checkLogin();
         },
         color: Theme.of(context).primaryColorLight,
         backgroundColor: Colors.white,

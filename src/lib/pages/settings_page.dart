@@ -101,167 +101,179 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Container(
-          constraints: BoxConstraints(
-            minWidth: MediaQuery.of(context).size.width,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Divider(color: Theme.of(context).primaryColor),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Change Avatar",
-                      style: Theme.of(
-                        context,
-                      ).typography.black.labelLarge!.apply(
-                        color: Theme.of(context).primaryColorDark,
-                        fontWeightDelta: 3,
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).primaryColorDark,
-                      shape: BoxShape.circle,
-                    ),
-                    width: 150,
-                    height: 150,
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Image(
-                        image: AssetImage(
-                          "assets/avatars/avatar_${selected}.png",
+      body: RefreshIndicator(
+        onRefresh: () async {
+          await checkLogin();
+        },
+        color: Theme.of(context).primaryColorLight,
+        backgroundColor: Colors.white,
+        child: SingleChildScrollView(
+          physics: AlwaysScrollableScrollPhysics(),
+          child: Container(
+            constraints: BoxConstraints(
+              minWidth: MediaQuery.of(context).size.width,
+              minHeight:
+                  MediaQuery.of(context).size.height -
+                  kToolbarHeight -
+                  kBottomNavigationBarHeight,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Divider(color: Theme.of(context).primaryColor),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Change Avatar",
+                        style: Theme.of(
+                          context,
+                        ).typography.black.labelLarge!.apply(
+                          color: Theme.of(context).primaryColorDark,
+                          fontWeightDelta: 3,
                         ),
-                        height: 140,
-                        width: 140,
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      avatarOption(1),
-                      avatarOption(6),
-                      avatarOption(2),
-                      avatarOption(7),
-                      avatarOption(3),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      avatarOption(8),
-                      avatarOption(4),
-                      avatarOption(9),
-                      avatarOption(5),
-                      avatarOption(10),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 5),
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "Change Name",
-                      style: Theme.of(
-                        context,
-                      ).typography.black.labelLarge!.apply(
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Container(
+                      decoration: BoxDecoration(
                         color: Theme.of(context).primaryColorDark,
-                        fontWeightDelta: 3,
+                        shape: BoxShape.circle,
+                      ),
+                      width: 150,
+                      height: 150,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Image(
+                          image: AssetImage(
+                            "assets/avatars/avatar_${selected}.png",
+                          ),
+                          height: 140,
+                          width: 140,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
-                  child: TextFormField(
-                    controller: controller,
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(
-                        Icons.person_outline,
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      hintText: "Name",
-                      errorText: error,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        avatarOption(1),
+                        avatarOption(6),
+                        avatarOption(2),
+                        avatarOption(7),
+                        avatarOption(3),
+                      ],
                     ),
-                    cursorColor: Theme.of(context).primaryColor,
-                    onChanged:
-                        (value) => setState(() {
-                          name = value;
-                        }),
                   ),
-                ),
-                (original != name || avatar != selected)
-                    ? TextButton(
-                      onPressed: () async {
-                        if (name.isEmpty) {
-                          setState(() {
-                            error = "Name cannot be empty";
-                          });
-                          return;
-                        }
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        avatarOption(8),
+                        avatarOption(4),
+                        avatarOption(9),
+                        avatarOption(5),
+                        avatarOption(10),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 5),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        "Change Name",
+                        style: Theme.of(
+                          context,
+                        ).typography.black.labelLarge!.apply(
+                          color: Theme.of(context).primaryColorDark,
+                          fontWeightDelta: 3,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
+                    child: TextFormField(
+                      controller: controller,
+                      textAlignVertical: TextAlignVertical.center,
+                      decoration: InputDecoration(
+                        prefixIcon: Icon(
+                          Icons.person_outline,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                        hintText: "Name",
+                        errorText: error,
+                      ),
+                      cursorColor: Theme.of(context).primaryColor,
+                      onChanged:
+                          (value) => setState(() {
+                            name = value;
+                          }),
+                    ),
+                  ),
+                  (original != name || avatar != selected)
+                      ? TextButton(
+                        onPressed: () async {
+                          if (name.isEmpty) {
+                            setState(() {
+                              error = "Name cannot be empty";
+                            });
+                            return;
+                          }
 
-                        if (RegExp(r"[^a-zA-Z ]").hasMatch(name)) {
-                          setState(() {
-                            error = "Invalid name";
-                          });
-                          return;
-                        }
+                          if (RegExp(r"[^a-zA-Z ]").hasMatch(name)) {
+                            setState(() {
+                              error = "Invalid name";
+                            });
+                            return;
+                          }
 
-                        setState(() {
-                          original = name;
-                          avatar = selected;
-                          error = null;
-                        });
-                        SecureStorage.writeMany({
-                          "name": name,
-                          "avatar": selected.toString(),
-                        });
-                        await post(
-                          Uri.parse(baseUrl + "/edit-profile/"),
-                          headers: {"Authorization": "Bearer ${token}"},
-                          body: {
-                            "user_id": user_id.toString(),
+                          setState(() {
+                            original = name;
+                            avatar = selected;
+                            error = null;
+                          });
+                          SecureStorage.writeMany({
                             "name": name,
                             "avatar": selected.toString(),
-                          },
-                        );
-                      },
-                      child: Text(
-                        "Save",
-                        style: Theme.of(context).typography.white.labelLarge!
-                            .apply(fontSizeDelta: 2, fontWeightDelta: 3),
-                      ),
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStatePropertyAll(
-                          Theme.of(context).primaryColor,
+                          });
+                          await post(
+                            Uri.parse(baseUrl + "/edit-profile/"),
+                            headers: {"Authorization": "Bearer ${token}"},
+                            body: {
+                              "user_id": user_id.toString(),
+                              "name": name,
+                              "avatar": selected.toString(),
+                            },
+                          );
+                        },
+                        child: Text(
+                          "Save",
+                          style: Theme.of(context).typography.white.labelLarge!
+                              .apply(fontSizeDelta: 2, fontWeightDelta: 3),
                         ),
-                        fixedSize: WidgetStatePropertyAll(
-                          Size(0.6 * MediaQuery.of(context).size.width, 50),
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Theme.of(context).primaryColor,
+                          ),
+                          fixedSize: WidgetStatePropertyAll(
+                            Size(0.6 * MediaQuery.of(context).size.width, 50),
+                          ),
+                          elevation: WidgetStatePropertyAll(10),
                         ),
-                        elevation: WidgetStatePropertyAll(10),
-                      ),
-                    )
-                    : Container(),
-              ],
+                      )
+                      : Container(),
+                ],
+              ),
             ),
           ),
         ),

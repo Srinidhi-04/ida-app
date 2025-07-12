@@ -224,7 +224,9 @@ class _EventPageState extends State<EventPage> {
                 : [],
       ),
       body: RefreshIndicator(
-        onRefresh: () async {},
+        onRefresh: () async {
+          await checkLogin();
+        },
         color: Theme.of(context).primaryColorLight,
         backgroundColor: Colors.white,
         child: Stack(
