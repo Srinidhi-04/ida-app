@@ -261,36 +261,47 @@ class _EventsPageState extends State<EventsPage> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                        bottom: 10.0,
+                                Container(
+                                  constraints: BoxConstraints(
+                                    maxWidth:
+                                        0.6 *
+                                            MediaQuery.of(context).size.width -
+                                        30,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          bottom: 10.0,
+                                        ),
+                                        child: Text(
+                                          "${days[date.weekday - 1]}, ${months[date.month - 1]} ${(date.day < 10) ? 0 : ""}${date.day} • ${(date.hour % 12 < 10 && date.hour % 12 != 0) ? 0 : ""}${(date.hour % 12 == 0) ? 12 : date.hour % 12}:${(date.minute < 10) ? 0 : ""}${date.minute} ${(date.hour >= 12) ? "PM" : "AM"}",
+                                          style: Theme.of(
+                                            context,
+                                          ).typography.white.labelSmall!.apply(
+                                            color:
+                                                Theme.of(
+                                                  context,
+                                                ).primaryColorLight,
+                                          ),
+                                        ),
                                       ),
-                                      child: Text(
-                                        "${days[date.weekday - 1]}, ${months[date.month - 1]} ${(date.day < 10) ? 0 : ""}${date.day} • ${(date.hour % 12 < 10 && date.hour % 12 != 0) ? 0 : ""}${(date.hour % 12 == 0) ? 12 : date.hour % 12}:${(date.minute < 10) ? 0 : ""}${date.minute} ${(date.hour >= 12) ? "PM" : "AM"}",
+                                      Text(
+                                        name,
                                         style: Theme.of(
                                           context,
-                                        ).typography.white.labelSmall!.apply(
+                                        ).typography.black.labelLarge!.apply(
                                           color:
                                               Theme.of(
                                                 context,
-                                              ).primaryColorLight,
+                                              ).primaryColorDark,
                                         ),
                                       ),
-                                    ),
-                                    Text(
-                                      name,
-                                      style: Theme.of(
-                                        context,
-                                      ).typography.black.labelLarge!.apply(
-                                        color:
-                                            Theme.of(context).primaryColorDark,
-                                      ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                                 (type != 2)
                                     ? IconButton(
