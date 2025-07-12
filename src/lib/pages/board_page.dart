@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:src/widgets/navigation.dart';
 
 class BoardPage extends StatefulWidget {
   const BoardPage({super.key});
@@ -228,7 +229,7 @@ class _BoardPageState extends State<BoardPage> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
               child: Text(
                 "Presenting the Illini Dads Association Board for 2025!",
                 style: Theme.of(
@@ -252,6 +253,7 @@ class _BoardPageState extends State<BoardPage> {
           ],
         ),
       ),
+      bottomNavigationBar: Navigation(selected: 0),
     );
   }
 }
