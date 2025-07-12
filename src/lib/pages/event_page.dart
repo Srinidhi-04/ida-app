@@ -121,9 +121,9 @@ class _EventPageState extends State<EventPage> {
       appBar: AppBar(
         title: Text(
           "Event Details",
-          style: Theme.of(context).typography.black.headlineMedium!.apply(
-            color: Theme.of(context).primaryColorDark,
-          ),
+          style: Theme.of(
+            context,
+          ).typography.black.headlineMedium!.apply(color: Colors.white),
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,

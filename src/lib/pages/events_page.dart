@@ -43,6 +43,9 @@ class _EventsPageState extends State<EventsPage> {
   List<Map> past = [];
   List notifs = [];
 
+  bool searching = false;
+  String search = "";
+
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Widget switchOption(int index, String text) {
@@ -511,6 +514,23 @@ class _EventsPageState extends State<EventsPage> {
             color: Theme.of(context).primaryColorDark,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                searching = !searching;
+                if (!searching) {
+                  search = "";
+                }
+              });
+            },
+            icon: Icon(
+              Icons.search_outlined,
+              color: Theme.of(context).primaryColorDark,
+              size: 32,
+            ),
+          ),
+        ],
       ),
       body: RefreshIndicator(
         onRefresh: () async {
@@ -532,6 +552,26 @@ class _EventsPageState extends State<EventsPage> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                (searching)
+                    ? Padding(
+                      padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                      child: TextFormField(
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.search_outlined,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          hintText: "Search",
+                        ),
+                        cursorColor: Theme.of(context).primaryColor,
+                        onChanged:
+                            (value) => setState(() {
+                              search = value;
+                            }),
+                      ),
+                    )
+                    : Container(),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                   child: Container(
@@ -548,7 +588,16 @@ class _EventsPageState extends State<EventsPage> {
                     ),
                   ),
                 ),
-                (selected == 0 && upcoming["all"]!.isNotEmpty)
+                ((selected == 0 && upcoming["all"]!.isNotEmpty && !searching) ||
+                        selected == 0 &&
+                            searching &&
+                            upcoming["all"]!
+                                .where(
+                                  (e) => (e["name"].toLowerCase().startsWith(
+                                    search.toLowerCase(),
+                                  )),
+                                )
+                                .isNotEmpty)
                     ? Padding(
                       padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                       child: Align(
@@ -584,7 +633,36 @@ class _EventsPageState extends State<EventsPage> {
                                   ),
                                 ),
                               ]
+                              : (searching &&
+                                  upcoming["all"]!
+                                      .where(
+                                        (e) => (e["name"]
+                                            .toLowerCase()
+                                            .startsWith(search.toLowerCase())),
+                                      )
+                                      .isEmpty)
+                              ? [
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 20),
+                                    child: Text(
+                                      "No matching events",
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).typography.black.headlineLarge,
+                                    ),
+                                  ),
+                                ),
+                              ]
                               : upcoming["all"]!
+                                  .where(
+                                    (e) =>
+                                        (!searching ||
+                                            e["name"].toLowerCase().startsWith(
+                                              search.toLowerCase(),
+                                            )),
+                                  )
                                   .map(
                                     (e) => eventCard(
                                       upcoming["all"]!.indexOf(e),
@@ -616,7 +694,36 @@ class _EventsPageState extends State<EventsPage> {
                                   ),
                                 ),
                               ]
+                              : (searching &&
+                                  past
+                                      .where(
+                                        (e) => (e["name"]
+                                            .toLowerCase()
+                                            .startsWith(search.toLowerCase())),
+                                      )
+                                      .isEmpty)
+                              ? [
+                                Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(top: 20),
+                                    child: Text(
+                                      "No matching events",
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).typography.black.headlineLarge,
+                                    ),
+                                  ),
+                                ),
+                              ]
                               : past
+                                  .where(
+                                    (e) =>
+                                        (!searching ||
+                                            e["name"].toLowerCase().startsWith(
+                                              search.toLowerCase(),
+                                            )),
+                                  )
                                   .map(
                                     (e) => eventCard(
                                       past.indexOf(e),
@@ -634,7 +741,18 @@ class _EventsPageState extends State<EventsPage> {
                                   )
                                   .toList()),
                 ),
-                (selected == 0 && upcoming["essential"]!.isNotEmpty)
+                ((selected == 0 &&
+                            upcoming["essential"]!.isNotEmpty &&
+                            !searching) ||
+                        (selected == 0 &&
+                            searching &&
+                            upcoming["essential"]!
+                                .where(
+                                  (e) => (e["name"].toLowerCase().startsWith(
+                                    search.toLowerCase(),
+                                  )),
+                                )
+                                .isNotEmpty))
                     ? Padding(
                       padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
                       child: Align(
@@ -655,22 +773,23 @@ class _EventsPageState extends State<EventsPage> {
                     ? Column(
                       mainAxisSize: MainAxisSize.min,
                       children:
-                          ((upcoming["essential"]!.isEmpty)
-                              ? [
-                                Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(top: 20),
-                                    child: Text(
-                                      "No upcoming events",
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).typography.black.headlineLarge,
-                                    ),
-                                  ),
-                                ),
-                              ]
+                          ((searching &&
+                                  upcoming["essential"]!
+                                      .where(
+                                        (e) => (e["name"]
+                                            .toLowerCase()
+                                            .startsWith(search.toLowerCase())),
+                                      )
+                                      .isEmpty)
+                              ? [Container()]
                               : upcoming["essential"]!
+                                  .where(
+                                    (e) =>
+                                        (!searching ||
+                                            e["name"].toLowerCase().startsWith(
+                                              search.toLowerCase(),
+                                            )),
+                                  )
                                   .map(
                                     (e) => eventCard(
                                       upcoming["essential"]!.indexOf(e),
