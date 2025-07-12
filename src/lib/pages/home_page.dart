@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
     bool past,
   ) {
     return Padding(
-      padding: const EdgeInsets.only(right: 20),
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: Container(
         width: 240,
         height: 300,
