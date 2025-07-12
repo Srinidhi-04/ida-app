@@ -281,9 +281,7 @@ class _DonatePageState extends State<DonatePage> {
                                 padding: const EdgeInsets.only(top: 10.0),
                                 child: TextButton(
                                   onPressed: () async {
-                                    if (errors[0] != null ||
-                                        errors[1] != null ||
-                                        errors[2] != null) {
+                                    if (errors[2] != null) {
                                       return;
                                     }
 

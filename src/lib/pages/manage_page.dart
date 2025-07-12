@@ -434,13 +434,8 @@ class _ManagePageState extends State<ManagePage> {
                       padding: const EdgeInsets.only(top: 10.0),
                       child: TextButton(
                         onPressed: () async {
-                          if (errors[0] != null ||
-                              errors[1] != null ||
-                              errors[2] != null ||
-                              errors[3] != null ||
-                              errors[4] != null ||
-                              errors[5] != null ||
-                              errors[6] != null) {
+                          if (errors[4] != null ||
+                              errors[5] != null) {
                             return;
                           }
 

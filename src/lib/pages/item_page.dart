@@ -191,8 +191,7 @@ class _ItemPageState extends State<ItemPage> {
                       padding: const EdgeInsets.only(top: 10.0),
                       child: TextButton(
                         onPressed: () async {
-                          if (errors[0] != null ||
-                              errors[1] != null) {
+                          if (errors[1] != null) {
                             return;
                           }
 
