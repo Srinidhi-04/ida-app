@@ -53,11 +53,6 @@ class _BoardPageState extends State<BoardPage> {
       "image": "assets/board/sean.jpg",
     },
     {
-      "name": "Sean Widener",
-      "position": "5K & Strategic Engagement",
-      "image": "assets/board/sean.jpg",
-    },
-    {
       "name": "Phil Lengle",
       "position": "Philanthropy Lead",
       "image": "assets/board/phil.jpg",
