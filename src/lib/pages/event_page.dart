@@ -401,7 +401,7 @@ class _EventPageState extends State<EventPage> {
             (!past)
                 ? Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: TextButton(
+                  child: ElevatedButton(
                     onPressed: () async {
                       post(
                         Uri.parse(baseUrl + "/toggle-rsvp/"),
