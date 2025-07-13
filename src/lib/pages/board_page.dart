@@ -122,7 +122,7 @@ class _BoardPageState extends State<BoardPage> {
         color:
             (pressed != index)
                 ? Colors.white
-                : Theme.of(context).primaryColorLight,
+                : (index % 4 == 0 || index % 4 == 3) ? Theme.of(context).primaryColorLight : Theme.of(context).primaryColorDark,
         child: TextButton(
           style: ButtonStyle(
             shape: WidgetStatePropertyAll(
