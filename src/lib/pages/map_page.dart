@@ -186,7 +186,7 @@ class _MapPageState extends State<MapPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children:
               events
-                  .where((e) => e["name"].toLowerCase().startsWith(text))
+                  .where((e) => e["name"].toLowerCase().contains(text))
                   .map(
                     (e) => TextButton(
                       onPressed: () {

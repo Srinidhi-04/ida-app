@@ -598,7 +598,7 @@ class _EventsPageState extends State<EventsPage> {
                                       .where(
                                         (e) => (e["name"]
                                             .toLowerCase()
-                                            .startsWith(search.toLowerCase())),
+                                            .contains(search.toLowerCase())),
                                       )
                                       .isNotEmpty)
                           ? Padding(
@@ -644,7 +644,7 @@ class _EventsPageState extends State<EventsPage> {
                                             .where(
                                               (e) => (e["name"]
                                                   .toLowerCase()
-                                                  .startsWith(
+                                                  .contains(
                                                     search.toLowerCase(),
                                                   )),
                                             )
@@ -672,7 +672,7 @@ class _EventsPageState extends State<EventsPage> {
                                               (!searching ||
                                                   e["name"]
                                                       .toLowerCase()
-                                                      .startsWith(
+                                                      .contains(
                                                         search.toLowerCase(),
                                                       )),
                                         )
@@ -715,7 +715,7 @@ class _EventsPageState extends State<EventsPage> {
                                             .where(
                                               (e) => (e["name"]
                                                   .toLowerCase()
-                                                  .startsWith(
+                                                  .contains(
                                                     search.toLowerCase(),
                                                   )),
                                             )
@@ -743,7 +743,7 @@ class _EventsPageState extends State<EventsPage> {
                                               (!searching ||
                                                   e["name"]
                                                       .toLowerCase()
-                                                      .startsWith(
+                                                      .contains(
                                                         search.toLowerCase(),
                                                       )),
                                         )
@@ -773,7 +773,7 @@ class _EventsPageState extends State<EventsPage> {
                                       .where(
                                         (e) => (e["name"]
                                             .toLowerCase()
-                                            .startsWith(search.toLowerCase())),
+                                            .contains(search.toLowerCase())),
                                       )
                                       .isNotEmpty))
                           ? Padding(
@@ -801,7 +801,7 @@ class _EventsPageState extends State<EventsPage> {
                                             .where(
                                               (e) => (e["name"]
                                                   .toLowerCase()
-                                                  .startsWith(
+                                                  .contains(
                                                     search.toLowerCase(),
                                                   )),
                                             )
@@ -813,7 +813,7 @@ class _EventsPageState extends State<EventsPage> {
                                               (!searching ||
                                                   e["name"]
                                                       .toLowerCase()
-                                                      .startsWith(
+                                                      .contains(
                                                         search.toLowerCase(),
                                                       )),
                                         )

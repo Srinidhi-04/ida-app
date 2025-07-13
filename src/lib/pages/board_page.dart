@@ -118,6 +118,7 @@ class _BoardPageState extends State<BoardPage> {
     return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Card(
+        elevation: 5,
         color:
             (pressed != index)
                 ? Colors.white
