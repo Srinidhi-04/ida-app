@@ -29,7 +29,7 @@ flutter_ios_podfile_setup
 
 target 'Runner' do
   use_frameworks!
-  user_modular_headers!
+  use_modular_headers!
 
   pod 'GoogleMaps'
 
