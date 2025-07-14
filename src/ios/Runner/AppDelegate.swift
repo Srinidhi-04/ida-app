@@ -2,6 +2,7 @@ import Flutter
 import UIKit
 import Firebase
 import UserNotifications
+import GoogleMaps
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
