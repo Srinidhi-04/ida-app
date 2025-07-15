@@ -125,6 +125,7 @@ class _EventPageState extends State<EventPage> {
             context,
           ).typography.black.headlineMedium!.apply(color: Colors.white),
         ),
+        centerTitle: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.white,

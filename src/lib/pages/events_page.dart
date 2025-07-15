@@ -513,6 +513,7 @@ class _EventsPageState extends State<EventsPage> {
             color: Theme.of(context).primaryColorDark,
           ),
         ),
+        centerTitle: false,
         actions: [
           IconButton(
             onPressed: () {

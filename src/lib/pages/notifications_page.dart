@@ -134,6 +134,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
             color: Theme.of(context).primaryColorDark,
           ),
         ),
+        centerTitle: false,
       ),
       body: RefreshIndicator(
         onRefresh: () async {

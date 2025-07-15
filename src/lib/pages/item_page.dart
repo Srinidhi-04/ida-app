@@ -99,6 +99,7 @@ class _ItemPageState extends State<ItemPage> {
                 color: Theme.of(context).primaryColorDark,
               ),
             ),
+            centerTitle: false,
           ),
           body: SingleChildScrollView(
             child: Container(

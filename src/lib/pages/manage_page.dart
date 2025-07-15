@@ -121,6 +121,7 @@ class _ManagePageState extends State<ManagePage> {
                 color: Theme.of(context).primaryColorDark,
               ),
             ),
+            centerTitle: false,
           ),
           body: SingleChildScrollView(
             child: Container(
@@ -434,8 +435,7 @@ class _ManagePageState extends State<ManagePage> {
                       padding: const EdgeInsets.only(top: 10.0),
                       child: TextButton(
                         onPressed: () async {
-                          if (errors[4] != null ||
-                              errors[5] != null) {
+                          if (errors[4] != null || errors[5] != null) {
                             return;
                           }
 

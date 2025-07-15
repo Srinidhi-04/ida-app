@@ -100,6 +100,7 @@ class _SettingsPageState extends State<SettingsPage> {
             color: Theme.of(context).primaryColorDark,
           ),
         ),
+        centerTitle: false,
       ),
       body: RefreshIndicator(
         onRefresh: () async {

@@ -451,6 +451,7 @@ class _ShopPageState extends State<ShopPage> {
             color: Theme.of(context).primaryColorDark,
           ),
         ),
+        centerTitle: false,
         actions:
             (cart)
                 ? []
