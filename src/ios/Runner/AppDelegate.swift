@@ -12,7 +12,9 @@ import GoogleMaps
   ) -> Bool {
     GMSServices.provideAPIKey("GOOGLE_API_KEY")
     GeneratedPluginRegistrant.register(with: self)
-    FirebaseApp.configure()
+    if FirebaseApp.app() == nil {
+      FirebaseApp.configure()
+    }
     UNUserNotificationCenter.current().delegate = self
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }

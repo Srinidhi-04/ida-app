@@ -58,5 +58,7 @@
 		<string>Scan your card to add it automatically</string>
 		<key>NSCameraUsageDescription</key>
 		<string>To scan cards</string>
+		<key>NSLocationWhenInUseUsageDescription</key>
+		<string>This app needs your location to show nearby services.</string>
 	</dict>
 </plist>
