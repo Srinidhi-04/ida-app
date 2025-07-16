@@ -42,6 +42,8 @@ class _ForgotPageState extends State<ForgotPage> {
   bool submitted = false;
   bool sent = false;
 
+  bool obscure = true;
+
   TextEditingController emailController = TextEditingController();
 
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
@@ -239,24 +241,55 @@ class _ForgotPageState extends State<ForgotPage> {
                                         30,
                                         10,
                                       ),
-                                      child: TextFormField(
-                                        textAlignVertical:
-                                            TextAlignVertical.center,
-                                        obscureText: true,
-                                        decoration: InputDecoration(
-                                          prefixIcon: Icon(
-                                            Icons.lock_outlined,
-                                            color:
-                                                Theme.of(context).primaryColor,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: TextFormField(
+                                              textAlignVertical:
+                                                  TextAlignVertical.center,
+                                              obscureText: obscure,
+                                              decoration: InputDecoration(
+                                                prefixIcon: Icon(
+                                                  (obscure) ? Icons.lock_outlined : Icons.lock_open_outlined,
+                                                  color:
+                                                      Theme.of(
+                                                        context,
+                                                      ).primaryColor,
+                                                ),
+                                                hintText: "New Password",
+                                              ),
+                                              cursorColor:
+                                                  Theme.of(
+                                                    context,
+                                                  ).primaryColor,
+                                              onChanged:
+                                                  (value) => setState(() {
+                                                    password = value;
+                                                  }),
+                                            ),
                                           ),
-                                          hintText: "New Password",
-                                        ),
-                                        cursorColor:
-                                            Theme.of(context).primaryColor,
-                                        onChanged:
-                                            (value) => setState(() {
-                                              password = value;
-                                            }),
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 5.0,
+                                            ),
+                                            child: IconButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  obscure = !obscure;
+                                                });
+                                              },
+                                              icon: Icon(
+                                                Icons.visibility_outlined,
+                                              ),
+                                              style: ButtonStyle(
+                                                visualDensity:
+                                                    VisualDensity.compact,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                     Padding(

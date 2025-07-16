@@ -39,6 +39,8 @@ class _LoginPageState extends State<LoginPage> {
   String error = "";
   bool submitted = false;
 
+  bool obscure = true;
+
   List<String> alerts = [
     "Off",
     "30 minutes before",
@@ -203,21 +205,44 @@ class _LoginPageState extends State<LoginPage> {
                                 30,
                                 10,
                               ),
-                              child: TextFormField(
-                                textAlignVertical: TextAlignVertical.center,
-                                obscureText: true,
-                                decoration: InputDecoration(
-                                  prefixIcon: Icon(
-                                    Icons.lock_outlined,
-                                    color: Theme.of(context).primaryColor,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      textAlignVertical:
+                                          TextAlignVertical.center,
+                                      obscureText: obscure,
+                                      decoration: InputDecoration(
+                                        prefixIcon: Icon(
+                                          (obscure) ? Icons.lock_outlined : Icons.lock_open_outlined,
+                                          color: Theme.of(context).primaryColor,
+                                        ),
+                                        hintText: "Password",
+                                      ),
+                                      cursorColor:
+                                          Theme.of(context).primaryColor,
+                                      onChanged:
+                                          (value) => setState(() {
+                                            password = value;
+                                          }),
+                                    ),
                                   ),
-                                  hintText: "Password",
-                                ),
-                                cursorColor: Theme.of(context).primaryColor,
-                                onChanged:
-                                    (value) => setState(() {
-                                      password = value;
-                                    }),
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 5.0),
+                                    child: IconButton(
+                                      onPressed: () {
+                                        setState(() {
+                                          obscure = !obscure;
+                                        });
+                                      },
+                                      icon: Icon(Icons.visibility_outlined),
+                                      style: ButtonStyle(
+                                        visualDensity: VisualDensity.compact,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             Align(
