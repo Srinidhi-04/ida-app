@@ -241,55 +241,40 @@ class _ForgotPageState extends State<ForgotPage> {
                                         30,
                                         10,
                                       ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Expanded(
-                                            child: TextFormField(
-                                              textAlignVertical:
-                                                  TextAlignVertical.center,
-                                              obscureText: obscure,
-                                              decoration: InputDecoration(
-                                                prefixIcon: Icon(
-                                                  (obscure) ? Icons.lock_outlined : Icons.lock_open_outlined,
-                                                  color:
-                                                      Theme.of(
-                                                        context,
-                                                      ).primaryColor,
-                                                ),
-                                                hintText: "New Password",
-                                              ),
-                                              cursorColor:
+                                      child: TextFormField(
+                                        textAlignVertical:
+                                            TextAlignVertical.center,
+                                        obscureText: obscure,
+                                        decoration: InputDecoration(
+                                          prefixIcon: Icon(
+                                            (obscure)
+                                                ? Icons.lock_outlined
+                                                : Icons.lock_open_outlined,
+                                            color:
+                                                Theme.of(context).primaryColor,
+                                          ),
+                                          suffixIcon: GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                obscure = !obscure;
+                                              });
+                                            },
+                                            child: Icon(
+                                              Icons.visibility_outlined,
+                                              color:
                                                   Theme.of(
                                                     context,
                                                   ).primaryColor,
-                                              onChanged:
-                                                  (value) => setState(() {
-                                                    password = value;
-                                                  }),
                                             ),
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 5.0,
-                                            ),
-                                            child: IconButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  obscure = !obscure;
-                                                });
-                                              },
-                                              icon: Icon(
-                                                Icons.visibility_outlined,
-                                              ),
-                                              style: ButtonStyle(
-                                                visualDensity:
-                                                    VisualDensity.compact,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                          hintText: "New Password",
+                                        ),
+                                        cursorColor:
+                                            Theme.of(context).primaryColor,
+                                        onChanged:
+                                            (value) => setState(() {
+                                              password = value;
+                                            }),
                                       ),
                                     ),
                                     Padding(
