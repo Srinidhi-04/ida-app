@@ -44,6 +44,12 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    checkLogin();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
@@ -98,6 +104,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                           hintText: "Body",
                           errorText: errors[1],
                         ),
+                        maxLines: null,
                         cursorColor: Theme.of(context).primaryColor,
                         onChanged:
                             (value) => setState(() {
@@ -127,7 +134,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                             });
 
                             await post(
-                              Uri.parse(baseUrl + "/edit-item/"),
+                              Uri.parse(baseUrl + "/send-announcement/"),
                               headers: {"Authorization": "Bearer ${token}"},
                               body: {
                                 "user_id": user_id.toString(),
