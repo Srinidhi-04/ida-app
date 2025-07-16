@@ -68,7 +68,7 @@ def verify_code(request: HttpRequest):
     settings = UserSettings(user = user, announcements = True, updates = True, merch = True, status = True, reminders = "2 hours before")
     settings.save()
 
-    return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "admin": user.admin, "reminders": settings.reminders, "token": user.token})
+    return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "admin": user.admin, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
 
 def send_code(request: HttpRequest):
     if request.method != "POST":
@@ -139,7 +139,7 @@ def change_password(request: HttpRequest):
 
     settings: UserSettings = user.user_settings
 
-    return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "admin": user.admin, "reminders": settings.reminders, "token": user.token})
+    return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "admin": user.admin, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
 
 def login(request: HttpRequest):
     if request.method != "POST":
@@ -176,7 +176,7 @@ def login(request: HttpRequest):
 
         settings: UserSettings = user.user_settings
 
-        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "admin": user.admin, "reminders": settings.reminders, "token": user.token})
+        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "admin": user.admin, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
     
     return JsonResponse({"error": "Email or password is incorrect"}, status = 400)
 
@@ -1040,3 +1040,40 @@ def log_donation(request: HttpRequest):
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
 
     return JsonResponse({"message": "Donation successfully logged"})
+
+def send_announcement(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+
+    try:
+        user_id = int(request.POST.get("user_id"))
+    except:
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+
+    token = request.headers.get("authorization")
+    if not token:
+        return JsonResponse({"error": "Authorization token is required"}, status = 400)
+    if not token.startswith("Bearer "):
+        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
+    token = token[7:]
+
+    try:
+        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+        if user.token != token:
+            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
+        if not user.admin:
+            return JsonResponse({"error": "User is not an admin"}, status = 400)
+    except:
+        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    
+    title = request.POST.get("title")
+    if not title:
+        return JsonResponse({"error": "'title' field is required"}, status = 400)
+    
+    body = request.POST.get("body")
+    if not body:
+        return JsonResponse({"error": "'body' field is required"}, status = 400)
+    
+    send_topic_notification("ida-app-announcements", title, body)
+
+    return JsonResponse({"message": "Announcement sent successfully"})

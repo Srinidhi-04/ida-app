@@ -23,6 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late int avatar;
   late String email;
   late String reminders;
+  late bool announcements;
 
   bool loaded = false;
   bool submitted = false;
@@ -291,6 +292,7 @@ class _ProfilePageState extends State<ProfilePage> {
       avatar = int.parse(info["avatar"]!);
       admin = bool.parse(info["admin"]!);
       reminders = info["reminders"]!;
+      announcements = bool.parse(info["announcements"]!);
     });
     await getEvents();
   }
@@ -556,6 +558,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             user_id,
                             token,
                             reminders,
+                            announcements,
                           );
 
                           await SecureStorage.delete();

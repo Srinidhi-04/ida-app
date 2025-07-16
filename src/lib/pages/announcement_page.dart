@@ -1,0 +1,185 @@
+import 'package:flutter/material.dart';
+import 'package:http/http.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/secure_storage.dart';
+
+class AnnouncementPage extends StatefulWidget {
+  const AnnouncementPage({super.key});
+
+  @override
+  State<AnnouncementPage> createState() => _AnnouncementPageState();
+}
+
+class _AnnouncementPageState extends State<AnnouncementPage> {
+  late int user_id;
+  late String token;
+
+  bool submitted = false;
+  String title = "";
+  String body = "";
+
+  List<String?> errors = [null, null];
+
+  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
+
+  Future<void> checkLogin() async {
+    Map<String, String> info = await SecureStorage.read();
+    if (info["last_login"] != null) {
+      DateTime date = DateTime.parse(info["last_login"]!);
+      if (DateTime.now().subtract(Duration(days: 30)).compareTo(date) >= 0) {
+        await SecureStorage.delete();
+        await Navigator.popAndPushNamed(context, "/login");
+        return;
+      }
+    }
+    if (info["user_id"] == null) {
+      await Navigator.popAndPushNamed(context, "/login");
+      return;
+    }
+
+    setState(() {
+      user_id = int.parse(info["user_id"]!);
+      token = info["token"]!;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: Text(
+              "Send Announcement",
+              style: Theme.of(context).typography.black.headlineMedium!.apply(
+                color: Theme.of(context).primaryColorDark,
+              ),
+            ),
+            centerTitle: false,
+          ),
+          body: SingleChildScrollView(
+            child: Container(
+              constraints: BoxConstraints(
+                minWidth: MediaQuery.of(context).size.width,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
+                      child: TextFormField(
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.drive_file_rename_outline,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          hintText: "Title",
+                          errorText: errors[0],
+                        ),
+                        cursorColor: Theme.of(context).primaryColor,
+                        onChanged:
+                            (value) => setState(() {
+                              title = value;
+                            }),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: TextFormField(
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.description_outlined,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          hintText: "Body",
+                          errorText: errors[1],
+                        ),
+                        cursorColor: Theme.of(context).primaryColor,
+                        onChanged:
+                            (value) => setState(() {
+                              body = value;
+                            }),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10.0),
+                      child: TextButton(
+                        onPressed: () async {
+                          FocusScope.of(context).unfocus();
+
+                          if (title == "")
+                            errors[0] = "Title is a required field";
+                          else
+                            errors[0] = null;
+
+                          if (body == "")
+                            errors[1] = "Body is a required field";
+                          else
+                            errors[1] = null;
+
+                          if (errors[0] == null && errors[1] == null) {
+                            setState(() {
+                              submitted = true;
+                            });
+
+                            await post(
+                              Uri.parse(baseUrl + "/edit-item/"),
+                              headers: {"Authorization": "Bearer ${token}"},
+                              body: {
+                                "user_id": user_id.toString(),
+                                "title": title,
+                                "body": body,
+                              },
+                            );
+                            Navigator.pop(context);
+                          }
+
+                          setState(() {
+                            errors = errors;
+                            submitted = false;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(5.0),
+                          child: Text(
+                            "Send",
+                            style: Theme.of(context)
+                                .typography
+                                .white
+                                .labelLarge!
+                                .apply(fontWeightDelta: 3),
+                          ),
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            Theme.of(context).primaryColorLight,
+                          ),
+                          foregroundColor: WidgetStatePropertyAll(Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        (submitted)
+            ? Container(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              color: Color(0x99FFFFFF),
+              child: LoadingAnimationWidget.threeArchedCircle(
+                color: Theme.of(context).primaryColorLight,
+                size: 100,
+              ),
+            )
+            : Container(),
+      ],
+    );
+  }
+}

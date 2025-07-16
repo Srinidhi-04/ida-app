@@ -96,6 +96,7 @@ class _ForgotPageState extends State<ForgotPage> {
       "avatar": info["avatar"].toString(),
       "admin": info["admin"].toString(),
       "reminders": info["reminders"].toString(),
+      "announcements": info["announcements"].toString(),
       "token": info["token"].toString(),
     });
 
@@ -103,6 +104,7 @@ class _ForgotPageState extends State<ForgotPage> {
       info["user_id"],
       info["token"],
       info["reminders"],
+      info["announcements"],
     );
 
     Navigator.popAndPushNamed(context, "/home");

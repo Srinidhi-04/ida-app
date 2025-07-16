@@ -18,6 +18,7 @@ class NotificationsManager {
     int user_id,
     String token,
     String reminders,
+    bool announcements,
   ) async {
     var response = await get(
       Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
@@ -33,12 +34,17 @@ class NotificationsManager {
         "ida-event-${event_id}-${alerts.indexOf(reminders) - 1}",
       );
     }
+
+    if (announcements) {
+      FirebaseMessaging.instance.subscribeToTopic("ida-app-announcements");
+    }
   }
 
   static Future<void> unsubscribeAllNotifications(
     int user_id,
     String token,
     String reminders,
+    bool announcements,
   ) async {
     var response = await get(
       Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
@@ -53,6 +59,10 @@ class NotificationsManager {
       FirebaseMessaging.instance.unsubscribeFromTopic(
         "ida-event-${event_id}-${alerts.indexOf(reminders) - 1}",
       );
+    }
+
+    if (announcements) {
+      FirebaseMessaging.instance.unsubscribeFromTopic("ida-app-announcements");
     }
   }
 
@@ -108,6 +118,14 @@ class NotificationsManager {
     }
   }
 
+  static Future<void> subscribeTopic(String topic) async {
+    FirebaseMessaging.instance.subscribeToTopic(topic);
+  }
+
+  static Future<void> unsubscribeTopic(String topic) async {
+    FirebaseMessaging.instance.unsubscribeFromTopic(topic);
+  }
+
   static Future<void> changeInterval(
     int user_id,
     String token,
@@ -122,13 +140,17 @@ class NotificationsManager {
     List notifs = info["data"];
 
     for (int event_id in notifs) {
-      FirebaseMessaging.instance.unsubscribeFromTopic(
-        "ida-event-${event_id}-${alerts.indexOf(original_alert) - 1}",
-      );
+      if (original_alert != "Off") {
+        FirebaseMessaging.instance.unsubscribeFromTopic(
+          "ida-event-${event_id}-${alerts.indexOf(original_alert) - 1}",
+        );
+      }
 
-      FirebaseMessaging.instance.subscribeToTopic(
-        "ida-event-${event_id}-${alerts.indexOf(new_alert) - 1}",
-      );
+      if (new_alert != "Off") {
+        FirebaseMessaging.instance.subscribeToTopic(
+          "ida-event-${event_id}-${alerts.indexOf(new_alert) - 1}",
+        );
+      }
     }
   }
 }

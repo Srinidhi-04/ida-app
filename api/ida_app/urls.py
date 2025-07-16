@@ -27,4 +27,5 @@ urlpatterns = [
     path("get-cart/", get_cart),
     path("stripe-payment/", stripe_payment),
     path("log-donation/", log_donation),
+    path("send-announcement/", send_announcement)
 ]

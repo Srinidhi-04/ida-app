@@ -17,6 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late int user_id;
   late String token;
+  late bool admin;
 
   List<String> months = [
     "JAN",
@@ -37,6 +38,7 @@ class _HomePageState extends State<HomePage> {
 
   Map<int, int> quantity = {};
 
+  bool loaded = false;
   bool loadingEvents = false;
 
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
@@ -294,6 +296,8 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       user_id = int.parse(info["user_id"]!);
       token = info["token"]!;
+      admin = bool.parse(info["admin"]!);
+      loaded = true;
     });
     await Future.wait([getCart(), getEvents()]);
   }
@@ -306,6 +310,16 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!loaded)
+      return Scaffold(
+        body: Center(
+          child: LoadingAnimationWidget.inkDrop(
+            color: Theme.of(context).primaryColorLight,
+            size: 100,
+          ),
+        ),
+      );
+
     return Scaffold(
       appBar: AppBar(
         title: Image(image: AssetImage("assets/logo.png"), height: 40),
@@ -589,6 +603,18 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
+      floatingActionButton:
+          (admin)
+              ? FloatingActionButton(
+                onPressed: () {
+                  Navigator.of(context).pushNamed("/announcement");
+                },
+                child: Icon(Icons.campaign_outlined),
+                backgroundColor: Theme.of(context).primaryColorDark,
+                foregroundColor: Theme.of(context).primaryColorLight,
+                shape: CircleBorder(),
+              )
+              : null,
       bottomNavigationBar: Navigation(selected: 0),
     );
   }

@@ -214,6 +214,17 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                 "reminders": alert,
                               },
                             );
+
+                            if (notifs["announcements"]) {
+                              NotificationsManager.subscribeTopic(
+                                "ida-app-announcements",
+                              );
+                            } else {
+                              NotificationsManager.unsubscribeTopic(
+                                "ida-app-announcements",
+                              );
+                            }
+
                             if (alert != original_alert) {
                               SecureStorage.writeOne("reminders", alert);
 

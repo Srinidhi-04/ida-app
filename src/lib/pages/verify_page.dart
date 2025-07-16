@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 
 class CirclePainter extends CustomPainter {
@@ -66,8 +67,10 @@ class _VerifyPageState extends State<VerifyPage> {
       "avatar": info["avatar"].toString(),
       "admin": info["admin"].toString(),
       "reminders": info["reminders"].toString(),
+      "announcements": info["announcements"].toString(),
       "token": info["token"].toString(),
     });
+    NotificationsManager.subscribeTopic("ida-app-announcements");
     Navigator.popAndPushNamed(context, "/home");
     setState(() {
       submitted = false;
