@@ -79,7 +79,12 @@ class _SplashPageState extends State<SplashPage> {
               color: Color(0x77FFFFFF),
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height,
-              child: Center(child: Image(image: AssetImage("assets/logo.png"))),
+              child: Center(
+                child: Image(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  image: AssetImage("assets/logo.png"),
+                ),
+              ),
             ),
           ],
         ),
