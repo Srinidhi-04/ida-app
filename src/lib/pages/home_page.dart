@@ -6,6 +6,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -510,6 +511,39 @@ class _HomePageState extends State<HomePage> {
                         style: Theme.of(context).typography.black.headlineSmall,
                       ),
                     ),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    child: Text(
+                      "Gallery",
+                      style: Theme.of(context).typography.black.headlineSmall,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: CarouselSlider.builder(
+                    options: CarouselOptions(
+                      height: 200,
+                      enlargeCenterPage: true,
+                    ),
+                    itemCount: 18,
+                    itemBuilder:
+                        (
+                          BuildContext context,
+                          int itemIndex,
+                          int pageViewIndex,
+                        ) => Image(
+                          height: 400,
+                          width: MediaQuery.of(context).size.width * 0.7,
+                          fit: BoxFit.cover,
+                          image: AssetImage(
+                            "assets/gallery/image_${itemIndex + 1}.png",
+                          ),
+                        ),
+                  ),
+                ),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
                   child: Container(
