@@ -514,9 +514,9 @@ class _HomePageState extends State<HomePage> {
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                     child: Text(
-                      "Gallery",
+                      "Image Gallery",
                       style: Theme.of(context).typography.black.headlineSmall,
                     ),
                   ),
