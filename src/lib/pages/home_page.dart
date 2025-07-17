@@ -399,6 +399,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         Image(
                           width: MediaQuery.of(context).size.width,
+                          fit: BoxFit.cover,
                           image: AssetImage("assets/pages/home_1.png"),
                         ),
                         SizedBox(height: 20),
