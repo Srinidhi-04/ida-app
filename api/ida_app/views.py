@@ -1074,6 +1074,12 @@ def send_announcement(request: HttpRequest):
     if not body:
         return JsonResponse({"error": "'body' field is required"}, status = 400)
     
-    send_topic_notification("ida-app-announcements", title, body)
+    everyone = request.POST.get("everyone") == "yes"
+    
+    if everyone:
+        send_topic_notification("ida-app-default", title, body)
+
+    else:
+        send_topic_notification("ida-app-announcements", title, body)
 
     return JsonResponse({"message": "Announcement sent successfully"})

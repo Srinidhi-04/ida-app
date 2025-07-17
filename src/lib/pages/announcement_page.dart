@@ -17,6 +17,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   bool submitted = false;
   String title = "";
   String body = "";
+  bool everyone = false;
 
   List<String?> errors = [null, null];
 
@@ -113,6 +114,31 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                       ),
                     ),
                     Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 20.0),
+                            child: Text(
+                              "Send to everyone?",
+                              style:
+                                  Theme.of(context).typography.black.labelLarge,
+                            ),
+                          ),
+                          Switch(
+                            thumbColor: WidgetStatePropertyAll(Colors.white),
+                            activeTrackColor: Colors.green,
+                            inactiveTrackColor: Theme.of(context).primaryColor,
+                            value: everyone,
+                            onChanged:
+                                (value) => setState(() {
+                                  everyone = value;
+                                }),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: TextButton(
                         onPressed: () async {
@@ -140,6 +166,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                 "user_id": user_id.toString(),
                                 "title": title,
                                 "body": body,
+                                "everyone": (everyone) ? "yes" : "no"
                               },
                             );
                             Navigator.pop(context);
