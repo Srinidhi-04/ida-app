@@ -113,7 +113,7 @@ flutter_native_splash:
 
   color: "#ffffff"
   image_android: "assets/splash-android.png"
-  image_ios: "assets/splash-ios-2.png"
+  image_ios: "assets/splash-ios.png"
   ios_content_mode: "scaleAspectFit"
   branding_android: "assets/splash-branding.png"
   branding_bottom_padding_android: 100
