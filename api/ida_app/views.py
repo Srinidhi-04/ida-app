@@ -68,7 +68,7 @@ def verify_code(request: HttpRequest):
     settings = UserSettings(user = user, announcements = True, updates = True, merch = True, status = True, reminders = "2 hours before")
     settings.save()
 
-    return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "admin": user.admin, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
+    return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
 
 def send_code(request: HttpRequest):
     if request.method != "POST":
@@ -139,7 +139,7 @@ def change_password(request: HttpRequest):
 
     settings: UserSettings = user.user_settings
 
-    return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "admin": user.admin, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
+    return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
 
 def login(request: HttpRequest):
     if request.method != "POST":
@@ -176,7 +176,7 @@ def login(request: HttpRequest):
 
         settings: UserSettings = user.user_settings
 
-        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "admin": user.admin, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
+        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
     
     return JsonResponse({"error": "Email or password is incorrect"}, status = 400)
 
@@ -200,7 +200,7 @@ def add_event(request: HttpRequest):
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
         if user.token != token:
             return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if not user.admin:
+        if user.role != "admin":
             return JsonResponse({"error": "User is not an admin"}, status = 400)
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
@@ -278,7 +278,7 @@ def edit_event(request: HttpRequest):
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
         if user.token != token:
             return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if not user.admin:
+        if user.role != "admin":
             return JsonResponse({"error": "User is not an admin"}, status = 400)
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
@@ -380,7 +380,7 @@ def delete_event(request: HttpRequest):
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
         if user.token != token:
             return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if not user.admin:
+        if user.role != "admin":
             return JsonResponse({"error": "User is not an admin"}, status = 400)
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
@@ -740,7 +740,7 @@ def add_item(request: HttpRequest):
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
         if user.token != token:
             return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if not user.admin:
+        if user.role != "admin":
             return JsonResponse({"error": "User is not an admin"}, status = 400)
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
@@ -786,7 +786,7 @@ def edit_item(request: HttpRequest):
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
         if user.token != token:
             return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if not user.admin:
+        if user.role != "admin":
             return JsonResponse({"error": "User is not an admin"}, status = 400)
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
@@ -867,7 +867,7 @@ def delete_item(request: HttpRequest):
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
         if user.token != token:
             return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if not user.admin:
+        if user.role != "admin":
             return JsonResponse({"error": "User is not an admin"}, status = 400)
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
@@ -1070,7 +1070,7 @@ def send_announcement(request: HttpRequest):
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
         if user.token != token:
             return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if not user.admin:
+        if user.role != "admin":
             return JsonResponse({"error": "User is not an admin"}, status = 400)
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)

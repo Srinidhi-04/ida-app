@@ -32,12 +32,12 @@ class UserManager(BaseUserManager):
         return user
     
     def create_superuser(self, email, name, password, **kwargs):
-        kwargs.setdefault("admin", True)
+        kwargs.setdefault("role", "admin")
         kwargs.setdefault("is_superuser", True)
         return self.create_user(email, name, password, **kwargs)
     
     def create_admin(self, email, name, password, **kwargs):
-        kwargs.setdefault("admin", True)
+        kwargs.setdefault("role", "admin")
         return self.create_user(email, name, password, **kwargs)
 
 
@@ -46,7 +46,7 @@ class UserCredentials(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique = True, null = False)
     name = models.TextField(unique = False, null = False)
     avatar = models.IntegerField(unique = False, null = False)
-    admin = models.BooleanField(default = False, null = False)
+    role = models.TextField(default = "user", null = False)
     signup_code = models.IntegerField(unique = True, null = True)
     forgot_code = models.IntegerField(unique = True, null = True)
     token = models.CharField(max_length = 50, unique = True, null = True)
