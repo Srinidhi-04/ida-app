@@ -427,7 +427,7 @@ def get_events(request: HttpRequest):
     Events.objects.filter(date__lte = datetime.datetime.now(tz = datetime.timezone.utc)).update(completed = True)
     
     if not completed:
-        events = list(Events.objects.all().values())
+        events = list(Events.objects.all().order_by("date").values())
     else:
         events = Events.objects.filter(completed = completed == "yes").order_by("date")
         if completed != "yes" and essential:
