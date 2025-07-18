@@ -171,7 +171,10 @@ class _ManagePageState extends State<ManagePage> {
                                       lastDate: DateTime.now().add(
                                         Duration(days: 365),
                                       ),
-                                      initialDate: DateTime.now(),
+                                      initialDate:
+                                          (event_date == null)
+                                              ? DateTime.now()
+                                              : event_date,
                                     ).then(
                                       (value) => setState(() {
                                         event_date = value;
@@ -224,7 +227,10 @@ class _ManagePageState extends State<ManagePage> {
                                   onPressed: () {
                                     showTimePicker(
                                       context: context,
-                                      initialTime: TimeOfDay.now(),
+                                      initialTime:
+                                          (event_time == null)
+                                              ? TimeOfDay.now()
+                                              : event_time!,
                                     ).then(
                                       (value) => setState(() {
                                         event_time = value;

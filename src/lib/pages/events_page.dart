@@ -103,9 +103,9 @@ class _EventsPageState extends State<EventsPage> {
   ) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 170,
+      height: 200,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(10, 0, 20, 10),
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
         child: Slidable(
           key: ValueKey(event_id),
           enabled: admin,
@@ -246,8 +246,8 @@ class _EventsPageState extends State<EventsPage> {
                     ClipRRect(
                       borderRadius: BorderRadius.circular(10),
                       child: Image(
-                        width: MediaQuery.of(context).size.width / 5,
-                        height: 170,
+                        width: MediaQuery.of(context).size.width * 0.2,
+                        height: 200,
                         image: NetworkImage(image),
                         fit: BoxFit.cover,
                       ),
@@ -255,7 +255,7 @@ class _EventsPageState extends State<EventsPage> {
                     Padding(
                       padding: const EdgeInsets.only(left: 20),
                       child: Container(
-                        width: 0.6 * MediaQuery.of(context).size.width,
+                        width: 0.8 * MediaQuery.of(context).size.width - 70,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,9 +267,9 @@ class _EventsPageState extends State<EventsPage> {
                                 Container(
                                   constraints: BoxConstraints(
                                     maxWidth:
-                                        0.6 *
+                                        0.8 *
                                             MediaQuery.of(context).size.width -
-                                        30,
+                                        120,
                                   ),
                                   child: Column(
                                     crossAxisAlignment:
@@ -346,6 +346,9 @@ class _EventsPageState extends State<EventsPage> {
                                                 context,
                                               ).primaryColorLight,
                                       iconSize: 30,
+                                      style: ButtonStyle(
+                                        visualDensity: VisualDensity.compact,
+                                      ),
                                     )
                                     : Container(),
                               ],

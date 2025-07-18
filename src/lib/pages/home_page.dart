@@ -88,8 +88,8 @@ class _HomePageState extends State<HomePage> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: Container(
-        width: 240,
-        height: 300,
+        width: 300,
+        height: 350,
         child: TextButton(
           style: ButtonStyle(
             padding: WidgetStatePropertyAll(EdgeInsets.zero),
@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
                     alignment: Alignment.topLeft,
                     children: [
                       Container(
-                        width: 220,
+                        width: 280,
                         height: 160,
                         decoration: BoxDecoration(
                           image: DecorationImage(

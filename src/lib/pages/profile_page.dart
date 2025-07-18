@@ -85,7 +85,7 @@ class _ProfilePageState extends State<ProfilePage> {
   ) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 170,
+      height: 200,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 20),
         child: Card(
@@ -132,8 +132,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image(
-                      width: MediaQuery.of(context).size.width / 5,
-                      height: 170,
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      height: 200,
                       image: NetworkImage(image),
                       fit: BoxFit.cover,
                     ),
@@ -141,7 +141,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   Padding(
                     padding: const EdgeInsets.only(left: 20),
                     child: Container(
-                      width: 0.6 * MediaQuery.of(context).size.width - 20,
+                      width: 0.8 * MediaQuery.of(context).size.width - 90,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,7 +184,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                     constraints: BoxConstraints(
                                       maxWidth:
                                           0.3 *
-                                          MediaQuery.of(context).size.width,
+                                              MediaQuery.of(
+                                                context,
+                                              ).size.width -
+                                          5,
                                     ),
                                     child: Text(
                                       location,

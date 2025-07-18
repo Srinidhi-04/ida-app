@@ -429,9 +429,9 @@ def get_events(request: HttpRequest):
     if not completed:
         events = list(Events.objects.all().values())
     else:
-        events = Events.objects.filter(completed = completed == "yes").order_by("-essential")
+        events = Events.objects.filter(completed = completed == "yes").order_by("date")
         if completed != "yes" and essential:
-            events = events.filter(essential = essential == "yes").order_by("-essential")
+            events = events.filter(essential = essential == "yes").order_by("date")
         events = list(events.values())
     
     rsvp = list(EventRsvp.objects.filter(user = user).only("event_id").values("event_id"))
