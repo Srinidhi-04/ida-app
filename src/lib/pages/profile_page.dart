@@ -140,10 +140,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       fit: BoxFit.cover,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Container(
-                      width: 0.8 * MediaQuery.of(context).size.width - 90,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         crossAxisAlignment: CrossAxisAlignment.start,

@@ -256,10 +256,9 @@ class _EventsPageState extends State<EventsPage> {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 20),
-                      child: Container(
-                        width: 0.8 * MediaQuery.of(context).size.width - 70,
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20),
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           crossAxisAlignment: CrossAxisAlignment.start,

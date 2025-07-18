@@ -38,7 +38,7 @@ class _ShopPageState extends State<ShopPage> {
   ) {
     return Container(
       width: MediaQuery.of(context).size.width,
-      height: 170,
+      height: 200,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
         child: Slidable(
@@ -122,16 +122,15 @@ class _ShopPageState extends State<ShopPage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image(
-                      width: MediaQuery.of(context).size.width / 5,
-                      height: 170,
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      height: 200,
                       image: NetworkImage(image),
                       fit: BoxFit.cover,
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: Container(
-                      width: 0.6 * MediaQuery.of(context).size.width,
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 20),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
