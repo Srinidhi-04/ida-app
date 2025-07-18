@@ -172,7 +172,10 @@ class _ManagePageState extends State<ManagePage> {
                                   onPressed: () {
                                     showDatePicker(
                                       context: context,
-                                      firstDate: DateTime.now(),
+                                      firstDate:
+                                          (event_date == null)
+                                              ? DateTime.now()
+                                              : event_date!,
                                       lastDate: DateTime.now().add(
                                         Duration(days: 365),
                                       ),
