@@ -40,7 +40,7 @@ class _HomePageState extends State<HomePage> {
   Map<int, int> quantity = {};
 
   bool loaded = false;
-  bool loadingEvents = false;
+  bool? loadingEvents;
 
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
@@ -230,7 +230,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> getEvents() async {
     setState(() {
-      loadingEvents = true;
+      if (loadingEvents == null) loadingEvents = true;
     });
 
     var response = await get(
@@ -479,7 +479,7 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
-                loadingEvents
+                (loadingEvents == null || loadingEvents!)
                     ? LoadingAnimationWidget.staggeredDotsWave(
                       color: Theme.of(context).primaryColorLight,
                       size: 50,
