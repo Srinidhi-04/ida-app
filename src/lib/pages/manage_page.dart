@@ -23,6 +23,7 @@ class _ManagePageState extends State<ManagePage> {
   List<double?> latlng = [null, null];
   String image = "";
   String body = "";
+  String ticket = "";
   bool featured = false;
   List<String?> errors = [null, null, null, null, null, null, null];
   bool initialized = false;
@@ -36,6 +37,7 @@ class _ManagePageState extends State<ManagePage> {
   TextEditingController long_controller = TextEditingController();
   TextEditingController image_controller = TextEditingController();
   TextEditingController body_controller = TextEditingController();
+  TextEditingController ticket_controller = TextEditingController();
 
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
@@ -91,6 +93,9 @@ class _ManagePageState extends State<ManagePage> {
 
           body = args["body"];
           body_controller.text = body;
+
+          ticket = args["ticket"];
+          ticket_controller.text = ticket;
 
           featured = args["featured"];
         });
@@ -413,6 +418,25 @@ class _ManagePageState extends State<ManagePage> {
                       ),
                     ),
                     Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: TextFormField(
+                        controller: ticket_controller,
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.confirmation_num_outlined,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          hintText: "Ticket",
+                        ),
+                        cursorColor: Theme.of(context).primaryColor,
+                        onChanged:
+                            (value) => setState(() {
+                              ticket = value;
+                            }),
+                      ),
+                    ),
+                    Padding(
                       padding: EdgeInsets.only(bottom: 20),
                       child: Row(
                         children: [
@@ -518,6 +542,7 @@ class _ManagePageState extends State<ManagePage> {
                                   "longitude": latlng[1].toString(),
                                   "image": image,
                                   "body": body,
+                                  "ticket": ticket,
                                   "essential": (featured ? "yes" : "no"),
                                 },
                               );
@@ -541,6 +566,7 @@ class _ManagePageState extends State<ManagePage> {
                                   "longitude": latlng[1].toString(),
                                   "image": image,
                                   "body": body,
+                                  "ticket": ticket,
                                   "essential": (featured ? "yes" : "no"),
                                 },
                               );
@@ -555,6 +581,7 @@ class _ManagePageState extends State<ManagePage> {
                                     ? image
                                     : "https://i.imgur.com/Mw85Kfp.png",
                                 body,
+                                ticket,
                                 featured,
                               );
                             }

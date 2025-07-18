@@ -6,6 +6,7 @@ import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class EventPage extends StatefulWidget {
   EventPage({super.key});
@@ -27,6 +28,7 @@ class _EventPageState extends State<EventPage> {
   late String location;
   late String title;
   late String body;
+  late String ticket;
   late Function callback;
   late double latitude;
   late double longitude;
@@ -87,6 +89,7 @@ class _EventPageState extends State<EventPage> {
         location = args["location"];
         title = args["title"];
         body = args["body"];
+        ticket = args["ticket"];
         callback = args["callback"];
         latitude = args["latitude"];
         longitude = args["longitude"];
@@ -158,6 +161,7 @@ class _EventPageState extends State<EventPage> {
                                     double new_longitude,
                                     String new_image,
                                     String new_body,
+                                    String new_ticket,
                                     bool new_featured,
                                   ) {
                                     setState(() {
@@ -168,6 +172,7 @@ class _EventPageState extends State<EventPage> {
                                       longitude = new_longitude;
                                       image = new_image;
                                       body = new_body;
+                                      ticket = new_ticket;
                                       featured = new_featured;
                                       past =
                                           (new_date.compareTo(DateTime.now()) <=
@@ -400,40 +405,115 @@ class _EventPageState extends State<EventPage> {
               ),
             ),
             (!past)
-                ? Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      post(
-                        Uri.parse(baseUrl + "/toggle-rsvp/"),
-                        headers: {"Authorization": "Bearer ${token}"},
-                        body: {
-                          "user_id": user_id.toString(),
-                          "event_id": event_id.toString(),
+                ? (ticket == "")
+                    ? Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          post(
+                            Uri.parse(baseUrl + "/toggle-rsvp/"),
+                            headers: {"Authorization": "Bearer ${token}"},
+                            body: {
+                              "user_id": user_id.toString(),
+                              "event_id": event_id.toString(),
+                            },
+                          );
+                          setState(() {
+                            rsvp = !rsvp;
+                          });
                         },
-                      );
-                      setState(() {
-                        rsvp = !rsvp;
-                      });
-                    },
-                    child: Text(
-                      (!rsvp) ? "RSVP" : "UNREGISTER",
-                      style: Theme.of(context).typography.white.labelLarge!
-                          .apply(fontSizeDelta: 2, fontWeightDelta: 3),
-                    ),
-                    style: ButtonStyle(
-                      backgroundColor: WidgetStatePropertyAll(
-                        (!rsvp)
-                            ? Theme.of(context).primaryColorLight
-                            : Theme.of(context).primaryColor,
+                        child: Text(
+                          (!rsvp) ? "RSVP" : "UNREGISTER",
+                          style: Theme.of(context).typography.white.labelLarge!
+                              .apply(fontSizeDelta: 2, fontWeightDelta: 3),
+                        ),
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStatePropertyAll(
+                            (!rsvp)
+                                ? Theme.of(context).primaryColorLight
+                                : Theme.of(context).primaryColor,
+                          ),
+                          fixedSize: WidgetStatePropertyAll(
+                            Size(0.6 * MediaQuery.of(context).size.width, 50),
+                          ),
+                          elevation: WidgetStatePropertyAll(10),
+                        ),
                       ),
-                      fixedSize: WidgetStatePropertyAll(
-                        Size(0.6 * MediaQuery.of(context).size.width, 50),
-                      ),
-                      elevation: WidgetStatePropertyAll(10),
-                    ),
-                  ),
-                )
+                    )
+                    : Row(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              post(
+                                Uri.parse(baseUrl + "/toggle-rsvp/"),
+                                headers: {"Authorization": "Bearer ${token}"},
+                                body: {
+                                  "user_id": user_id.toString(),
+                                  "event_id": event_id.toString(),
+                                },
+                              );
+                              setState(() {
+                                rsvp = !rsvp;
+                              });
+                            },
+                            child: Text(
+                              (!rsvp) ? "RSVP" : "UNREGISTER",
+                              style: Theme.of(context)
+                                  .typography
+                                  .white
+                                  .labelLarge!
+                                  .apply(fontSizeDelta: 2, fontWeightDelta: 3),
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                (!rsvp)
+                                    ? Theme.of(context).primaryColorLight
+                                    : Theme.of(context).primaryColor,
+                              ),
+                              fixedSize: WidgetStatePropertyAll(
+                                Size(
+                                  0.3 * MediaQuery.of(context).size.width,
+                                  50,
+                                ),
+                              ),
+                              elevation: WidgetStatePropertyAll(10),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              launchUrl(Uri.parse(ticket), mode: LaunchMode.externalApplication);
+                            },
+                            child: Text(
+                              "BUY TICKET",
+                              style: Theme.of(
+                                context,
+                              ).typography.white.labelLarge!.apply(
+                                fontSizeDelta: 2,
+                                fontWeightDelta: 3,
+                                color: Theme.of(context).primaryColorLight,
+                              ),
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                Colors.white,
+                              ),
+                              fixedSize: WidgetStatePropertyAll(
+                                Size(
+                                  0.3 * MediaQuery.of(context).size.width,
+                                  50,
+                                ),
+                              ),
+                              elevation: WidgetStatePropertyAll(10),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
                 : SizedBox(),
           ],
         ),

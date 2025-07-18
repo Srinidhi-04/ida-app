@@ -67,6 +67,7 @@ class Events(models.Model):
     body = models.TextField(unique = False, null = False)
     completed = models.BooleanField(default = False, null = False)
     essential = models.BooleanField(default = False, null = False)
+    ticket = models.TextField(unique = False, null = False)
 
 
 class UserNotifications(models.Model):

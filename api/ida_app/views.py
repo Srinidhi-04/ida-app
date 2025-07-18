@@ -227,6 +227,10 @@ def add_event(request: HttpRequest):
 
     essential = request.POST.get("essential") == "yes"
 
+    ticket = request.POST.get("ticket")
+    if not ticket:
+        ticket = ""
+
     if not name:
         return JsonResponse({"error": "'name' field is required"}, status = 400)
     if not date:
@@ -242,7 +246,7 @@ def add_event(request: HttpRequest):
         tz = datetime.timezone(offset=datetime.timedelta(hours=float(timezone.split(":")[0]), minutes=float(timezone.split(":")[1])))
         event_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tz)
 
-        event = Events(name = name, date = event_date, location = location, latitude = latitude, longitude = longitude, image = image, essential = essential, body = body)
+        event = Events(name = name, date = event_date, location = location, latitude = latitude, longitude = longitude, image = image, essential = essential, body = body, ticket = ticket)
         event.save()
     except:
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
@@ -306,6 +310,10 @@ def edit_event(request: HttpRequest):
 
     essential = request.POST.get("essential") == "yes"
 
+    ticket = request.POST.get("ticket")
+    if not ticket:
+        ticket = ""
+
     if not name:
         return JsonResponse({"error": "'name' field is required"}, status = 400)
     if not date:
@@ -338,6 +346,7 @@ def edit_event(request: HttpRequest):
     event.image = image
     event.essential = essential
     event.body = body
+    event.ticket = ticket
 
     if event_date.astimezone(tz = datetime.timezone.utc) > datetime.datetime.now(tz = datetime.timezone.utc):
         event.completed = False

@@ -96,6 +96,7 @@ class _EventsPageState extends State<EventsPage> {
     DateTime date,
     String image,
     String body,
+    String ticket,
     LatLng coordinates,
     int type,
     bool featured,
@@ -157,6 +158,7 @@ class _EventsPageState extends State<EventsPage> {
                         double new_longitude,
                         String new_image,
                         String new_body,
+                        String new_ticket,
                         bool new_featured,
                       ) {
                         getEvents();
@@ -216,6 +218,7 @@ class _EventsPageState extends State<EventsPage> {
                     "location": location,
                     "title": name,
                     "body": body,
+                    "ticket": ticket,
                     "event_id": event_id,
                     "rsvp": rsvp,
                     "callback": () {
@@ -689,6 +692,7 @@ class _EventsPageState extends State<EventsPage> {
                                             e["date"],
                                             e["image"],
                                             e["body"],
+                                            e["ticket"],
                                             e["coordinates"],
                                             0,
                                             e["essential"],
@@ -760,6 +764,7 @@ class _EventsPageState extends State<EventsPage> {
                                             e["date"],
                                             e["image"],
                                             e["body"],
+                                            e["ticket"],
                                             e["coordinates"],
                                             2,
                                             e["essential"],
@@ -830,6 +835,7 @@ class _EventsPageState extends State<EventsPage> {
                                             e["date"],
                                             e["image"],
                                             e["body"],
+                                            e["ticket"],
                                             e["coordinates"],
                                             1,
                                             e["essential"],
