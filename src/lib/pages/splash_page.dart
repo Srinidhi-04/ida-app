@@ -32,7 +32,12 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   Future<void> checkLogin() async {
-    Map<String, String> info = await SecureStorage.read();
+    Map<String, String> info = {};
+    try {
+      info = await SecureStorage.read();
+    } catch (e) {
+      await SecureStorage.delete();
+    }
     if (info["last_login"] != null) {
       DateTime date = DateTime.parse(info["last_login"]!);
       if (DateTime.now().subtract(Duration(days: 30)).compareTo(date) >= 0) {

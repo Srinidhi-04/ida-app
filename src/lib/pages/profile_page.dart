@@ -189,7 +189,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                               MediaQuery.of(
                                                 context,
                                               ).size.width -
-                                          5,
+                                          20,
                                     ),
                                     child: Text(
                                       location,
@@ -401,7 +401,8 @@ class _ProfilePageState extends State<ProfilePage> {
                         ? Padding(
                           padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                           child: Text(
-                            role.substring(0, 1).toUpperCase() + role.substring(1),
+                            role.substring(0, 1).toUpperCase() +
+                                role.substring(1),
                             style:
                                 Theme.of(context).typography.black.labelSmall,
                           ),

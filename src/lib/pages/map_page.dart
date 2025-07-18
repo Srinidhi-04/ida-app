@@ -57,7 +57,7 @@ class _MapPageState extends State<MapPage> {
   ) {
     return Container(
       width: 0.8 * MediaQuery.of(context).size.width,
-      height: 170,
+      height: 200,
       color: Colors.transparent,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -101,8 +101,8 @@ class _MapPageState extends State<MapPage> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
                     child: Image(
-                      width: MediaQuery.of(context).size.width / 5,
-                      height: 170,
+                      width: MediaQuery.of(context).size.width * 0.2,
+                      height: 200,
                       image: NetworkImage(image),
                       fit: BoxFit.cover,
                     ),
@@ -259,7 +259,7 @@ class _MapPageState extends State<MapPage> {
 
   Future<void> getEvents() async {
     var response = await get(
-      Uri.parse(baseUrl + "/get-events?user_id=${user_id}"),
+      Uri.parse(baseUrl + "/get-events?completed=no&user_id=${user_id}"),
       headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);

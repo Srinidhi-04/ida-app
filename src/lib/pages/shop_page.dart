@@ -40,7 +40,7 @@ class _ShopPageState extends State<ShopPage> {
       width: MediaQuery.of(context).size.width,
       height: 170,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
+        padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
         child: Slidable(
           key: ValueKey(item_id),
           enabled: (role == "admin" && !cart),

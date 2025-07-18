@@ -445,7 +445,7 @@ class _EventPageState extends State<EventPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.all(10.0),
+                          padding: const EdgeInsets.all(5),
                           child: ElevatedButton(
                             onPressed: () async {
                               post(
@@ -459,6 +459,7 @@ class _EventPageState extends State<EventPage> {
                               setState(() {
                                 rsvp = !rsvp;
                               });
+                              callback();
                             },
                             child: Text(
                               (!rsvp) ? "RSVP" : "UNREGISTER",
@@ -476,7 +477,7 @@ class _EventPageState extends State<EventPage> {
                               ),
                               fixedSize: WidgetStatePropertyAll(
                                 Size(
-                                  0.4 * MediaQuery.of(context).size.width,
+                                  0.45 * MediaQuery.of(context).size.width,
                                   50,
                                 ),
                               ),
@@ -485,7 +486,7 @@ class _EventPageState extends State<EventPage> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(10.0),
+                          padding: const EdgeInsets.all(5),
                           child: ElevatedButton(
                             onPressed: () {
                               launchUrl(
@@ -509,7 +510,7 @@ class _EventPageState extends State<EventPage> {
                               ),
                               fixedSize: WidgetStatePropertyAll(
                                 Size(
-                                  0.4 * MediaQuery.of(context).size.width,
+                                  0.45 * MediaQuery.of(context).size.width,
                                   50,
                                 ),
                               ),
