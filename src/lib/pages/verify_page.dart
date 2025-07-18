@@ -271,11 +271,12 @@ class _VerifyPageState extends State<VerifyPage> {
                               },
                               child: Text(
                                 "VERIFY",
-                                style: Theme.of(context)
-                                    .typography
-                                    .white
-                                    .labelMedium!
-                                    .apply(fontWeightDelta: 3),
+                                style: Theme.of(
+                                  context,
+                                ).typography.white.labelMedium!.apply(
+                                  fontSizeDelta: 2,
+                                  fontWeightDelta: 3,
+                                ),
                               ),
                               style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll(

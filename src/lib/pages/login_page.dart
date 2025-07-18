@@ -311,11 +311,12 @@ class _LoginPageState extends State<LoginPage> {
                               },
                               child: Text(
                                 "LOGIN",
-                                style: Theme.of(context)
-                                    .typography
-                                    .white
-                                    .labelMedium!
-                                    .apply(fontWeightDelta: 3),
+                                style: Theme.of(
+                                  context,
+                                ).typography.white.labelMedium!.apply(
+                                  fontSizeDelta: 2,
+                                  fontWeightDelta: 3,
+                                ),
                               ),
                               style: ButtonStyle(
                                 backgroundColor: WidgetStatePropertyAll(
