@@ -112,11 +112,15 @@ flutter_native_splash:
   web: false
 
   color: "#ffffff"
-  image: "assets/splash-image.png"
+  image_android: "assets/splash-android.png"
+  image_ios: "assets/splash-ios.png"
+  branding: "assets/logo.png"
+  branding_bottom_padding: 50
 
   android_12:
     color: "#ffffff"
-    image: "assets/splash-image.png"
+    image: "assets/splash-android.png"
+    branding: "assets/logo.png"
 
 flutter_launcher_icons:
   android: true
