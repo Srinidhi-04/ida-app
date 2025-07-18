@@ -19,7 +19,7 @@ class EventsPage extends StatefulWidget {
 class _EventsPageState extends State<EventsPage> {
   late int user_id;
   late String token;
-  late bool admin;
+  late String role;
   late String reminders;
   List<bool> loaded = [false, false];
 
@@ -109,7 +109,7 @@ class _EventsPageState extends State<EventsPage> {
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
         child: Slidable(
           key: ValueKey(event_id),
-          enabled: admin,
+          enabled: role == "admin",
           endActionPane: ActionPane(
             motion: BehindMotion(),
             dismissible: DismissiblePane(
@@ -488,7 +488,7 @@ class _EventsPageState extends State<EventsPage> {
     setState(() {
       user_id = int.parse(info["user_id"]!);
       token = info["token"]!;
-      admin = bool.parse(info["admin"]!);
+      role = info["role"]!;
       reminders = info["reminders"]!;
     });
     await Future.wait([getNotifications(), getEvents()]);
@@ -855,7 +855,7 @@ class _EventsPageState extends State<EventsPage> {
         ),
       ),
       floatingActionButton:
-          (admin)
+          (role == "admin")
               ? FloatingActionButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed(

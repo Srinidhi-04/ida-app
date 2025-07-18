@@ -18,7 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late int user_id;
   late String token;
-  late bool admin;
+  late String role;
 
   List<String> months = [
     "JAN",
@@ -300,7 +300,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       user_id = int.parse(info["user_id"]!);
       token = info["token"]!;
-      admin = bool.parse(info["admin"]!);
+      role = info["role"]!;
       loaded = true;
     });
     await Future.wait([getCart(), getEvents()]);
@@ -643,7 +643,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton:
-          (admin)
+          (role == "admin")
               ? FloatingActionButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed("/announcement");

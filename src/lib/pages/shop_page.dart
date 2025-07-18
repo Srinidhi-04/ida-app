@@ -17,7 +17,7 @@ class ShopPage extends StatefulWidget {
 class _ShopPageState extends State<ShopPage> {
   late int user_id;
   late String token;
-  late bool admin;
+  late String role;
 
   Map<int, int> quantity = {};
   List items = [];
@@ -43,7 +43,7 @@ class _ShopPageState extends State<ShopPage> {
         padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
         child: Slidable(
           key: ValueKey(item_id),
-          enabled: (admin && !cart),
+          enabled: (role == "admin" && !cart),
           endActionPane: ActionPane(
             motion: BehindMotion(),
             dismissible: DismissiblePane(
@@ -400,7 +400,7 @@ class _ShopPageState extends State<ShopPage> {
     setState(() {
       user_id = int.parse(info["user_id"]!);
       token = info["token"]!;
-      admin = bool.parse(info["admin"]!);
+      role = info["role"]!;
     });
     await Future.wait([getItems(), getCart()]);
   }
@@ -586,7 +586,7 @@ class _ShopPageState extends State<ShopPage> {
                 ),
               ),
       floatingActionButton:
-          (admin && !cart)
+          (role == "admin" && !cart)
               ? FloatingActionButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed(

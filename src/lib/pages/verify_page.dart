@@ -65,7 +65,7 @@ class _VerifyPageState extends State<VerifyPage> {
       "email": info["email"].toString(),
       "name": info["name"].toString(),
       "avatar": info["avatar"].toString(),
-      "admin": info["admin"].toString(),
+      "role": info["role"].toString(),
       "reminders": info["reminders"].toString(),
       "announcements": info["announcements"].toString(),
       "token": info["token"].toString(),

@@ -18,7 +18,7 @@ class EventPage extends StatefulWidget {
 class _EventPageState extends State<EventPage> {
   late int user_id;
   late String token;
-  late bool admin;
+  late String role;
   bool loaded = false;
   bool initialized = false;
 
@@ -71,7 +71,7 @@ class _EventPageState extends State<EventPage> {
     setState(() {
       user_id = int.parse(info["user_id"]!);
       token = info["token"]!;
-      admin = bool.parse(info["admin"]!);
+      role = info["role"]!;
       loaded = true;
     });
   }
@@ -133,7 +133,7 @@ class _EventPageState extends State<EventPage> {
         elevation: 0,
         foregroundColor: Colors.white,
         actions:
-            (admin)
+            (role == "admin")
                 ? [
                   PopupMenuButton(
                     color: Theme.of(context).primaryColorLight,

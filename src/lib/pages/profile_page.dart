@@ -18,7 +18,7 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   late int user_id;
   late String token;
-  late bool admin;
+  late String role;
   late String name;
   late int avatar;
   late String email;
@@ -295,7 +295,7 @@ class _ProfilePageState extends State<ProfilePage> {
       email = info["email"]!;
       name = info["name"]!;
       avatar = int.parse(info["avatar"]!);
-      admin = bool.parse(info["admin"]!);
+      role = info["role"]!;
       reminders = info["reminders"]!;
       announcements = bool.parse(info["announcements"]!);
     });
@@ -397,11 +397,11 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                       ],
                     ),
-                    (admin)
+                    (role != "user")
                         ? Padding(
                           padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                           child: Text(
-                            "Admin",
+                            role.substring(0, 1).toUpperCase() + role.substring(1),
                             style:
                                 Theme.of(context).typography.black.labelSmall,
                           ),
