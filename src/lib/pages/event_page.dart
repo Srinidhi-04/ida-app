@@ -152,6 +152,7 @@ class _EventPageState extends State<EventPage> {
                                   "longitude": longitude,
                                   "image": image,
                                   "body": body,
+                                  "ticket": ticket,
                                   "featured": featured,
                                   "callback": (
                                     String new_name,
@@ -424,7 +425,7 @@ class _EventPageState extends State<EventPage> {
                         },
                         child: Text(
                           (!rsvp) ? "RSVP" : "UNREGISTER",
-                          style: Theme.of(context).typography.white.labelLarge!
+                          style: Theme.of(context).typography.white.labelMedium!
                               .apply(fontSizeDelta: 2, fontWeightDelta: 3),
                         ),
                         style: ButtonStyle(
@@ -441,6 +442,7 @@ class _EventPageState extends State<EventPage> {
                       ),
                     )
                     : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Padding(
                           padding: const EdgeInsets.all(10.0),
@@ -463,7 +465,7 @@ class _EventPageState extends State<EventPage> {
                               style: Theme.of(context)
                                   .typography
                                   .white
-                                  .labelLarge!
+                                  .labelMedium!
                                   .apply(fontSizeDelta: 2, fontWeightDelta: 3),
                             ),
                             style: ButtonStyle(
@@ -474,7 +476,7 @@ class _EventPageState extends State<EventPage> {
                               ),
                               fixedSize: WidgetStatePropertyAll(
                                 Size(
-                                  0.3 * MediaQuery.of(context).size.width,
+                                  0.4 * MediaQuery.of(context).size.width,
                                   50,
                                 ),
                               ),
@@ -486,13 +488,16 @@ class _EventPageState extends State<EventPage> {
                           padding: const EdgeInsets.all(10.0),
                           child: ElevatedButton(
                             onPressed: () {
-                              launchUrl(Uri.parse(ticket), mode: LaunchMode.externalApplication);
+                              launchUrl(
+                                Uri.parse(ticket),
+                                mode: LaunchMode.inAppBrowserView,
+                              );
                             },
                             child: Text(
                               "BUY TICKET",
                               style: Theme.of(
                                 context,
-                              ).typography.white.labelLarge!.apply(
+                              ).typography.white.labelMedium!.apply(
                                 fontSizeDelta: 2,
                                 fontWeightDelta: 3,
                                 color: Theme.of(context).primaryColorLight,
@@ -504,7 +509,7 @@ class _EventPageState extends State<EventPage> {
                               ),
                               fixedSize: WidgetStatePropertyAll(
                                 Size(
-                                  0.3 * MediaQuery.of(context).size.width,
+                                  0.4 * MediaQuery.of(context).size.width,
                                   50,
                                 ),
                               ),

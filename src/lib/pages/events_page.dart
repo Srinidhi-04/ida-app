@@ -149,6 +149,7 @@ class _EventsPageState extends State<EventsPage> {
                       "longitude": coordinates.longitude,
                       "image": image,
                       "body": body,
+                      "ticket": ticket,
                       "featured": featured,
                       "callback": (
                         String new_name,

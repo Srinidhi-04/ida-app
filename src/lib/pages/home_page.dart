@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
       child: TextButton(
         onPressed: () {
           if (external)
-            launchUrl(Uri.parse(path), mode: LaunchMode.externalApplication);
+            launchUrl(Uri.parse(path), mode: LaunchMode.inAppBrowserView);
           else
             Navigator.of(context).pushNamed(path);
         },
@@ -588,7 +588,7 @@ class _HomePageState extends State<HomePage> {
                                       Uri.parse(
                                         "https://www.illinidads.com/centennial-plaza",
                                       ),
-                                      mode: LaunchMode.externalApplication,
+                                      mode: LaunchMode.inAppBrowserView,
                                     );
                                   },
                                   child: Padding(
