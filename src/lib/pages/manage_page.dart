@@ -173,7 +173,10 @@ class _ManagePageState extends State<ManagePage> {
                                     showDatePicker(
                                       context: context,
                                       firstDate:
-                                          (event_date == null)
+                                          (event_date == null ||
+                                                  event_date!.isAfter(
+                                                    DateTime.now(),
+                                                  ))
                                               ? DateTime.now()
                                               : event_date!,
                                       lastDate: DateTime.now().add(
