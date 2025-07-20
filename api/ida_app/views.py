@@ -440,14 +440,14 @@ def get_events(request: HttpRequest):
     Events.objects.filter(date__lte = datetime.datetime.now(tz = datetime.timezone.utc)).update(completed = True)
     
     if not completed:
-        events = list(Events.objects.all().order_by("date").values())
+        events = list(Events.objects.order_by("date").values())
     else:
         events = Events.objects.filter(completed = completed == "yes").order_by("date")
         if completed != "yes" and essential:
             events = events.filter(essential = essential == "yes").order_by("date")
         events = list(events.values())
     
-    rsvp = list(EventRsvp.objects.filter(user = user).only("event_id").values("event_id"))
+    rsvp = list(EventRsvp.objects.filter(user = user).values("event_id"))
 
     for i in range(len(events)):
         events[i]["rsvp"] = {"event_id": events[i]["event_id"]} in rsvp
@@ -521,9 +521,9 @@ def get_rsvp(request: HttpRequest):
 
     Events.objects.filter(date__lte = datetime.datetime.now(tz = datetime.timezone.utc)).update(completed = True)
     
-    all_events = list(Events.objects.all().values())
+    all_events = list(Events.objects.values())
     
-    rsvp = list(EventRsvp.objects.filter(user = user).only("event_id").values("event_id"))
+    rsvp = list(EventRsvp.objects.filter(user = user).values("event_id"))
 
     events = []
     for event in all_events:
@@ -597,9 +597,9 @@ def get_notifications(request: HttpRequest):
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
 
-    notifs = user.user_notifications.only("event_id")
+    notifs = list(user.user_notifications.values("event_id"))
     
-    return JsonResponse({"data": [x["event_id"] for x in list(notifs.values("event_id"))]})
+    return JsonResponse({"data": [x["event_id"] for x in notifs]})
 
 def change_settings(request: HttpRequest):
     if request.method != "POST":
@@ -970,9 +970,9 @@ def get_cart(request: HttpRequest):
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
 
-    cart_item = user.user_carts.all().only("item_id", "quantity")
+    cart_item = list(user.user_carts.values("item_id", "quantity"))
 
-    return JsonResponse({"data": list(cart_item.values("item_id", "quantity"))})
+    return JsonResponse({"data": cart_item})
 
 def stripe_payment(request: HttpRequest):
     if request.method != "POST":
@@ -1096,3 +1096,77 @@ def send_announcement(request: HttpRequest):
         send_topic_notification("ida-app-announcements", title, body)
 
     return JsonResponse({"message": "Announcement sent successfully"})
+
+def edit_role(request: HttpRequest):
+    if request.method != "POST":
+        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
+    
+    try:
+        user_id = int(request.POST.get("user_id"))
+    except:
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+
+    token = request.headers.get("authorization")
+    if not token:
+        return JsonResponse({"error": "Authorization token is required"}, status = 400)
+    if not token.startswith("Bearer "):
+        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
+    token = token[7:]
+
+    try:
+        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+        if user.token != token:
+            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
+        if user.role != "admin":
+            return JsonResponse({"error": "User is not an admin"}, status = 400)
+    except:
+        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    
+    email = request.POST.get("name")
+    if not email:
+        return JsonResponse({"error": "'email' field is required"}, status = 400)
+    
+    try:
+        target: UserCredentials = UserCredentials.objects.get(email = email)
+    except:
+        return JsonResponse({"error": "A user with that email does not exist"}, status = 400) 
+    
+    role = request.POST.get("role")
+    if not role:
+        return JsonResponse({"error": "'role' field is required"}, status = 400)
+    
+    target.role = role
+    target.save()
+
+    return JsonResponse({"message": "Role edited successfully"})
+
+def get_roles(request: HttpRequest):
+    if request.method != "GET":
+        return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
+    
+    try:
+        user_id = int(request.GET.get("user_id"))
+    except:
+        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+
+    token = request.headers.get("authorization")
+    if not token:
+        return JsonResponse({"error": "Authorization token is required"}, status = 400)
+    if not token.startswith("Bearer "):
+        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
+    token = token[7:]
+
+    try:
+        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+        if user.token != token:
+            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
+        if user.role != "admin":
+            return JsonResponse({"error": "User is not an admin"}, status = 400)
+    except:
+        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    
+    objs = list(UserCredentials.objects.values("email", "role"))
+    emails = [x["email"] for x in objs]
+    roles = list(set([x["role"] for x in objs]))
+
+    return JsonResponse({"data": {"emails": emails, "roles": roles}})
