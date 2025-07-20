@@ -62,7 +62,7 @@ def verify_code(request: HttpRequest):
     uid = uuid.uuid4()
     user.token = uid.hex
 
-    user.last_login = datetime.datetime.now()
+    user.last_login = datetime.datetime.now(tz = datetime.timezone.utc)
     user.save()
 
     settings = UserSettings(user = user, announcements = True, updates = True, merch = True, status = True, reminders = "2 hours before")
@@ -134,7 +134,7 @@ def change_password(request: HttpRequest):
     uid = uuid.uuid4()
     user.token = uid.hex
 
-    user.last_login = datetime.datetime.now()
+    user.last_login = datetime.datetime.now(tz = datetime.timezone.utc)
     user.save()
 
     settings: UserSettings = user.user_settings
@@ -171,11 +171,11 @@ def login(request: HttpRequest):
         return JsonResponse({"message": "Code successfully resent", "user_id": user.user_id, "email": user.email})
 
     if user:
-        if datetime.datetime.now() - user.last_login > datetime.timedelta(days = 30):
+        if datetime.datetime.now(tz = datetime.timezone.utc) - user.last_login.replace(tzinfo = datetime.timezone.utc) > datetime.timedelta(days = 30):
             uid = uuid.uuid4()
             user.token = uid.hex
 
-        user.last_login = datetime.datetime.now()
+        user.last_login = datetime.datetime.now(tz = datetime.timezone.utc)
         user.save()
 
         settings: UserSettings = user.user_settings
