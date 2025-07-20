@@ -563,6 +563,16 @@ class _ProfilePageState extends State<ProfilePage> {
                             endIndent: 20,
                           ),
                           profileButton("Profile Settings", "/settings"),
+                          (role == "admin")
+                              ? Divider(
+                                color: Theme.of(context).primaryColor,
+                                indent: 20,
+                                endIndent: 20,
+                              )
+                              : Container(),
+                          (role == "admin")
+                              ? profileButton("Assign Roles", "/roles")
+                              : Container(),
                         ],
                       ),
                     ),

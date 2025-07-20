@@ -13,6 +13,7 @@ import 'package:src/pages/events_page.dart';
 import 'package:src/pages/home_page.dart';
 import 'package:src/pages/login_page.dart';
 import 'package:src/pages/map_page.dart';
+import 'package:src/pages/roles_page.dart';
 import 'package:src/pages/settings_page.dart';
 import 'package:src/pages/profile_page.dart';
 import 'package:src/pages/notifications_page.dart';
@@ -99,6 +100,7 @@ void main() async {
         "/donate": (context) => DonatePage(),
         "/board": (context) => BoardPage(),
         "/announcement": (context) => AnnouncementPage(),
+        "/roles": (context) => RolesPage(),
       },
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

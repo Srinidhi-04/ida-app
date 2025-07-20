@@ -1122,7 +1122,7 @@ def edit_role(request: HttpRequest):
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
     
-    email = request.POST.get("name")
+    email = request.POST.get("email")
     if not email:
         return JsonResponse({"error": "'email' field is required"}, status = 400)
     
