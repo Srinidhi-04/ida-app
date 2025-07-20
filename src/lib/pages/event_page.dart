@@ -284,103 +284,111 @@ class _EventPageState extends State<EventPage> {
                             fit: BoxFit.contain,
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.stretch,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 5,
+                        Container(
+                          color: Theme.of(
+                            context,
+                          ).primaryColorDark.withAlpha(150),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Container(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.3,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              right: 5,
+                                            ),
+                                            child: Icon(
+                                              Icons.event_available_outlined,
+                                              color: Colors.white,
+                                            ),
                                           ),
-                                          child: Icon(
-                                            Icons.event_available_outlined,
-                                            color: Colors.white,
+                                          Text(
+                                            "${date.day} ${months[date.month - 1]}, ${date.year}",
+                                            style: Theme.of(context)
+                                                .typography
+                                                .white
+                                                .labelMedium!
+                                                .apply(fontWeightDelta: 3),
                                           ),
-                                        ),
-                                        Text(
-                                          "${date.day} ${months[date.month - 1]}, ${date.year}",
-                                          style: Theme.of(context)
-                                              .typography
-                                              .white
-                                              .labelMedium!
-                                              .apply(fontWeightDelta: 3),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 5,
-                                          ),
-                                          child: Icon(
-                                            Icons.alarm_outlined,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                        Text(
-                                          "${(date.hour % 12 < 10 && date.hour % 12 > 0) ? "0" : ""}${(date.hour % 12 == 0) ? "12" : date.hour % 12}:${(date.minute < 10 ? "0" : "")}${date.minute} ${(date.hour < 12) ? "AM" : "PM"}",
-                                          style: Theme.of(context)
-                                              .typography
-                                              .white
-                                              .labelMedium!
-                                              .apply(fontWeightDelta: 3),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushNamed(
-                                    context,
-                                    "/map",
-                                    arguments: {
-                                      "coordinates": LatLng(
-                                        latitude,
-                                        longitude,
+                                        ],
                                       ),
-                                    },
-                                  );
-                                },
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(right: 5),
-                                      child: Icon(
-                                        Icons.location_on_outlined,
-                                        color: Colors.white,
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              right: 5,
+                                            ),
+                                            child: Icon(
+                                              Icons.alarm_outlined,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          Text(
+                                            "${(date.hour % 12 < 10 && date.hour % 12 > 0) ? "0" : ""}${(date.hour % 12 == 0) ? "12" : date.hour % 12}:${(date.minute < 10 ? "0" : "")}${date.minute} ${(date.hour < 12) ? "AM" : "PM"}",
+                                            style: Theme.of(context)
+                                                .typography
+                                                .white
+                                                .labelMedium!
+                                                .apply(fontWeightDelta: 3),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    Text(
-                                      "${location}",
-                                      style: Theme.of(context)
-                                          .typography
-                                          .white
-                                          .labelMedium!
-                                          .apply(fontWeightDelta: 3),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      "/map",
+                                      arguments: {
+                                        "coordinates": LatLng(
+                                          latitude,
+                                          longitude,
+                                        ),
+                                      },
+                                    );
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 5,
+                                        ),
+                                        child: Icon(
+                                          Icons.location_on_outlined,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        "${location}",
+                                        style: Theme.of(context)
+                                            .typography
+                                            .white
+                                            .labelMedium!
+                                            .apply(fontWeightDelta: 3),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
