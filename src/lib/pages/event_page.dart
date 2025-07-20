@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
@@ -200,7 +202,7 @@ class _EventPageState extends State<EventPage> {
                           ),
                           PopupMenuItem(
                             onTap: () async {
-                              await post(
+                              var response = await post(
                                 Uri.parse(baseUrl + "/delete-event/"),
                                 headers: {"Authorization": "Bearer ${token}"},
                                 body: {
@@ -208,6 +210,20 @@ class _EventPageState extends State<EventPage> {
                                   "event_id": event_id.toString(),
                                 },
                               );
+                              Map info = jsonDecode(response.body);
+                              if (info.containsKey("error") &&
+                                  info["error"] ==
+                                      "Invalid authorization token") {
+                                await SecureStorage.delete();
+                                await Navigator.of(
+                                  context,
+                                ).pushNamedAndRemoveUntil(
+                                  "/login",
+                                  (route) => false,
+                                );
+                                return;
+                              }
+
                               callback();
                               Navigator.pop(context);
                             },
@@ -411,7 +427,7 @@ class _EventPageState extends State<EventPage> {
                       padding: const EdgeInsets.all(10.0),
                       child: ElevatedButton(
                         onPressed: () async {
-                          post(
+                          var response = await post(
                             Uri.parse(baseUrl + "/toggle-rsvp/"),
                             headers: {"Authorization": "Bearer ${token}"},
                             body: {
@@ -419,6 +435,17 @@ class _EventPageState extends State<EventPage> {
                               "event_id": event_id.toString(),
                             },
                           );
+                          Map info = jsonDecode(response.body);
+                          if (info.containsKey("error") &&
+                              info["error"] == "Invalid authorization token") {
+                            await SecureStorage.delete();
+                            await Navigator.of(context).pushNamedAndRemoveUntil(
+                              "/login",
+                              (route) => false,
+                            );
+                            return;
+                          }
+
                           setState(() {
                             rsvp = !rsvp;
                           });
@@ -448,7 +475,7 @@ class _EventPageState extends State<EventPage> {
                           padding: const EdgeInsets.all(5),
                           child: ElevatedButton(
                             onPressed: () async {
-                              post(
+                              var response = await post(
                                 Uri.parse(baseUrl + "/toggle-rsvp/"),
                                 headers: {"Authorization": "Bearer ${token}"},
                                 body: {
@@ -456,6 +483,20 @@ class _EventPageState extends State<EventPage> {
                                   "event_id": event_id.toString(),
                                 },
                               );
+                              Map info = jsonDecode(response.body);
+                              if (info.containsKey("error") &&
+                                  info["error"] ==
+                                      "Invalid authorization token") {
+                                await SecureStorage.delete();
+                                await Navigator.of(
+                                  context,
+                                ).pushNamedAndRemoveUntil(
+                                  "/login",
+                                  (route) => false,
+                                );
+                                return;
+                              }
+
                               setState(() {
                                 rsvp = !rsvp;
                               });

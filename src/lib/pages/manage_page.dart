@@ -1,3 +1,5 @@
+import "dart:convert";
+
 import "package:flutter/material.dart";
 import "package:http/http.dart";
 import "package:loading_animation_widget/loading_animation_widget.dart";
@@ -532,7 +534,7 @@ class _ManagePageState extends State<ManagePage> {
                             );
 
                             if (event_id == null) {
-                              await post(
+                              var response = await post(
                                 Uri.parse(baseUrl + "/add-event/"),
                                 headers: {"Authorization": "Bearer ${token}"},
                                 body: {
@@ -552,10 +554,24 @@ class _ManagePageState extends State<ManagePage> {
                                   "essential": (featured ? "yes" : "no"),
                                 },
                               );
+                              Map info = jsonDecode(response.body);
+                              if (info.containsKey("error") &&
+                                  info["error"] ==
+                                      "Invalid authorization token") {
+                                await SecureStorage.delete();
+                                await Navigator.of(
+                                  context,
+                                ).pushNamedAndRemoveUntil(
+                                  "/login",
+                                  (route) => false,
+                                );
+                                return;
+                              }
+
                               Navigator.pop(context);
                               callback();
                             } else {
-                              await post(
+                              var response = await post(
                                 Uri.parse(baseUrl + "/edit-event/"),
                                 headers: {"Authorization": "Bearer ${token}"},
                                 body: {
@@ -576,6 +592,20 @@ class _ManagePageState extends State<ManagePage> {
                                   "essential": (featured ? "yes" : "no"),
                                 },
                               );
+                              Map info = jsonDecode(response.body);
+                              if (info.containsKey("error") &&
+                                  info["error"] ==
+                                      "Invalid authorization token") {
+                                await SecureStorage.delete();
+                                await Navigator.of(
+                                  context,
+                                ).pushNamedAndRemoveUntil(
+                                  "/login",
+                                  (route) => false,
+                                );
+                                return;
+                              }
+
                               Navigator.pop(context);
                               callback(
                                 name,

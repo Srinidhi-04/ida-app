@@ -76,6 +76,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
       headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
+    if (info.containsKey("error") &&
+        info["error"] == "Invalid authorization token") {
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    }
+
     setState(() {
       alert = info["data"]!.remove("reminders");
       original_alert = alert;
@@ -201,7 +210,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             setState(() {
                               changed = false;
                             });
-                            await post(
+                            var response = await post(
                               Uri.parse(baseUrl + "/change-settings/"),
                               headers: {"Authorization": "Bearer ${token}"},
                               body: {
@@ -214,6 +223,19 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                 "reminders": alert,
                               },
                             );
+                            Map info = jsonDecode(response.body);
+                            if (info.containsKey("error") &&
+                                info["error"] ==
+                                    "Invalid authorization token") {
+                              await SecureStorage.delete();
+                              await Navigator.of(
+                                context,
+                              ).pushNamedAndRemoveUntil(
+                                "/login",
+                                (route) => false,
+                              );
+                              return;
+                            }
 
                             if (notifs["announcements"]) {
                               NotificationsManager.subscribeTopic(

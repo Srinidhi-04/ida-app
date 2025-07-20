@@ -248,6 +248,15 @@ class _ProfilePageState extends State<ProfilePage> {
       headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
+    if (info.containsKey("error") &&
+        info["error"] == "Invalid authorization token") {
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    }
+
     List all_events = info["data"];
 
     List upcoming = [];

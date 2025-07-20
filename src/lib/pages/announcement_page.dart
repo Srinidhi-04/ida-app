@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -159,16 +161,30 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                               submitted = true;
                             });
 
-                            await post(
+                            var response = await post(
                               Uri.parse(baseUrl + "/send-announcement/"),
                               headers: {"Authorization": "Bearer ${token}"},
                               body: {
                                 "user_id": user_id.toString(),
                                 "title": title,
                                 "body": body,
-                                "everyone": (everyone) ? "yes" : "no"
+                                "everyone": (everyone) ? "yes" : "no",
                               },
                             );
+                            Map info = jsonDecode(response.body);
+                            if (info.containsKey("error") &&
+                                info["error"] ==
+                                    "Invalid authorization token") {
+                              await SecureStorage.delete();
+                              await Navigator.of(
+                                context,
+                              ).pushNamedAndRemoveUntil(
+                                "/login",
+                                (route) => false,
+                              );
+                              return;
+                            }
+
                             Navigator.pop(context);
                           }
 

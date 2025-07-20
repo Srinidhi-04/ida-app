@@ -238,6 +238,15 @@ class _HomePageState extends State<HomePage> {
       headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
+    if (info.containsKey("error") &&
+        info["error"] == "Invalid authorization token") {
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    }
+
     List all_events = info["data"];
 
     List<Map> new_events = [];
@@ -270,6 +279,15 @@ class _HomePageState extends State<HomePage> {
       headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
+    if (info.containsKey("error") &&
+        info["error"] == "Invalid authorization token") {
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    }
+
     List data = info["data"];
 
     Map<int, int> cart = {};

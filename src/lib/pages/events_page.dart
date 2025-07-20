@@ -123,7 +123,7 @@ class _EventsPageState extends State<EventsPage> {
                     past.removeAt(index);
                   }
                 });
-                await post(
+                var response = await post(
                   Uri.parse(baseUrl + "/delete-event/"),
                   headers: {"Authorization": "Bearer ${token}"},
                   body: {
@@ -131,6 +131,16 @@ class _EventsPageState extends State<EventsPage> {
                     "event_id": event_id.toString(),
                   },
                 );
+                Map info = jsonDecode(response.body);
+                if (info.containsKey("error") &&
+                    info["error"] == "Invalid authorization token") {
+                  await SecureStorage.delete();
+                  await Navigator.of(
+                    context,
+                  ).pushNamedAndRemoveUntil("/login", (route) => false);
+                  return;
+                }
+
                 getEvents();
                 getNotifications();
               },
@@ -184,7 +194,7 @@ class _EventsPageState extends State<EventsPage> {
                       past.removeAt(index);
                     }
                   });
-                  await post(
+                  var response = await post(
                     Uri.parse(baseUrl + "/delete-event/"),
                     headers: {"Authorization": "Bearer ${token}"},
                     body: {
@@ -192,6 +202,16 @@ class _EventsPageState extends State<EventsPage> {
                       "event_id": event_id.toString(),
                     },
                   );
+                  Map info = jsonDecode(response.body);
+                  if (info.containsKey("error") &&
+                      info["error"] == "Invalid authorization token") {
+                    await SecureStorage.delete();
+                    await Navigator.of(
+                      context,
+                    ).pushNamedAndRemoveUntil("/login", (route) => false);
+                    return;
+                  }
+
                   getEvents();
                   getNotifications();
                 },
@@ -430,6 +450,15 @@ class _EventsPageState extends State<EventsPage> {
       headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
+    if (info.containsKey("error") &&
+        info["error"] == "Invalid authorization token") {
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    }
+
     List all_events = info["data"];
 
     List<Map> all_past = [];
@@ -463,6 +492,15 @@ class _EventsPageState extends State<EventsPage> {
       headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
+    if (info.containsKey("error") &&
+        info["error"] == "Invalid authorization token") {
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    }
+
     setState(() {
       notifs = info["data"];
       loaded[1] = true;

@@ -51,7 +51,7 @@ class _ShopPageState extends State<ShopPage> {
                 setState(() {
                   items.removeAt(index);
                 });
-                await post(
+                var response = await post(
                   Uri.parse(baseUrl + "/delete-item/"),
                   headers: {"Authorization": "Bearer ${token}"},
                   body: {
@@ -59,6 +59,16 @@ class _ShopPageState extends State<ShopPage> {
                     "item_id": item_id.toString(),
                   },
                 );
+                Map info = jsonDecode(response.body);
+                if (info.containsKey("error") &&
+                    info["error"] == "Invalid authorization token") {
+                  await SecureStorage.delete();
+                  await Navigator.of(
+                    context,
+                  ).pushNamedAndRemoveUntil("/login", (route) => false);
+                  return;
+                }
+
                 getItems();
                 getCart();
               },
@@ -90,7 +100,7 @@ class _ShopPageState extends State<ShopPage> {
                   setState(() {
                     items.removeAt(index);
                   });
-                  await post(
+                  var response = await post(
                     Uri.parse(baseUrl + "/delete-item/"),
                     headers: {"Authorization": "Bearer ${token}"},
                     body: {
@@ -98,6 +108,16 @@ class _ShopPageState extends State<ShopPage> {
                       "item_id": item_id.toString(),
                     },
                   );
+                  Map info = jsonDecode(response.body);
+                  if (info.containsKey("error") &&
+                      info["error"] == "Invalid authorization token") {
+                    await SecureStorage.delete();
+                    await Navigator.of(
+                      context,
+                    ).pushNamedAndRemoveUntil("/login", (route) => false);
+                    return;
+                  }
+
                   getItems();
                   getCart();
                 },
@@ -175,7 +195,7 @@ class _ShopPageState extends State<ShopPage> {
                                         setState(() {
                                           quantity[item_id] = 1;
                                         });
-                                        await post(
+                                        var response = await post(
                                           Uri.parse(baseUrl + "/edit-cart/"),
                                           headers: {
                                             "Authorization": "Bearer ${token}",
@@ -186,6 +206,19 @@ class _ShopPageState extends State<ShopPage> {
                                             "quantity": "1",
                                           },
                                         );
+                                        Map info = jsonDecode(response.body);
+                                        if (info.containsKey("error") &&
+                                            info["error"] ==
+                                                "Invalid authorization token") {
+                                          await SecureStorage.delete();
+                                          await Navigator.of(
+                                            context,
+                                          ).pushNamedAndRemoveUntil(
+                                            "/login",
+                                            (route) => false,
+                                          );
+                                          return;
+                                        }
                                       },
                                       child: Text(
                                         "Add to cart",
@@ -240,7 +273,7 @@ class _ShopPageState extends State<ShopPage> {
                                                 if (quantity[item_id] == 0)
                                                   quantity.remove(item_id);
                                               });
-                                              await post(
+                                              var response = await post(
                                                 Uri.parse(
                                                   baseUrl + "/edit-cart/",
                                                 ),
@@ -260,6 +293,21 @@ class _ShopPageState extends State<ShopPage> {
                                                           : "0"),
                                                 },
                                               );
+                                              Map info = jsonDecode(
+                                                response.body,
+                                              );
+                                              if (info.containsKey("error") &&
+                                                  info["error"] ==
+                                                      "Invalid authorization token") {
+                                                await SecureStorage.delete();
+                                                await Navigator.of(
+                                                  context,
+                                                ).pushNamedAndRemoveUntil(
+                                                  "/login",
+                                                  (route) => false,
+                                                );
+                                                return;
+                                              }
                                             },
                                             icon: Icon(Icons.remove, size: 15),
                                           ),
@@ -280,7 +328,7 @@ class _ShopPageState extends State<ShopPage> {
                                                 quantity[item_id] =
                                                     quantity[item_id]! + 1;
                                               });
-                                              await post(
+                                              var response = await post(
                                                 Uri.parse(
                                                   baseUrl + "/edit-cart/",
                                                 ),
@@ -296,6 +344,21 @@ class _ShopPageState extends State<ShopPage> {
                                                           .toString(),
                                                 },
                                               );
+                                              Map info = jsonDecode(
+                                                response.body,
+                                              );
+                                              if (info.containsKey("error") &&
+                                                  info["error"] ==
+                                                      "Invalid authorization token") {
+                                                await SecureStorage.delete();
+                                                await Navigator.of(
+                                                  context,
+                                                ).pushNamedAndRemoveUntil(
+                                                  "/login",
+                                                  (route) => false,
+                                                );
+                                                return;
+                                              }
                                             },
                                             icon: Icon(Icons.add, size: 15),
                                           ),
@@ -354,6 +417,15 @@ class _ShopPageState extends State<ShopPage> {
       headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
+    if (info.containsKey("error") &&
+        info["error"] == "Invalid authorization token") {
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    }
+
     List all_items = info["data"];
 
     setState(() {
@@ -368,6 +440,15 @@ class _ShopPageState extends State<ShopPage> {
       headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
+    if (info.containsKey("error") &&
+        info["error"] == "Invalid authorization token") {
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    }
+    
     List data = info["data"];
 
     Map<int, int> cart = {};

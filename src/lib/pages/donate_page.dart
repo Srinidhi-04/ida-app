@@ -318,6 +318,18 @@ class _DonatePageState extends State<DonatePage> {
                                         },
                                       );
                                       Map info = jsonDecode(response.body);
+                                      if (info.containsKey("error") &&
+                                          info["error"] ==
+                                              "Invalid authorization token") {
+                                        await SecureStorage.delete();
+                                        await Navigator.of(
+                                          context,
+                                        ).pushNamedAndRemoveUntil(
+                                          "/login",
+                                          (route) => false,
+                                        );
+                                        return;
+                                      }
 
                                       await Stripe.instance.initPaymentSheet(
                                         paymentSheetParameters:
@@ -349,7 +361,7 @@ class _DonatePageState extends State<DonatePage> {
                                           submitted = true;
                                         });
 
-                                        await post(
+                                        var response = await post(
                                           Uri.parse(baseUrl + "/log-donation/"),
                                           headers: {
                                             "Authorization": "Bearer ${token}",
@@ -361,6 +373,19 @@ class _DonatePageState extends State<DonatePage> {
                                             "amount": amount.toString(),
                                           },
                                         );
+                                        Map info = jsonDecode(response.body);
+                                        if (info.containsKey("error") &&
+                                            info["error"] ==
+                                                "Invalid authorization token") {
+                                          await SecureStorage.delete();
+                                          await Navigator.of(
+                                            context,
+                                          ).pushNamedAndRemoveUntil(
+                                            "/login",
+                                            (route) => false,
+                                          );
+                                          return;
+                                        }
 
                                         setState(() {
                                           receipt = {
