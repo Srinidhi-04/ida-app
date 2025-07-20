@@ -133,7 +133,7 @@ class _ItemPageState extends State<ItemPage> {
                         cursorColor: Theme.of(context).primaryColor,
                         onChanged:
                             (value) => setState(() {
-                              name = value;
+                              name = value.trim();
                             }),
                       ),
                     ),
@@ -190,7 +190,7 @@ class _ItemPageState extends State<ItemPage> {
                         cursorColor: Theme.of(context).primaryColor,
                         onChanged:
                             (value) => setState(() {
-                              image = value;
+                              image = value.trim();
                             }),
                       ),
                     ),

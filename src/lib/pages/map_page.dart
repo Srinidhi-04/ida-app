@@ -453,7 +453,7 @@ class _MapPageState extends State<MapPage> {
                                 ),
                               ),
                               generateAutocomplete(
-                                autocompleteController.text.toLowerCase(),
+                                autocompleteController.text.trim().toLowerCase(),
                               ),
                             ],
                           ),

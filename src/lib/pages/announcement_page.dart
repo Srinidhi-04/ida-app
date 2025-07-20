@@ -95,7 +95,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                         cursorColor: Theme.of(context).primaryColor,
                         onChanged:
                             (value) => setState(() {
-                              title = value;
+                              title = value.trim();
                             }),
                       ),
                     ),
@@ -115,7 +115,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                         cursorColor: Theme.of(context).primaryColor,
                         onChanged:
                             (value) => setState(() {
-                              body = value;
+                              body = value.trim();
                             }),
                       ),
                     ),

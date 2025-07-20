@@ -49,6 +49,10 @@ class _RolesPageState extends State<RolesPage> {
     }
 
     setState(() {
+      controller.text = "";
+      autocomplete = true;
+      original = "";
+      role = "";
       roles = info["data"]["roles"];
       emails = info["data"]["emails"];
       loaded = true;
@@ -209,7 +213,7 @@ class _RolesPageState extends State<RolesPage> {
                         ),
                       ),
                       generateAutocomplete(
-                        controller.text.toLowerCase(),
+                        controller.text.trim().toLowerCase(),
                         autocomplete,
                       ),
                       (!autocomplete)
@@ -324,7 +328,7 @@ class _RolesPageState extends State<RolesPage> {
                                                               (value) =>
                                                                   setState(() {
                                                                     new_role =
-                                                                        value;
+                                                                        value.trim();
                                                                   }),
                                                         ),
                                                       ),
@@ -334,9 +338,6 @@ class _RolesPageState extends State<RolesPage> {
                                                 actions: [
                                                   TextButton(
                                                     onPressed: () {
-                                                      new_role =
-                                                          new_role.trim();
-
                                                       if (new_role.isEmpty) {
                                                         setDialogState(() {
                                                           dialog_error =
@@ -439,13 +440,9 @@ class _RolesPageState extends State<RolesPage> {
                                   return;
                                 }
 
-                                print(info);
+                                await getRoles();
 
                                 setState(() {
-                                  controller.text = "";
-                                  autocomplete = true;
-                                  original = "";
-                                  role = "";
                                   submitted = false;
                                 });
                               },

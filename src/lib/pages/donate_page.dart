@@ -217,7 +217,7 @@ class _DonatePageState extends State<DonatePage> {
                                   cursorColor: Theme.of(context).primaryColor,
                                   onChanged:
                                       (value) => setState(() {
-                                        name = value;
+                                        name = value.trim();
                                       }),
                                 ),
                               ),
@@ -237,7 +237,7 @@ class _DonatePageState extends State<DonatePage> {
                                   cursorColor: Theme.of(context).primaryColor,
                                   onChanged:
                                       (value) => setState(() {
-                                        email = value;
+                                        email = value.trim();
                                       }),
                                 ),
                               ),
@@ -261,8 +261,8 @@ class _DonatePageState extends State<DonatePage> {
                                   onChanged:
                                       (value) => setState(() {
                                         try {
-                                          if (value != "") {
-                                            amount = double.parse(value);
+                                          if (value.trim() != "") {
+                                            amount = double.parse(value.trim());
                                             if (amount! <= 0) {
                                               errors[2] =
                                                   "Amount must be positive";

@@ -197,7 +197,7 @@ class _VerifyPageState extends State<VerifyPage> {
                                 cursorColor: Theme.of(context).primaryColor,
                                 onChanged:
                                     (value) => setState(() {
-                                      code = value;
+                                      code = value.trim();
                                     }),
                               ),
                             ),

@@ -606,7 +606,7 @@ class _EventsPageState extends State<EventsPage> {
                     cursorColor: Theme.of(context).primaryColor,
                     onChanged:
                         (value) => setState(() {
-                          search = value;
+                          search = value.trim();
                         }),
                   ),
                 )

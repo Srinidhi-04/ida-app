@@ -197,7 +197,7 @@ class _LoginPageState extends State<LoginPage> {
                                 cursorColor: Theme.of(context).primaryColor,
                                 onChanged:
                                     (value) => setState(() {
-                                      email = value;
+                                      email = value.trim();
                                     }),
                               ),
                             ),

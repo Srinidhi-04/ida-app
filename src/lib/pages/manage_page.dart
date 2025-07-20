@@ -160,7 +160,7 @@ class _ManagePageState extends State<ManagePage> {
                         cursorColor: Theme.of(context).primaryColor,
                         onChanged:
                             (value) => setState(() {
-                              name = value;
+                              name = value.trim();
                             }),
                       ),
                     ),
@@ -309,7 +309,7 @@ class _ManagePageState extends State<ManagePage> {
                         cursorColor: Theme.of(context).primaryColor,
                         onChanged:
                             (value) => setState(() {
-                              location = value;
+                              location = value.trim();
                             }),
                       ),
                     ),
@@ -340,8 +340,8 @@ class _ManagePageState extends State<ManagePage> {
                                 onChanged:
                                     (value) => setState(() {
                                       try {
-                                        if (value != "")
-                                          latlng[0] = double.parse(value);
+                                        if (value.trim() != "")
+                                          latlng[0] = double.parse(value.trim());
                                         else
                                           latlng[0] = null;
                                         errors[4] = null;
@@ -374,8 +374,8 @@ class _ManagePageState extends State<ManagePage> {
                                 onChanged:
                                     (value) => setState(() {
                                       try {
-                                        if (value != "")
-                                          latlng[1] = double.parse(value);
+                                        if (value.trim() != "")
+                                          latlng[1] = double.parse(value.trim());
                                         else
                                           latlng[1] = null;
                                         errors[5] = null;
@@ -404,7 +404,7 @@ class _ManagePageState extends State<ManagePage> {
                         cursorColor: Theme.of(context).primaryColor,
                         onChanged:
                             (value) => setState(() {
-                              image = value;
+                              image = value.trim();
                             }),
                       ),
                     ),
@@ -425,7 +425,7 @@ class _ManagePageState extends State<ManagePage> {
                         cursorColor: Theme.of(context).primaryColor,
                         onChanged:
                             (value) => setState(() {
-                              body = value;
+                              body = value.trim();
                             }),
                       ),
                     ),
@@ -444,7 +444,7 @@ class _ManagePageState extends State<ManagePage> {
                         cursorColor: Theme.of(context).primaryColor,
                         onChanged:
                             (value) => setState(() {
-                              ticket = value;
+                              ticket = value.trim();
                             }),
                       ),
                     ),

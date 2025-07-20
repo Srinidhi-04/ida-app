@@ -223,7 +223,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       cursorColor: Theme.of(context).primaryColor,
                       onChanged:
                           (value) => setState(() {
-                            name = value;
+                            name = value.trim();
                           }),
                     ),
                   ),

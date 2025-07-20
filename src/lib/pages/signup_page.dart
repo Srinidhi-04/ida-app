@@ -162,7 +162,7 @@ class _SignupPageState extends State<SignupPage> {
                                 cursorColor: Theme.of(context).primaryColor,
                                 onChanged:
                                     (value) => setState(() {
-                                      name = value;
+                                      name = value.trim();
                                     }),
                               ),
                             ),
@@ -185,7 +185,7 @@ class _SignupPageState extends State<SignupPage> {
                                 cursorColor: Theme.of(context).primaryColor,
                                 onChanged:
                                     (value) => setState(() {
-                                      email = value;
+                                      email = value.trim();
                                     }),
                               ),
                             ),

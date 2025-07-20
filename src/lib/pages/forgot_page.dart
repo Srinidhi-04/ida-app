@@ -230,7 +230,7 @@ class _ForgotPageState extends State<ForgotPage> {
                                 cursorColor: Theme.of(context).primaryColor,
                                 onChanged:
                                     (value) => setState(() {
-                                      email = value;
+                                      email = value.trim();
                                     }),
                               ),
                             ),
@@ -304,7 +304,7 @@ class _ForgotPageState extends State<ForgotPage> {
                                             Theme.of(context).primaryColor,
                                         onChanged:
                                             (value) => setState(() {
-                                              code = value;
+                                              code = value.trim();
                                             }),
                                       ),
                                     ),
