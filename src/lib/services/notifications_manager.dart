@@ -20,6 +20,11 @@ class NotificationsManager {
     String reminders,
     bool announcements,
   ) async {
+    FirebaseMessaging.instance.subscribeToTopic("ida-app-default");
+    if (announcements) {
+      FirebaseMessaging.instance.subscribeToTopic("ida-app-announcements");
+    }
+
     var response = await get(
       Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
       headers: {"Authorization": "Bearer ${token}"},
@@ -34,36 +39,10 @@ class NotificationsManager {
         "ida-event-${event_id}-${alerts.indexOf(reminders) - 1}",
       );
     }
-
-    if (announcements) {
-      FirebaseMessaging.instance.subscribeToTopic("ida-app-announcements");
-    }
   }
 
-  static Future<void> unsubscribeAllNotifications(
-    int user_id,
-    String token,
-    String reminders,
-    bool announcements,
-  ) async {
-    var response = await get(
-      Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
-    List notifs = info["data"];
-
-    for (int event_id in notifs) {
-      FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}");
-
-      FirebaseMessaging.instance.unsubscribeFromTopic(
-        "ida-event-${event_id}-${alerts.indexOf(reminders) - 1}",
-      );
-    }
-
-    if (announcements) {
-      FirebaseMessaging.instance.unsubscribeFromTopic("ida-app-announcements");
-    }
+  static Future<void> unsubscribeAllNotifications() async {
+    await FirebaseMessaging.instance.deleteToken();
   }
 
   static Future<void> subscribeNotification(

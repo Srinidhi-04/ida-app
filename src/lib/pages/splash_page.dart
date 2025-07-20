@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:src/services/notifications_manager.dart';
 import "package:src/services/secure_storage.dart";
 
 class CirclePainter extends CustomPainter {
@@ -41,8 +42,11 @@ class _SplashPageState extends State<SplashPage> {
     if (info["last_login"] != null) {
       DateTime date = DateTime.parse(info["last_login"]!);
       if (DateTime.now().subtract(Duration(days: 30)).compareTo(date) >= 0) {
+        await NotificationsManager.unsubscribeAllNotifications();
         await SecureStorage.delete();
-        await Navigator.popAndPushNamed(context, "/login");
+        await Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil("/login", (route) => false);
         return;
       }
     }

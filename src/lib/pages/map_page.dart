@@ -6,6 +6,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -265,6 +266,7 @@ class _MapPageState extends State<MapPage> {
     Map info = jsonDecode(response.body);
     if (info.containsKey("error") &&
         info["error"] == "Invalid authorization token") {
+      await NotificationsManager.unsubscribeAllNotifications();
       await SecureStorage.delete();
       await Navigator.of(
         context,
@@ -324,8 +326,11 @@ class _MapPageState extends State<MapPage> {
     if (info["last_login"] != null) {
       DateTime date = DateTime.parse(info["last_login"]!);
       if (DateTime.now().subtract(Duration(days: 30)).compareTo(date) >= 0) {
+        await NotificationsManager.unsubscribeAllNotifications();
         await SecureStorage.delete();
-        await Navigator.popAndPushNamed(context, "/login");
+        await Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil("/login", (route) => false);
         return;
       }
     }

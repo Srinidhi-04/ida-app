@@ -3,6 +3,7 @@ import "dart:convert";
 import "package:flutter/material.dart";
 import "package:http/http.dart";
 import "package:loading_animation_widget/loading_animation_widget.dart";
+import "package:src/services/notifications_manager.dart";
 import "package:src/services/secure_storage.dart";
 import "package:src/widgets/navigation.dart";
 
@@ -55,8 +56,11 @@ class _SettingsPageState extends State<SettingsPage> {
     if (info["last_login"] != null) {
       DateTime date = DateTime.parse(info["last_login"]!);
       if (DateTime.now().subtract(Duration(days: 30)).compareTo(date) >= 0) {
+        await NotificationsManager.unsubscribeAllNotifications();
         await SecureStorage.delete();
-        await Navigator.popAndPushNamed(context, "/login");
+        await Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil("/login", (route) => false);
         return;
       }
     }
@@ -261,6 +265,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           Map info = jsonDecode(response.body);
                           if (info.containsKey("error") &&
                               info["error"] == "Invalid authorization token") {
+                            await NotificationsManager.unsubscribeAllNotifications();
                             await SecureStorage.delete();
                             await Navigator.of(context).pushNamedAndRemoveUntil(
                               "/login",
