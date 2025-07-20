@@ -171,6 +171,10 @@ def login(request: HttpRequest):
         return JsonResponse({"message": "Code successfully resent", "user_id": user.user_id, "email": user.email})
 
     if user:
+        if datetime.datetime.now() - user.last_login > datetime.timedelta(days = 30):
+            uid = uuid.uuid4()
+            user.token = uid.hex
+
         user.last_login = datetime.datetime.now()
         user.save()
 
