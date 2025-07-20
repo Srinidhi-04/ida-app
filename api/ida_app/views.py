@@ -1165,8 +1165,7 @@ def get_roles(request: HttpRequest):
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
     
-    objs = list(UserCredentials.objects.values("email", "role"))
-    emails = [x["email"] for x in objs]
-    roles = list(set([x["role"] for x in objs]))
+    emails = list(UserCredentials.objects.values("email", "role"))
+    roles = list(set([x["role"] for x in emails]))
 
     return JsonResponse({"data": {"emails": emails, "roles": roles}})
