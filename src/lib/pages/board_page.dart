@@ -39,7 +39,7 @@ class _BoardPageState extends State<BoardPage> {
     },
     {
       "name": "David Mann",
-      "position": "BBQ/Brunch Lead",
+      "position": "Brunch Lead",
       "image": "assets/board/david.jpg",
     },
     {
@@ -88,8 +88,8 @@ class _BoardPageState extends State<BoardPage> {
       "image": "assets/board/jeff.jpg",
     },
     {
-      "name": "Rice Nathan",
-      "position": "Communications",
+      "name": "Nathan Rice",
+      "position": "Barbeque Lead",
       "image": "assets/board/rice.jpg",
     },
     {
