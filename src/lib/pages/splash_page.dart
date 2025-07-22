@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:src/services/notifications_manager.dart';
 import "package:src/services/secure_storage.dart";
 
@@ -32,6 +34,25 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  final app_version = 6;
+  bool update = false;
+
+  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
+
+  Future<void> checkUpdate() async {
+    var response = await get(
+      Uri.parse(baseUrl + "/check-update?version=${app_version}"),
+    );
+    Map info = jsonDecode(response.body);
+    if (info["message"] == "Hard update") {
+      setState(() {
+        update = true;
+      });
+      return;
+    }
+    checkLogin();
+  }
+
   Future<void> checkLogin() async {
     Map<String, String> info = {};
     try {
@@ -59,11 +80,31 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void initState() {
     super.initState();
-    checkLogin();
+    checkUpdate();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (update) {
+      return Material(
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          color: Colors.white,
+          child: Center(
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width * 0.7,
+              child: Text(
+                "Please update the app to the latest version to continue",
+                style: Theme.of(context).typography.black.bodyLarge,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width,
