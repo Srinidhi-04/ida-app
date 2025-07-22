@@ -3,13 +3,32 @@ import datetime
 import random as rd
 from django.http import HttpRequest, JsonResponse, HttpResponse
 from django.contrib.auth import authenticate
-from django.db.models import Q, Prefetch
 import stripe
 from ida_app.tasks import *
 from ida_app.models import *
+import os
+
+APP_VERSION = os.getenv("APP_VERSION")
 
 def index(request: HttpRequest):
     return HttpResponse("API is up and running")
+
+def check_update(request: HttpRequest):
+    if request.method != "GET":
+        return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
+    
+    try:
+        version = float(request.GET.get("version"))
+    except:
+        return JsonResponse({"error": "'version' field is required"}, status = 400)
+    
+    if version < APP_VERSION:
+        return JsonResponse({"message": "Please update your app to the latest version to continue"})
+    
+    if version != APP_VERSION:
+        return JsonResponse({"message": "The app is not at its latest version but you may still proceed"})
+    
+    return JsonResponse({"message": "The app is at its latest version"})
 
 def signup(request: HttpRequest):
     if request.method != "POST":
