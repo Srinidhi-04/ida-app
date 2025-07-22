@@ -8,7 +8,7 @@ from ida_app.tasks import *
 from ida_app.models import *
 import os
 
-APP_VERSION = os.getenv("APP_VERSION")
+APP_VERSION = float(os.getenv("APP_VERSION"))
 
 def index(request: HttpRequest):
     return HttpResponse("API is up and running")
@@ -22,7 +22,7 @@ def check_update(request: HttpRequest):
     except:
         return JsonResponse({"error": "'version' field is required"}, status = 400)
     
-    if version < APP_VERSION:
+    if version < int(APP_VERSION):
         return JsonResponse({"message": "Please update your app to the latest version to continue"})
     
     if version != APP_VERSION:
