@@ -23,12 +23,12 @@ def check_update(request: HttpRequest):
         return JsonResponse({"error": "'version' field is required"}, status = 400)
     
     if version < int(APP_VERSION):
-        return JsonResponse({"message": "Please update your app to the latest version to continue"})
+        return JsonResponse({"message": "Hard update"})
     
     if version != APP_VERSION:
-        return JsonResponse({"message": "The app is not at its latest version but you may still proceed"})
+        return JsonResponse({"message": "Soft update"})
     
-    return JsonResponse({"message": "The app is at its latest version"})
+    return JsonResponse({"message": "Updated"})
 
 def signup(request: HttpRequest):
     if request.method != "POST":
