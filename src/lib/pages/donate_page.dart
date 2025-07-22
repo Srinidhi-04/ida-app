@@ -343,7 +343,7 @@ class _DonatePageState extends State<DonatePage> {
                                               paymentIntentClientSecret:
                                                   info["payment_intent"],
                                               merchantDisplayName:
-                                                  "Illini Dads Association Donation",
+                                                  "Illini Dads Association",
                                               style: ThemeMode.light,
                                               googlePay:
                                                   const PaymentSheetGooglePay(
