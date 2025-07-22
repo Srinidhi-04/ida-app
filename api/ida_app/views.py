@@ -1008,7 +1008,7 @@ def stripe_payment(request: HttpRequest):
         payment_method_types = ["card"]
     )
 
-    return JsonResponse({"message": "Stripe payment sheet successfully created", "payment_intent": payment_intent.client_secret, "publishable_key": "pk_test_51Rjh8ERxXVR7luJWI8mgxhGiR6aKig0aRJqdYYAFFPrJOuIQ2LE4O35WLQY4h8WqWkkxtLysoBbrhJciJxt5IVrq00FIw2Exxi"})
+    return JsonResponse({"message": "Stripe payment sheet successfully created", "payment_intent": payment_intent.client_secret, "publishable_key": "pk_test_51RnYlzQkArntKpGlapTuIf51Fvsi1CittiW7jyvqGN4mKEg9z5baV4kWtOKWHWiW14TzzRqxbSXHZQz01xRJeK8k00gJ2IaMpr"})
 
 def log_donation(request: HttpRequest):
     if request.method != "POST":

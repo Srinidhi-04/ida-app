@@ -76,7 +76,7 @@ void main() async {
   await FirebaseMessaging.instance.subscribeToTopic("ida-app-default");
 
   Stripe.publishableKey =
-      "pk_test_51Rjh8ERxXVR7luJWI8mgxhGiR6aKig0aRJqdYYAFFPrJOuIQ2LE4O35WLQY4h8WqWkkxtLysoBbrhJciJxt5IVrq00FIw2Exxi";
+      "pk_test_51RnYlzQkArntKpGlapTuIf51Fvsi1CittiW7jyvqGN4mKEg9z5baV4kWtOKWHWiW14TzzRqxbSXHZQz01xRJeK8k00gJ2IaMpr";
 
   runApp(
     MaterialApp(
