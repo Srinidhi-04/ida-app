@@ -6,9 +6,8 @@ from django.contrib.auth import authenticate
 import stripe
 from ida_app.tasks import *
 from ida_app.models import *
-import os
 
-APP_VERSION = float(os.getenv("APP_VERSION"))
+APP_VERSION = 6.1
 
 def index(request: HttpRequest):
     return HttpResponse("API is up and running")
