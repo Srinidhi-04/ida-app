@@ -54,6 +54,8 @@ class _EventPageState extends State<EventPage> {
     "Dec",
   ];
 
+  List<String> admin_roles = ["admin"];
+
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Future<void> checkLogin() async {
@@ -139,7 +141,7 @@ class _EventPageState extends State<EventPage> {
         elevation: 0,
         foregroundColor: Colors.white,
         actions:
-            (role == "admin")
+            (admin_roles.contains(role))
                 ? [
                   PopupMenuButton(
                     color: Theme.of(context).primaryColorLight,

@@ -46,6 +46,8 @@ class _EventsPageState extends State<EventsPage> {
   bool searching = false;
   String search = "";
 
+  List<String> admin_roles = ["admin"];
+
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Widget switchOption(int index, String text) {
@@ -109,7 +111,7 @@ class _EventsPageState extends State<EventsPage> {
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
         child: Slidable(
           key: ValueKey(event_id),
-          enabled: role == "admin",
+          enabled: (admin_roles.contains(role)),
           endActionPane: ActionPane(
             motion: BehindMotion(),
             dismissible: DismissiblePane(
@@ -899,7 +901,7 @@ class _EventsPageState extends State<EventsPage> {
         ),
       ),
       floatingActionButton:
-          (role == "admin")
+          (admin_roles.contains(role))
               ? FloatingActionButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed(

@@ -47,6 +47,8 @@ class _ProfilePageState extends State<ProfilePage> {
   ];
   List<String> days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
+  List<String> admin_roles = ["admin"];
+
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Widget profileButton(String name, String route) {
@@ -563,14 +565,14 @@ class _ProfilePageState extends State<ProfilePage> {
                             endIndent: 20,
                           ),
                           profileButton("Profile Settings", "/settings"),
-                          (role == "admin")
+                          (admin_roles.contains(role))
                               ? Divider(
                                 color: Theme.of(context).primaryColor,
                                 indent: 20,
                                 endIndent: 20,
                               )
                               : Container(),
-                          (role == "admin")
+                          (admin_roles.contains(role))
                               ? profileButton("Assign Roles", "/roles")
                               : Container(),
                         ],

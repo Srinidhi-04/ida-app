@@ -28,6 +28,8 @@ class _ShopPageState extends State<ShopPage> {
 
   List<bool> loaded = [false, false];
 
+  List<String> admin_roles = ["admin"];
+
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Widget shopItem(
@@ -44,7 +46,7 @@ class _ShopPageState extends State<ShopPage> {
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
         child: Slidable(
           key: ValueKey(item_id),
-          enabled: (role == "admin" && !cart),
+          enabled: (admin_roles.contains(role) && !cart),
           endActionPane: ActionPane(
             motion: BehindMotion(),
             dismissible: DismissiblePane(
@@ -677,7 +679,7 @@ class _ShopPageState extends State<ShopPage> {
                 ),
               ),
       floatingActionButton:
-          (role == "admin" && !cart)
+          (admin_roles.contains(role) && !cart)
               ? FloatingActionButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed(

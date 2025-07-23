@@ -43,6 +43,8 @@ class _HomePageState extends State<HomePage> {
   bool loaded = false;
   bool? loadingEvents;
 
+  List<String> admin_roles = ["admin"];
+
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Widget mainButton(Color color, String text, String path, bool external) {
@@ -667,7 +669,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton:
-          (role == "admin")
+          (admin_roles.contains(role))
               ? FloatingActionButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed("/announcement");
