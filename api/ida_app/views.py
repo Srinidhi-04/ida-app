@@ -7,7 +7,7 @@ import stripe
 from ida_app.tasks import *
 from ida_app.models import *
 
-APP_VERSION = 6.1
+APP_VERSION = 6.2
 
 def index(request: HttpRequest):
     return HttpResponse("API is up and running")

@@ -558,6 +558,7 @@ class _HomePageState extends State<HomePage> {
                     options: CarouselOptions(
                       height: 200,
                       enlargeCenterPage: true,
+                      autoPlay: true,
                     ),
                     itemCount: 18,
                     itemBuilder:
