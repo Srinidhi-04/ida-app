@@ -24,6 +24,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     "updates": true,
     "merch": true,
     "status": true,
+    "mailing": true,
   };
 
   Map<String, String> aliases = {
@@ -31,6 +32,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     "updates": "Ticket Updates",
     "merch": "New Merchandise",
     "status": "Order Status",
+    "mailing": "Mailing List",
   };
 
   String alert = "Off";

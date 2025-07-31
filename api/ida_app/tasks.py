@@ -87,3 +87,33 @@ def send_verification_code(name: str, code: int, email: str):
     session.quit()
 
     print("Verification code sent successfully")
+
+def send_new_subscriber(name: str, email: str):
+    text = f"""
+    <html>
+    <body>
+        <p>
+        You have a new subscriber!
+        <br><br>
+        {name} <b>({email})</b> just subscribed to your mailing list!
+        <br><br>
+        This email was sent automatically, do not reply to it.
+        </p>
+        <br>
+        <img src="https://i.imgur.com/0FHQKN4.png" alt="image">
+    </body>
+    </html>
+    """
+
+    message = MIMEText(text, "html")
+    message["Subject"] = "You've got a new subscriber!"
+    message["From"] = "illinidadsassociation@gmail.com"
+    message["To"] = "communications@illinidads.com"
+
+    session = smtplib.SMTP("smtp.gmail.com", 587)
+    session.starttls()
+    session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
+    session.sendmail("illinidadsassociation@gmail.com", email, message.as_string())
+    session.quit()
+
+    print("Subscriber mail sent successfully")

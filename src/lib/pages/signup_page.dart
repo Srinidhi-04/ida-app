@@ -40,6 +40,8 @@ class _SignupPageState extends State<SignupPage> {
   String error = "";
   bool submitted = false;
 
+  bool mailing = true;
+
   bool obscure = true;
 
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
@@ -50,7 +52,7 @@ class _SignupPageState extends State<SignupPage> {
     });
     var response = await post(
       Uri.parse(baseUrl + "/signup/"),
-      body: {"name": name, "email": email, "password": password},
+      body: {"name": name, "email": email, "password": password, "mailing": (mailing) ? "yes" : "no"},
     );
     Map info = jsonDecode(response.body);
     if (info.containsKey("error")) {
@@ -224,6 +226,40 @@ class _SignupPageState extends State<SignupPage> {
                                     (value) => setState(() {
                                       password = value;
                                     }),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                15,
+                                10,
+                                30,
+                                10,
+                              ),
+                              child: Row(
+                                children: [
+                                  Checkbox(
+                                    checkColor: Colors.white,
+                                    fillColor: WidgetStatePropertyAll(
+                                      (mailing)
+                                          ? Theme.of(context).primaryColorLight
+                                          : Colors.white,
+                                    ),
+                                    value: mailing,
+                                    onChanged:
+                                        (value) => setState(() {
+                                          mailing = value!;
+                                        }),
+                                  ),
+                                  Text(
+                                    "Join our mailing list",
+                                    style: Theme.of(
+                                      context,
+                                    ).typography.black.labelMedium!.apply(
+                                      fontSizeDelta: 2,
+                                      color: Theme.of(context).primaryColorDark,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             (error.isNotEmpty)

@@ -36,6 +36,7 @@ def signup(request: HttpRequest):
     email = request.POST.get("email")
     name = request.POST.get("name")
     password = request.POST.get("password")
+    mailing = request.POST.get("mailing") == "yes"
 
     if not email:
         return JsonResponse({"error": "'email' field is required"}, status = 400)
@@ -45,11 +46,13 @@ def signup(request: HttpRequest):
         return JsonResponse({"error": "'password' field is required"}, status = 400)
 
     try:
-        user: UserCredentials = UserCredentials.objects.create_user(email = email, name = name, password = password, avatar = rd.randint(1, 10))
+        user: UserCredentials = UserCredentials.objects.create_user(email = email, name = name, password = password, avatar = rd.randint(1, 10), mailing = mailing)
     except Exception:
         return JsonResponse({"error": "A user with that email already exists"}, status = 400)
 
     send_verification_code(user.name, user.signup_code, user.email)
+    if mailing:
+        send_new_subscriber(user.name, user.email)
 
     return JsonResponse({"message": "User successfully signed up", "user_id": user.user_id, "email": user.email})
 
@@ -661,6 +664,11 @@ def change_settings(request: HttpRequest):
     if not status:
         return JsonResponse({"error": "'status' field is required"}, status = 400)
     status = status == "yes"
+    
+    mailing = request.POST.get("mailing")
+    if not mailing:
+        return JsonResponse({"error": "'mailing' field is required"}, status = 400)
+    mailing = mailing == "yes"
 
     reminders = request.POST.get("reminders")
     if not reminders:
@@ -673,6 +681,12 @@ def change_settings(request: HttpRequest):
     settings.status = status
     settings.reminders = reminders
     settings.save()
+
+    if mailing != user.mailing:
+        user.mailing = mailing
+        user.save()
+        if mailing:
+            send_new_subscriber(user.name, user.email)
 
     return JsonResponse({"message": "Settings changed successfully"})
 
@@ -701,6 +715,7 @@ def get_settings(request: HttpRequest):
     
     settings: dict = user.user_settings.__dict__
     settings.pop("_state")
+    settings["mailing"] = user.mailing
 
     return JsonResponse({"data": settings})
 
