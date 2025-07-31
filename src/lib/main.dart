@@ -69,11 +69,12 @@ void main() async {
     carPlay: false,
     criticalAlert: false,
     provisional: false,
-    sound: true
+    sound: true,
   );
 
   if (Platform.isIOS) {
-    var token = await FirebaseMessaging.instance.getAPNSToken();
+    await Future<void>.delayed(Duration(seconds: 3));
+    await FirebaseMessaging.instance.getAPNSToken();
   }
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
