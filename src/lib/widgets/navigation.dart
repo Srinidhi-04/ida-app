@@ -42,7 +42,7 @@ class _NavigationState extends State<Navigation> {
             color: Colors.grey.withAlpha(128),
             offset: Offset(0, -1),
             blurRadius: 8,
-            spreadRadius: 1,
+            spreadRadius: 2,
           ),
         ],
       ),
