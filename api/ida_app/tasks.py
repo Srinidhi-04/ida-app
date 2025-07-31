@@ -95,7 +95,7 @@ def send_new_subscriber(name: str, email: str):
         <p>
         You have a new subscriber!
         <br><br>
-        {name} <b>({email})</b> just subscribed to your mailing list!
+        <b>{name} ({email})</b> just subscribed to your mailing list!
         <br><br>
         This email was sent automatically, do not reply to it.
         </p>
