@@ -34,9 +34,6 @@ class _NavigationState extends State<Navigation> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        border: BoxBorder.fromLTRB(
-          top: BorderSide(color: Theme.of(context).primaryColor),
-        ),
         color: Colors.white,
         boxShadow: [
           BoxShadow(
