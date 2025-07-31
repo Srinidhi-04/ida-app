@@ -88,25 +88,43 @@ def send_verification_code(name: str, code: int, email: str):
 
     print("Verification code sent successfully")
 
-def send_new_subscriber(name: str, email: str):
-    text = f"""
-    <html>
-    <body>
-        <p>
-        You have a new subscriber!
-        <br><br>
-        <b>{name} ({email})</b> just subscribed to your mailing list!
-        <br><br>
-        This email was sent automatically, do not reply to it.
-        </p>
-        <br>
-        <img src="https://i.imgur.com/0FHQKN4.png" alt="image">
-    </body>
-    </html>
-    """
+def send_new_subscriber(name: str, email: str, subscribe: bool):
+    if subscribe:
+        text = f"""
+<html>
+<body>
+    <p>
+    You have a new subscriber!
+    <br><br>
+    <b>{name} ({email})</b> just subscribed to your mailing list!
+    <br><br>
+    This email was sent automatically, do not reply to it.
+    </p>
+    <br>
+    <img src="https://i.imgur.com/0FHQKN4.png" alt="image">
+</body>
+</html>
+"""
+    
+    else:
+        text = f"""
+<html>
+<body>
+    <p>
+    You lost a subscriber :(
+    <br><br>
+    <b>{name} ({email})</b> just unsubscribed from your mailing list.
+    <br><br>
+    This email was sent automatically, do not reply to it.
+    </p>
+    <br>
+    <img src="https://i.imgur.com/0FHQKN4.png" alt="image">
+</body>
+</html>
+"""
 
     message = MIMEText(text, "html")
-    message["Subject"] = "You've got a new subscriber!"
+    message["Subject"] = "You've got a new subscriber!" if subscribe else "You've lost a subscriber"
     message["From"] = "illinidadsassociation@gmail.com"
     message["To"] = "communications@illinidads.com"
 

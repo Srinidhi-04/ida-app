@@ -52,7 +52,7 @@ def signup(request: HttpRequest):
 
     send_verification_code(user.name, user.signup_code, user.email)
     if mailing:
-        send_new_subscriber(user.name, user.email)
+        send_new_subscriber(user.name, user.email, mailing)
 
     return JsonResponse({"message": "User successfully signed up", "user_id": user.user_id, "email": user.email})
 
@@ -685,8 +685,8 @@ def change_settings(request: HttpRequest):
     if mailing != user.mailing:
         user.mailing = mailing
         user.save()
-        if mailing:
-            send_new_subscriber(user.name, user.email)
+        
+        send_new_subscriber(user.name, user.email, mailing)
 
     return JsonResponse({"message": "Settings changed successfully"})
 
