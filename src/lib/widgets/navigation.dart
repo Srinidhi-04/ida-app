@@ -1,5 +1,7 @@
 // ignore_for_file: must_be_immutable
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class Navigation extends StatefulWidget {
@@ -44,7 +46,7 @@ class _NavigationState extends State<Navigation> {
           ),
         ],
       ),
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 15),
+      padding: EdgeInsets.fromLTRB(0, 5, 0, ((Platform.isIOS) ? 15 : 5)),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
