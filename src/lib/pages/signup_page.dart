@@ -179,7 +179,7 @@ class _SignupPageState extends State<SignupPage> {
                                 textAlignVertical: TextAlignVertical.center,
                                 decoration: InputDecoration(
                                   prefixIcon: Icon(
-                                    Icons.alternate_email_outlined,
+                                    Icons.mail_outline,
                                     color: Theme.of(context).primaryColor,
                                   ),
                                   hintText: "Email",
