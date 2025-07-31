@@ -349,6 +349,7 @@ class _ProfilePageState extends State<ProfilePage> {
             elevation: 0,
             centerTitle: true,
           ),
+          backgroundColor: Theme.of(context).primaryColorDark,
           body: RefreshIndicator(
             onRefresh: () async {
               await checkLogin();
@@ -358,6 +359,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: SingleChildScrollView(
               physics: AlwaysScrollableScrollPhysics(),
               child: Container(
+                color: Colors.white,
                 constraints: BoxConstraints(
                   minWidth: MediaQuery.of(context).size.width,
                   minHeight:
