@@ -113,7 +113,7 @@ def send_new_subscriber(name: str, email: str):
     session = smtplib.SMTP("smtp.gmail.com", 587)
     session.starttls()
     session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
-    session.sendmail("illinidadsassociation@gmail.com", email, message.as_string())
+    session.sendmail("illinidadsassociation@gmail.com", "communications@illinidads.com", message.as_string())
     session.quit()
 
     print("Subscriber mail sent successfully")

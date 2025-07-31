@@ -226,6 +226,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                 "updates": (notifs["updates"]) ? "yes" : "no",
                                 "merch": (notifs["merch"]) ? "yes" : "no",
                                 "status": (notifs["status"]) ? "yes" : "no",
+                                "mailing": (notifs["mailing"]) ? "yes" : "no",
                                 "reminders": alert,
                               },
                             );
