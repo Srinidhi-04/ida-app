@@ -60,20 +60,20 @@ def delete_topic_notification(topic: str):
 
 def send_verification_code(name: str, code: int, email: str):
     text = f"""
-    <html>
-    <body>
-        <p>
-        Hi {name}!
-        <br><br>
-        Your verification code is <b>{code}</b>. Do not share this code with anyone else.
-        <br><br>
-        This email was sent automatically, do not reply to it.
-        </p>
-        <br>
-        <img src="https://i.imgur.com/0FHQKN4.png" alt="image">
-    </body>
-    </html>
-    """
+<html>
+<body>
+    <p>
+    Hi {name}!
+    <br><br>
+    Your verification code is <b>{code}</b>. Do not share this code with anyone else.
+    <br><br>
+    This email was sent automatically, do not reply to it.
+    </p>
+    <br>
+    <img src="https://i.imgur.com/0FHQKN4.png" alt="image">
+</body>
+</html>
+"""
 
     message = MIMEText(text, "html")
     message["Subject"] = "Illini Dads App Verification Code"
