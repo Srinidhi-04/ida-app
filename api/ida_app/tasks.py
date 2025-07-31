@@ -76,7 +76,7 @@ def send_verification_code(name: str, code: int, email: str):
     """
 
     message = MIMEText(text, "html")
-    message["Subject"] = "IDA App Verification Code"
+    message["Subject"] = "Illini Dads App Verification Code"
     message["From"] = "illinidadsassociation@gmail.com"
     message["To"] = email
 
