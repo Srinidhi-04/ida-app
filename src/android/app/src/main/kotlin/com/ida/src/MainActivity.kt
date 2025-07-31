@@ -1,4 +1,4 @@
-package com.ida_app.src
+package com.ida.src
 
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.android.FlutterFragmentActivity
