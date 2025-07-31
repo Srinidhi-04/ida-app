@@ -144,6 +144,7 @@ class _EventPageState extends State<EventPage> {
             (admin_roles.contains(role))
                 ? [
                   PopupMenuButton(
+                    icon: Icon(Icons.more_vert),
                     color: Theme.of(context).primaryColorLight,
                     itemBuilder:
                         (popupContext) => [
