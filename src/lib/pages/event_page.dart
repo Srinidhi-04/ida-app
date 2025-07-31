@@ -484,99 +484,103 @@ class _EventPageState extends State<EventPage> {
                         ),
                       ),
                     )
-                    : Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              var response = await post(
-                                Uri.parse(baseUrl + "/toggle-rsvp/"),
-                                headers: {"Authorization": "Bearer ${token}"},
-                                body: {
-                                  "user_id": user_id.toString(),
-                                  "event_id": event_id.toString(),
-                                },
-                              );
-                              Map info = jsonDecode(response.body);
-                              if (info.containsKey("error") &&
-                                  info["error"] ==
-                                      "Invalid authorization token") {
-                                await NotificationsManager.unsubscribeAllNotifications();
-                                await SecureStorage.delete();
-                                await Navigator.of(
-                                  context,
-                                ).pushNamedAndRemoveUntil(
-                                  "/login",
-                                  (route) => false,
+                    : Padding(
+                      padding: const EdgeInsets.only(bottom: 5.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                var response = await post(
+                                  Uri.parse(baseUrl + "/toggle-rsvp/"),
+                                  headers: {"Authorization": "Bearer ${token}"},
+                                  body: {
+                                    "user_id": user_id.toString(),
+                                    "event_id": event_id.toString(),
+                                  },
                                 );
-                                return;
-                              }
+                                Map info = jsonDecode(response.body);
+                                if (info.containsKey("error") &&
+                                    info["error"] ==
+                                        "Invalid authorization token") {
+                                  await NotificationsManager.unsubscribeAllNotifications();
+                                  await SecureStorage.delete();
+                                  await Navigator.of(
+                                    context,
+                                  ).pushNamedAndRemoveUntil(
+                                    "/login",
+                                    (route) => false,
+                                  );
+                                  return;
+                                }
 
-                              setState(() {
-                                rsvp = !rsvp;
-                              });
-                              callback();
-                            },
-                            child: Text(
-                              (!rsvp) ? "RSVP" : "UNREGISTER",
-                              style: Theme.of(context)
-                                  .typography
-                                  .white
-                                  .labelMedium!
-                                  .apply(fontSizeDelta: 2, fontWeightDelta: 3),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor: WidgetStatePropertyAll(
-                                (!rsvp)
-                                    ? Theme.of(context).primaryColorLight
-                                    : Theme.of(context).primaryColor,
-                              ),
-                              fixedSize: WidgetStatePropertyAll(
-                                Size(
-                                  0.45 * MediaQuery.of(context).size.width,
-                                  50,
+                                setState(() {
+                                  rsvp = !rsvp;
+                                });
+                                callback();
+                              },
+                              child: Text(
+                                (!rsvp) ? "RSVP" : "UNREGISTER",
+                                style: Theme.of(
+                                  context,
+                                ).typography.white.labelMedium!.apply(
+                                  fontSizeDelta: 2,
+                                  fontWeightDelta: 3,
                                 ),
                               ),
-                              elevation: WidgetStatePropertyAll(10),
+                              style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll(
+                                  (!rsvp)
+                                      ? Theme.of(context).primaryColorLight
+                                      : Theme.of(context).primaryColor,
+                                ),
+                                fixedSize: WidgetStatePropertyAll(
+                                  Size(
+                                    0.45 * MediaQuery.of(context).size.width,
+                                    50,
+                                  ),
+                                ),
+                                elevation: WidgetStatePropertyAll(10),
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              launchUrl(
-                                Uri.parse(ticket),
-                                mode: LaunchMode.inAppBrowserView,
-                              );
-                            },
-                            child: Text(
-                              "BUY TICKET",
-                              style: Theme.of(
-                                context,
-                              ).typography.white.labelMedium!.apply(
-                                fontSizeDelta: 2,
-                                fontWeightDelta: 3,
-                                color: Theme.of(context).primaryColorLight,
-                              ),
-                            ),
-                            style: ButtonStyle(
-                              backgroundColor: WidgetStatePropertyAll(
-                                Colors.white,
-                              ),
-                              fixedSize: WidgetStatePropertyAll(
-                                Size(
-                                  0.45 * MediaQuery.of(context).size.width,
-                                  50,
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: ElevatedButton(
+                              onPressed: () {
+                                launchUrl(
+                                  Uri.parse(ticket),
+                                  mode: LaunchMode.inAppBrowserView,
+                                );
+                              },
+                              child: Text(
+                                "BUY TICKET",
+                                style: Theme.of(
+                                  context,
+                                ).typography.white.labelMedium!.apply(
+                                  fontSizeDelta: 2,
+                                  fontWeightDelta: 3,
+                                  color: Theme.of(context).primaryColorLight,
                                 ),
                               ),
-                              elevation: WidgetStatePropertyAll(10),
+                              style: ButtonStyle(
+                                backgroundColor: WidgetStatePropertyAll(
+                                  Colors.white,
+                                ),
+                                fixedSize: WidgetStatePropertyAll(
+                                  Size(
+                                    0.45 * MediaQuery.of(context).size.width,
+                                    50,
+                                  ),
+                                ),
+                                elevation: WidgetStatePropertyAll(10),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     )
                 : SizedBox(),
           ],
