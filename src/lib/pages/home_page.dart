@@ -5,6 +5,7 @@ import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
+import 'package:src/widgets/cart_button.dart';
 import 'package:src/widgets/navigation.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -353,53 +354,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Image(image: AssetImage("assets/logo.png"), height: 40),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context)
-                  .pushNamed(
-                    "/shop",
-                    arguments: {"cart": true, "quantity": quantity},
-                  )
-                  .then((value) {
-                    getCart();
-                  });
-            },
-            child: Stack(
-              children: [
-                Icon(
-                  Icons.shopping_cart_outlined,
-                  color: Theme.of(context).primaryColorDark,
-                  size: 32,
-                ),
-                (quantity.length > 0)
-                    ? Positioned(
-                      right: 0,
-                      top: 0,
-                      child: Container(
-                        width: 15,
-                        height: 15,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.red,
-                        ),
-                        child: Center(
-                          child: Text(
-                            quantity.length.toString(),
-                            style: Theme.of(context)
-                                .typography
-                                .white
-                                .labelSmall!
-                                .apply(fontSizeDelta: -2),
-                          ),
-                        ),
-                      ),
-                    )
-                    : Container(),
-              ],
-            ),
-          ),
-        ],
+        actions: [CartButton(quantity: quantity, callback: () => getCart())],
         centerTitle: true,
       ),
       body: RefreshIndicator(
