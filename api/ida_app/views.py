@@ -27,7 +27,7 @@ def check_update(request: HttpRequest):
     if version < int(APP_VERSION):
         return JsonResponse({"message": "Hard update"})
     
-    if version != APP_VERSION:
+    if version < APP_VERSION:
         return JsonResponse({"message": "Soft update"})
     
     return JsonResponse({"message": "Updated"})
