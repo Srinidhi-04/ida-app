@@ -153,6 +153,7 @@ class _SignupPageState extends State<SignupPage> {
                                 10,
                               ),
                               child: TextFormField(
+                                keyboardType: TextInputType.name,
                                 textAlignVertical: TextAlignVertical.center,
                                 decoration: InputDecoration(
                                   prefixIcon: Icon(
@@ -176,6 +177,7 @@ class _SignupPageState extends State<SignupPage> {
                                 10,
                               ),
                               child: TextFormField(
+                                keyboardType: TextInputType.emailAddress,
                                 textAlignVertical: TextAlignVertical.center,
                                 decoration: InputDecoration(
                                   prefixIcon: Icon(

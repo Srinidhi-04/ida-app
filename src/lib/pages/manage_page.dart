@@ -392,6 +392,7 @@ class _ManagePageState extends State<ManagePage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: TextFormField(
+                        keyboardType: TextInputType.webSearch,
                         controller: image_controller,
                         textAlignVertical: TextAlignVertical.center,
                         decoration: InputDecoration(
@@ -432,6 +433,7 @@ class _ManagePageState extends State<ManagePage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: TextFormField(
+                        keyboardType: TextInputType.webSearch,
                         controller: ticket_controller,
                         textAlignVertical: TextAlignVertical.center,
                         decoration: InputDecoration(

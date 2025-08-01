@@ -218,6 +218,7 @@ class _ForgotPageState extends State<ForgotPage> {
                                 10,
                               ),
                               child: TextFormField(
+                                keyboardType: TextInputType.emailAddress,
                                 controller: emailController,
                                 textAlignVertical: TextAlignVertical.center,
                                 decoration: InputDecoration(

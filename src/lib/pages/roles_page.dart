@@ -196,6 +196,7 @@ class _RolesPageState extends State<RolesPage> {
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 20, 0, 5),
                         child: TextFormField(
+                          keyboardType: TextInputType.emailAddress,
                           controller: controller,
                           textAlignVertical: TextAlignVertical.center,
                           decoration: InputDecoration(

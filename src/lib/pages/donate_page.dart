@@ -204,6 +204,7 @@ class _DonatePageState extends State<DonatePage> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 20),
                                 child: TextFormField(
+                                  keyboardType: TextInputType.name,
                                   controller: name_controller,
                                   textAlignVertical: TextAlignVertical.center,
                                   decoration: InputDecoration(
@@ -224,6 +225,7 @@ class _DonatePageState extends State<DonatePage> {
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 20),
                                 child: TextFormField(
+                                  keyboardType: TextInputType.emailAddress,
                                   controller: email_controller,
                                   textAlignVertical: TextAlignVertical.center,
                                   decoration: InputDecoration(

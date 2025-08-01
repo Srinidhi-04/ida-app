@@ -178,6 +178,7 @@ class _ItemPageState extends State<ItemPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: TextFormField(
+                        keyboardType: TextInputType.webSearch,
                         controller: image_controller,
                         textAlignVertical: TextAlignVertical.center,
                         decoration: InputDecoration(

@@ -210,6 +210,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 20, 0, 20),
                     child: TextFormField(
+                      keyboardType: TextInputType.name,
                       controller: controller,
                       textAlignVertical: TextAlignVertical.center,
                       decoration: InputDecoration(
