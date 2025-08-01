@@ -443,6 +443,10 @@ class _EventPageState extends State<EventPage> {
                       padding: const EdgeInsets.all(10.0),
                       child: ElevatedButton(
                         onPressed: () async {
+                          setState(() {
+                            rsvp = !rsvp;
+                          });
+
                           var response = await post(
                             Uri.parse(baseUrl + "/toggle-rsvp/"),
                             headers: {"Authorization": "Bearer ${token}"},
@@ -462,10 +466,6 @@ class _EventPageState extends State<EventPage> {
                             );
                             return;
                           }
-
-                          setState(() {
-                            rsvp = !rsvp;
-                          });
                         },
                         child: Text(
                           (!rsvp) ? "RSVP" : "UNREGISTER",
@@ -494,6 +494,11 @@ class _EventPageState extends State<EventPage> {
                             padding: const EdgeInsets.all(5),
                             child: ElevatedButton(
                               onPressed: () async {
+                                setState(() {
+                                  rsvp = !rsvp;
+                                });
+                                callback();
+
                                 var response = await post(
                                   Uri.parse(baseUrl + "/toggle-rsvp/"),
                                   headers: {"Authorization": "Bearer ${token}"},
@@ -516,11 +521,6 @@ class _EventPageState extends State<EventPage> {
                                   );
                                   return;
                                 }
-
-                                setState(() {
-                                  rsvp = !rsvp;
-                                });
-                                callback();
                               },
                               child: Text(
                                 (!rsvp) ? "RSVP" : "UNREGISTER",
