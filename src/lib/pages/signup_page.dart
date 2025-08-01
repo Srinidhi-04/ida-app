@@ -67,9 +67,7 @@ class _SignupPageState extends State<SignupPage> {
       "email": info["email"],
     });
     Navigator.popAndPushNamed(context, "/verify");
-    setState(() {
-      submitted = false;
-    });
+
     return true;
   }
 

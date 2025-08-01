@@ -72,9 +72,7 @@ class _VerifyPageState extends State<VerifyPage> {
     });
     NotificationsManager.subscribeTopic("ida-app-announcements");
     Navigator.popAndPushNamed(context, "/home");
-    setState(() {
-      submitted = false;
-    });
+
     return true;
   }
 

@@ -628,6 +628,7 @@ class _ManagePageState extends State<ManagePage> {
                                 ticket,
                                 featured,
                               );
+                              return;
                             }
                           }
 

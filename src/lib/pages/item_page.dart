@@ -277,6 +277,7 @@ class _ItemPageState extends State<ItemPage> {
 
                               Navigator.pop(context);
                               callback();
+                              return;
                             }
                           }
 

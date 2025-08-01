@@ -73,9 +73,7 @@ class _LoginPageState extends State<LoginPage> {
         "email": info["email"],
       });
       Navigator.popAndPushNamed(context, "/verify");
-      setState(() {
-        submitted = false;
-      });
+
       return true;
     }
 
@@ -100,9 +98,6 @@ class _LoginPageState extends State<LoginPage> {
 
     Navigator.popAndPushNamed(context, "/home");
 
-    setState(() {
-      submitted = false;
-    });
     return true;
   }
 

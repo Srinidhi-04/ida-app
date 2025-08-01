@@ -111,10 +111,6 @@ class _ForgotPageState extends State<ForgotPage> {
 
     Navigator.popAndPushNamed(context, "/home");
 
-    setState(() {
-      submitted = false;
-    });
-
     return true;
   }
 

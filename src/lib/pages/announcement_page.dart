@@ -191,6 +191,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                             }
 
                             Navigator.pop(context);
+                            return;
                           }
 
                           setState(() {

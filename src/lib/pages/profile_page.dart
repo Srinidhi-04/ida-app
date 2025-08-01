@@ -593,10 +593,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           await Navigator.of(
                             context,
                           ).pushNamedAndRemoveUntil("/login", (route) => false);
-
-                          setState(() {
-                            submitted = false;
-                          });
                         },
                         child: Text(
                           "LOG OUT",
