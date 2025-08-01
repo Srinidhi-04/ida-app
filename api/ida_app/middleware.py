@@ -6,10 +6,10 @@ def auth_exempt(view):
     return view
 
 def requires_roles(roles: list):
-    def admin_only(view):
+    def set_roles(view):
         view.roles = roles
         return view
-    return admin_only
+    return set_roles
 
 class AuthMiddleware:
     def __init__(self, get_response):
