@@ -73,7 +73,6 @@ void main() async {
   );
 
   if (Platform.isIOS) {
-    await Future<void>.delayed(Duration(seconds: 3));
     await FirebaseMessaging.instance.getAPNSToken();
   }
 
