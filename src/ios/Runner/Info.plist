@@ -32,6 +32,8 @@
 	<string>To scan cards</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs your location to show nearby services.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs your location to show nearby events.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
