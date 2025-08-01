@@ -6,12 +6,15 @@ from django.contrib.auth import authenticate
 import stripe
 from ida_app.tasks import *
 from ida_app.models import *
+from ida_app.middleware import *
 
 APP_VERSION = 6.2
 
+@auth_exempt
 def index(request: HttpRequest):
     return HttpResponse("API is up and running")
 
+@auth_exempt
 def check_update(request: HttpRequest):
     if request.method != "GET":
         return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
@@ -29,6 +32,7 @@ def check_update(request: HttpRequest):
     
     return JsonResponse({"message": "Updated"})
 
+@auth_exempt
 def signup(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
@@ -56,6 +60,7 @@ def signup(request: HttpRequest):
 
     return JsonResponse({"message": "User successfully signed up", "user_id": user.user_id, "email": user.email})
 
+@auth_exempt
 def verify_code(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
@@ -91,6 +96,7 @@ def verify_code(request: HttpRequest):
 
     return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
 
+@auth_exempt
 def send_code(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
@@ -124,6 +130,7 @@ def send_code(request: HttpRequest):
 
     return JsonResponse({"message": "Code successfully resent", "user_id": user.user_id, "email": user.email})
 
+@auth_exempt
 def change_password(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
@@ -162,6 +169,7 @@ def change_password(request: HttpRequest):
 
     return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
 
+@auth_exempt
 def login(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
@@ -205,30 +213,10 @@ def login(request: HttpRequest):
     
     return JsonResponse({"error": "Email or password is incorrect"}, status = 400)
 
+@requires_roles(["admin"])
 def add_event(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if user.role != "admin":
-            return JsonResponse({"error": "User is not an admin"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
 
     name = request.POST.get("name")
     date = request.POST.get("date")
@@ -283,30 +271,10 @@ def add_event(request: HttpRequest):
 
     return JsonResponse({"message": "Event successfully added", "event_id": event.event_id})
 
+@requires_roles(["admin"])
 def edit_event(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if user.role != "admin":
-            return JsonResponse({"error": "User is not an admin"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
 
     try:
         event_id = int(request.POST.get("event_id"))
@@ -385,30 +353,10 @@ def edit_event(request: HttpRequest):
 
     return JsonResponse({"message": "Event successfully edited", "event_id": event.event_id})
 
+@requires_roles(["admin"])
 def delete_event(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-    
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if user.role != "admin":
-            return JsonResponse({"error": "User is not an admin"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
 
     try:
         event_id = int(request.POST.get("event_id"))
@@ -435,25 +383,8 @@ def delete_event(request: HttpRequest):
 def get_events(request: HttpRequest):
     if request.method != "GET":
         return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
-    
-    try:
-        user_id = int(request.GET.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
 
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    user: UserCredentials = request.user
 
     completed = request.GET.get("completed")
     essential = request.GET.get("essential")
@@ -478,26 +409,9 @@ def get_events(request: HttpRequest):
 def toggle_rsvp(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
     
+    user: UserCredentials = request.user
+
     try:
         event_id = int(request.POST.get("event_id"))
     except:
@@ -521,24 +435,7 @@ def get_rsvp(request: HttpRequest):
     if request.method != "GET":
         return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
     
-    try:
-        user_id = int(request.GET.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    user: UserCredentials = request.user
 
     Events.objects.filter(date__lte = datetime.datetime.now(tz = datetime.timezone.utc)).update(completed = True)
     
@@ -557,24 +454,7 @@ def toggle_notification(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
 
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    user: UserCredentials = request.user
     
     try:
         event_id = int(request.POST.get("event_id"))
@@ -599,24 +479,7 @@ def get_notifications(request: HttpRequest):
     if request.method != "GET":
         return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
 
-    try:
-        user_id = int(request.GET.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    user: UserCredentials = request.user
 
     notifs = list(user.user_notifications.values("event_id"))
     
@@ -626,24 +489,7 @@ def change_settings(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
     
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    user: UserCredentials = request.user
     
     announcements = request.POST.get("announcements")
     if not announcements:
@@ -694,24 +540,7 @@ def get_settings(request: HttpRequest):
     if request.method != "GET":
         return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
     
-    try:
-        user_id = int(request.GET.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    user: UserCredentials = request.user
     
     settings: dict = user.user_settings.__dict__
     settings.pop("_state")
@@ -723,24 +552,7 @@ def edit_profile(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
     
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    user: UserCredentials = request.user
     
     name = request.POST.get("name")
     if not name:
@@ -757,30 +569,10 @@ def edit_profile(request: HttpRequest):
 
     return JsonResponse({"message": "Profile edited successfully"})
 
+@requires_roles(["admin"])
 def add_item(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if user.role != "admin":
-            return JsonResponse({"error": "User is not an admin"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
 
     name = request.POST.get("name")
     if not name:
@@ -803,30 +595,10 @@ def add_item(request: HttpRequest):
 
     return JsonResponse({"message": "Item successfully added", "item_id": item.item_id})
 
+@requires_roles(["admin"])
 def edit_item(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if user.role != "admin":
-            return JsonResponse({"error": "User is not an admin"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
 
     try:
         item_id = int(request.POST.get("item_id"))
@@ -861,53 +633,14 @@ def get_items(request: HttpRequest):
     if request.method != "GET":
         return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
 
-    try:
-        user_id = int(request.GET.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
-
     items = list(ShopItems.objects.values())
 
     return JsonResponse({"data": items})
 
+@requires_roles(["admin"])
 def delete_item(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if user.role != "admin":
-            return JsonResponse({"error": "User is not an admin"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
 
     try:
         item_id = int(request.POST.get("item_id"))
@@ -930,24 +663,7 @@ def edit_cart(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
 
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    user: UserCredentials = request.user
     
     try:
         item_id = int(request.POST.get("item_id"))
@@ -984,24 +700,7 @@ def get_cart(request: HttpRequest):
     if request.method != "GET":
         return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
 
-    try:
-        user_id = int(request.GET.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    user: UserCredentials = request.user
 
     cart_item = list(user.user_carts.values("item_id", "quantity"))
 
@@ -1010,25 +709,6 @@ def get_cart(request: HttpRequest):
 def stripe_payment(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
 
     try:
         amount = int(float(request.POST.get("amount")) * 100)
@@ -1048,25 +728,8 @@ def stripe_payment(request: HttpRequest):
 def log_donation(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+    
+    user: UserCredentials = request.user
     
     name = request.POST.get("name")
     if not name:
@@ -1089,30 +752,10 @@ def log_donation(request: HttpRequest):
 
     return JsonResponse({"message": "Donation successfully logged"})
 
+@requires_roles(["admin"])
 def send_announcement(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if user.role != "admin":
-            return JsonResponse({"error": "User is not an admin"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
     
     title = request.POST.get("title")
     if not title:
@@ -1132,30 +775,10 @@ def send_announcement(request: HttpRequest):
 
     return JsonResponse({"message": "Announcement sent successfully"})
 
+@requires_roles(["admin"])
 def edit_role(request: HttpRequest):
     if request.method != "POST":
         return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-    
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if user.role != "admin":
-            return JsonResponse({"error": "User is not an admin"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
     
     email = request.POST.get("email")
     if not email:
@@ -1175,30 +798,10 @@ def edit_role(request: HttpRequest):
 
     return JsonResponse({"message": "Role edited successfully"})
 
+@requires_roles(["admin"])
 def get_roles(request: HttpRequest):
     if request.method != "GET":
         return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
-    
-    try:
-        user_id = int(request.GET.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
-
-    token = request.headers.get("authorization")
-    if not token:
-        return JsonResponse({"error": "Authorization token is required"}, status = 400)
-    if not token.startswith("Bearer "):
-        return JsonResponse({"error": "Invalid authorization token format"}, status = 400)
-    token = token[7:]
-
-    try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-        if user.token != token:
-            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
-        if user.role != "admin":
-            return JsonResponse({"error": "User is not an admin"}, status = 400)
-    except:
-        return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
     
     emails = list(UserCredentials.objects.values("email", "role"))
     roles = list(set([x["role"] for x in emails]))
