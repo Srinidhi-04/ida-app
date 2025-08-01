@@ -1032,6 +1032,8 @@ def stripe_payment(request: HttpRequest):
 
     try:
         amount = int(float(request.POST.get("amount")) * 100)
+        if amount < 50:
+            return JsonResponse({"error": "Amount must be at least $0.5"}, status = 400)
     except:
         return JsonResponse({"error": "'amount' is required as a float"}, status = 400)
 
