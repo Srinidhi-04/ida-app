@@ -92,6 +92,8 @@ void main() async {
 
   Stripe.publishableKey =
       "pk_test_51RnYlzQkArntKpGlapTuIf51Fvsi1CittiW7jyvqGN4mKEg9z5baV4kWtOKWHWiW14TzzRqxbSXHZQz01xRJeK8k00gJ2IaMpr";
+  Stripe.merchantIdentifier = "merchant.ida.src";
+  Stripe.instance.applySettings();
 
   runApp(
     MaterialApp(

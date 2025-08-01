@@ -347,11 +347,17 @@ class _DonatePageState extends State<DonatePage> {
                                               merchantDisplayName:
                                                   "Illini Dads Association",
                                               style: ThemeMode.light,
+                                              applePay:
+                                                  const PaymentSheetApplePay(
+                                                    merchantCountryCode: "US",
+                                                    buttonType: PlatformButtonType.donate,
+                                                  ),
                                               googlePay:
                                                   const PaymentSheetGooglePay(
                                                     testEnv: true,
                                                     currencyCode: "USD",
                                                     merchantCountryCode: "US",
+                                                    buttonType: PlatformButtonType.donate,
                                                   ),
                                             ),
                                       );
