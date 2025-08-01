@@ -265,9 +265,9 @@ class _DonatePageState extends State<DonatePage> {
                                         try {
                                           if (value.trim() != "") {
                                             amount = double.parse(value.trim());
-                                            if (amount! <= 0) {
+                                            if (amount! < 0.5) {
                                               errors[2] =
-                                                  "Amount must be positive";
+                                                  "Amount must be at least \$0.5";
                                             } else {
                                               errors[2] = null;
                                             }
