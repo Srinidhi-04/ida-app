@@ -16,10 +16,7 @@ class _NavigationState extends State<Navigation> {
   Widget NavigationButton(int index, Icon icon, String route) {
     return IconButton(
       onPressed: () {
-        if (index == 0)
-          Navigator.popAndPushNamed(context, route);
-        else
-          Navigator.pushNamed(context, route);
+        Navigator.pushNamed(context, route);
       },
       icon: icon,
       style: ButtonStyle(
