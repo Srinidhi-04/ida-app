@@ -410,7 +410,7 @@ class _EventPageState extends State<EventPage> {
                               style: Theme.of(context)
                                   .typography
                                   .black
-                                  .headlineSmall!
+                                  .headlineMedium!
                                   .apply(fontWeightDelta: 3),
                             ),
                             SizedBox(height: 20),
@@ -425,8 +425,11 @@ class _EventPageState extends State<EventPage> {
                             SizedBox(height: 20),
                             Text(
                               body,
-                              style:
-                                  Theme.of(context).typography.black.bodyMedium,
+                              style: Theme.of(context)
+                                  .typography
+                                  .black
+                                  .bodyMedium!
+                                  .apply(fontSizeDelta: 2),
                             ),
                             SizedBox(height: 50),
                           ],

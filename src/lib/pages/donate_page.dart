@@ -98,18 +98,18 @@ class _DonatePageState extends State<DonatePage> {
                       children: [
                         Text(
                           "Thank you so much for your donation!",
-                          style: Theme.of(context)
-                              .typography
-                              .black
-                              .headlineSmall!
-                              .apply(fontSizeDelta: -1),
+                          style:
+                              Theme.of(context).typography.black.headlineSmall,
                         ),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
                           child: Text(
                             "Here is a receipt of your donation:",
-                            style:
-                                Theme.of(context).typography.black.bodyMedium,
+                            style: Theme.of(context)
+                                .typography
+                                .black
+                                .bodyMedium!
+                                .apply(fontSizeDelta: 2),
                           ),
                         ),
                         Text.rich(
@@ -122,7 +122,8 @@ class _DonatePageState extends State<DonatePage> {
                               TextSpan(text: receipt!["name"]),
                             ],
                           ),
-                          style: Theme.of(context).typography.black.labelMedium,
+                          style: Theme.of(context).typography.black.labelMedium!
+                              .apply(fontSizeDelta: 2),
                         ),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
@@ -136,8 +137,11 @@ class _DonatePageState extends State<DonatePage> {
                                 TextSpan(text: receipt!["email"]),
                               ],
                             ),
-                            style:
-                                Theme.of(context).typography.black.labelMedium,
+                            style: Theme.of(context)
+                                .typography
+                                .black
+                                .labelMedium!
+                                .apply(fontSizeDelta: 2),
                           ),
                         ),
                         Text.rich(
@@ -153,7 +157,8 @@ class _DonatePageState extends State<DonatePage> {
                               ),
                             ],
                           ),
-                          style: Theme.of(context).typography.black.labelMedium,
+                          style: Theme.of(context).typography.black.labelMedium!
+                              .apply(fontSizeDelta: 2),
                         ),
                       ],
                     ),
@@ -180,11 +185,10 @@ class _DonatePageState extends State<DonatePage> {
                             children: [
                               Text(
                                 "Support the Illini Dads Association!",
-                                style: Theme.of(context)
-                                    .typography
-                                    .black
-                                    .headlineSmall!
-                                    .apply(fontSizeDelta: -1),
+                                style:
+                                    Theme.of(
+                                      context,
+                                    ).typography.black.headlineSmall,
                               ),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(
@@ -195,10 +199,11 @@ class _DonatePageState extends State<DonatePage> {
                                 ),
                                 child: Text(
                                   "Your generosity helps us fund events, scholarships, and initiatives that benefit the entire UIUC community. Every contribution, big or small, make a difference.",
-                                  style:
-                                      Theme.of(
-                                        context,
-                                      ).typography.black.bodyMedium,
+                                  style: Theme.of(context)
+                                      .typography
+                                      .black
+                                      .bodyMedium!
+                                      .apply(fontSizeDelta: 2),
                                 ),
                               ),
                               Padding(
@@ -350,14 +355,18 @@ class _DonatePageState extends State<DonatePage> {
                                               applePay:
                                                   const PaymentSheetApplePay(
                                                     merchantCountryCode: "US",
-                                                    buttonType: PlatformButtonType.donate,
+                                                    buttonType:
+                                                        PlatformButtonType
+                                                            .donate,
                                                   ),
                                               googlePay:
                                                   const PaymentSheetGooglePay(
                                                     testEnv: true,
                                                     currencyCode: "USD",
                                                     merchantCountryCode: "US",
-                                                    buttonType: PlatformButtonType.donate,
+                                                    buttonType:
+                                                        PlatformButtonType
+                                                            .donate,
                                                   ),
                                             ),
                                       );
