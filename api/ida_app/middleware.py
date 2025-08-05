@@ -1,30 +1,20 @@
-from functools import wraps
 from django.http import HttpRequest, JsonResponse
 from ida_app.models import UserCredentials
 
 def auth_exempt(view):
-    @wraps(view)
-    def wrapper(*args, **kwargs):
-        return view(*args, **kwargs)
-    wrapper.auth_exempt = True
-    return wrapper
+    view.auth_exempt = True
+    return view
 
 def requires_roles(roles: list):
     def set_roles(view):
-        @wraps(view)
-        def wrapper(*args, **kwargs):
-            return view(*args, **kwargs)
-        wrapper.roles = roles
-        return wrapper
+        view.roles = roles
+        return view
     return set_roles
 
 def request_type(type: str):
     def set_type(view):
-        @wraps(view)
-        def wrapper(*args, **kwargs):
-            return view(*args, **kwargs)
-        wrapper.type = type
-        return wrapper
+        view.type = type
+        return view
     return set_type
 
 class AuthMiddleware:
@@ -36,6 +26,10 @@ class AuthMiddleware:
         return self.get_response(request)
 
     def process_view(self, request: HttpRequest, view_func, view_args, view_kwargs):
+        print(1, getattr(view_func, "type", None))
+        print(2, getattr(view_func, "auth_exempt", None))
+        print(3, getattr(view_func, "roles", None))
+
         method = getattr(view_func, "type", "GET")
         if request.method != method:
             return JsonResponse({"error": f"This endpoint can only be accessed via {method}"}, status = 400)
