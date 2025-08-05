@@ -31,7 +31,7 @@ import 'firebase_options.dart';
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+Future<void> fcmBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 }
 
@@ -62,33 +62,34 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await FirebaseMessaging.instance.requestPermission(
-    alert: true,
-    announcement: true,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
 
-  if (Platform.isIOS) {
-    await FirebaseMessaging.instance.getAPNSToken();
+  final permission = await FirebaseMessaging.instance.requestPermission();
+
+  if (permission.authorizationStatus == AuthorizationStatus.authorized) {
+    if (Platform.isIOS) {
+      String? token;
+      while (token == null) {
+        token = await FirebaseMessaging.instance.getAPNSToken();
+        if (token == null) {
+          await Future<void>.delayed(Duration(seconds: 1));
+        }
+      }
+    }
+
+    FirebaseMessaging.onBackgroundMessage(fcmBackgroundHandler);
+
+    const AndroidInitializationSettings androidInit =
+        AndroidInitializationSettings('@drawable/ic_stat_notification');
+    final DarwinInitializationSettings iosInit = DarwinInitializationSettings();
+
+    await flutterLocalNotificationsPlugin.initialize(
+      InitializationSettings(android: androidInit, iOS: iosInit),
+    );
+
+    setupInteractedMessage();
+
+    await FirebaseMessaging.instance.subscribeToTopic("ida-app-default");
   }
-
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-  const AndroidInitializationSettings androidInit =
-      AndroidInitializationSettings('@drawable/ic_stat_notification');
-  final DarwinInitializationSettings iosInit = DarwinInitializationSettings();
-
-  await flutterLocalNotificationsPlugin.initialize(
-    InitializationSettings(android: androidInit, iOS: iosInit),
-  );
-
-  setupInteractedMessage();
-
-  await FirebaseMessaging.instance.subscribeToTopic("ida-app-default");
 
   Stripe.publishableKey =
       "pk_test_51RnYlzQkArntKpGlapTuIf51Fvsi1CittiW7jyvqGN4mKEg9z5baV4kWtOKWHWiW14TzzRqxbSXHZQz01xRJeK8k00gJ2IaMpr";

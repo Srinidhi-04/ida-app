@@ -99,7 +99,7 @@ class _DonatePageState extends State<DonatePage> {
                         Text(
                           "Thank you so much for your donation!",
                           style:
-                              Theme.of(context).typography.black.headlineSmall,
+                              Theme.of(context).typography.black.headlineMedium,
                         ),
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 10, 0, 20),
@@ -188,7 +188,7 @@ class _DonatePageState extends State<DonatePage> {
                                 style:
                                     Theme.of(
                                       context,
-                                    ).typography.black.headlineSmall,
+                                    ).typography.black.headlineMedium,
                               ),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(

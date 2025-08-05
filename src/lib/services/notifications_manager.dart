@@ -20,29 +20,37 @@ class NotificationsManager {
     String reminders,
     bool announcements,
   ) async {
-    FirebaseMessaging.instance.subscribeToTopic("ida-app-default");
-    if (announcements) {
-      FirebaseMessaging.instance.subscribeToTopic("ida-app-announcements");
-    }
+    try {
+      FirebaseMessaging.instance.subscribeToTopic("ida-app-default");
+      if (announcements) {
+        FirebaseMessaging.instance.subscribeToTopic("ida-app-announcements");
+      }
 
-    var response = await get(
-      Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
-    List notifs = info["data"];
-
-    for (int event_id in notifs) {
-      FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}");
-
-      FirebaseMessaging.instance.subscribeToTopic(
-        "ida-event-${event_id}-${alerts.indexOf(reminders) - 1}",
+      var response = await get(
+        Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
+        headers: {"Authorization": "Bearer ${token}"},
       );
+      Map info = jsonDecode(response.body);
+      List notifs = info["data"];
+
+      for (int event_id in notifs) {
+        FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}");
+
+        FirebaseMessaging.instance.subscribeToTopic(
+          "ida-event-${event_id}-${alerts.indexOf(reminders) - 1}",
+        );
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
   static Future<void> unsubscribeAllNotifications() async {
-    await FirebaseMessaging.instance.deleteToken();
+    try {
+      await FirebaseMessaging.instance.deleteToken();
+    } catch (e) {
+      print(e);
+    }
   }
 
   static Future<void> subscribeNotification(
@@ -51,20 +59,24 @@ class NotificationsManager {
     int event_id,
     String reminders,
   ) async {
-    post(
-      Uri.parse(baseUrl + "/toggle-notification/"),
-      headers: {"Authorization": "Bearer ${token}"},
-      body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
-    );
+    try {
+      post(
+        Uri.parse(baseUrl + "/toggle-notification/"),
+        headers: {"Authorization": "Bearer ${token}"},
+        body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
+      );
 
-    FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}");
+      FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}");
 
-    if (reminders == "30 minutes before") {
-      FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-0");
-    } else if (reminders == "2 hours before") {
-      FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-1");
-    } else if (reminders == "6 hours before") {
-      FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-2");
+      if (reminders == "30 minutes before") {
+        FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-0");
+      } else if (reminders == "2 hours before") {
+        FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-1");
+      } else if (reminders == "6 hours before") {
+        FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-2");
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -74,35 +86,47 @@ class NotificationsManager {
     int event_id,
     String reminders,
   ) async {
-    post(
-      Uri.parse(baseUrl + "/toggle-notification/"),
-      headers: {"Authorization": "Bearer ${token}"},
-      body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
-    );
+    try {
+      post(
+        Uri.parse(baseUrl + "/toggle-notification/"),
+        headers: {"Authorization": "Bearer ${token}"},
+        body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
+      );
 
-    FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}");
+      FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}");
 
-    if (reminders == "30 minutes before") {
-      FirebaseMessaging.instance.unsubscribeFromTopic(
-        "ida-event-${event_id}-0",
-      );
-    } else if (reminders == "2 hours before") {
-      FirebaseMessaging.instance.unsubscribeFromTopic(
-        "ida-event-${event_id}-1",
-      );
-    } else if (reminders == "6 hours before") {
-      FirebaseMessaging.instance.unsubscribeFromTopic(
-        "ida-event-${event_id}-2",
-      );
+      if (reminders == "30 minutes before") {
+        FirebaseMessaging.instance.unsubscribeFromTopic(
+          "ida-event-${event_id}-0",
+        );
+      } else if (reminders == "2 hours before") {
+        FirebaseMessaging.instance.unsubscribeFromTopic(
+          "ida-event-${event_id}-1",
+        );
+      } else if (reminders == "6 hours before") {
+        FirebaseMessaging.instance.unsubscribeFromTopic(
+          "ida-event-${event_id}-2",
+        );
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
   static Future<void> subscribeTopic(String topic) async {
-    FirebaseMessaging.instance.subscribeToTopic(topic);
+    try {
+      FirebaseMessaging.instance.subscribeToTopic(topic);
+    } catch (e) {
+      print(e);
+    }
   }
 
   static Future<void> unsubscribeTopic(String topic) async {
-    FirebaseMessaging.instance.unsubscribeFromTopic(topic);
+    try {
+      FirebaseMessaging.instance.unsubscribeFromTopic(topic);
+    } catch (e) {
+      print(e);
+    }
   }
 
   static Future<void> changeInterval(
@@ -111,25 +135,29 @@ class NotificationsManager {
     String original_alert,
     String new_alert,
   ) async {
-    var response = await get(
-      Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
-    List notifs = info["data"];
+    try {
+      var response = await get(
+        Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
+        headers: {"Authorization": "Bearer ${token}"},
+      );
+      Map info = jsonDecode(response.body);
+      List notifs = info["data"];
 
-    for (int event_id in notifs) {
-      if (original_alert != "Off") {
-        FirebaseMessaging.instance.unsubscribeFromTopic(
-          "ida-event-${event_id}-${alerts.indexOf(original_alert) - 1}",
-        );
-      }
+      for (int event_id in notifs) {
+        if (original_alert != "Off") {
+          FirebaseMessaging.instance.unsubscribeFromTopic(
+            "ida-event-${event_id}-${alerts.indexOf(original_alert) - 1}",
+          );
+        }
 
-      if (new_alert != "Off") {
-        FirebaseMessaging.instance.subscribeToTopic(
-          "ida-event-${event_id}-${alerts.indexOf(new_alert) - 1}",
-        );
+        if (new_alert != "Off") {
+          FirebaseMessaging.instance.subscribeToTopic(
+            "ida-event-${event_id}-${alerts.indexOf(new_alert) - 1}",
+          );
+        }
       }
+    } catch (e) {
+      print(e);
     }
   }
 }

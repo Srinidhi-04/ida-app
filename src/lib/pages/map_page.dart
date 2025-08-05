@@ -238,24 +238,29 @@ class _MapPageState extends State<MapPage> {
       permission = await Geolocator.requestPermission();
     }
 
-    Position? posit;
-    try {
-      posit = await Geolocator.getCurrentPosition(
-        locationSettings: LocationSettings(timeLimit: Duration(seconds: 10)),
-      );
-    } catch (e) {
-      print("Couldn't get location: ${e}");
-      posit = await Geolocator.getLastKnownPosition();
-    }
+    if (permission == LocationPermission.always ||
+        permission == LocationPermission.whileInUse) {
+      Position? posit;
+      try {
+        posit = await Geolocator.getCurrentPosition(
+          locationSettings: LocationSettings(timeLimit: Duration(seconds: 10)),
+        );
+      } catch (e) {
+        print("Couldn't get location: ${e}");
+        posit = await Geolocator.getLastKnownPosition();
+      }
 
-    setState(() {
-      myLoc =
-          (posit != null)
-              ? LatLng(posit.latitude, posit.longitude)
-              : LatLng(40.105833, -88.227222);
-      if (center == null) center = myLoc;
-      markers.add(Marker(markerId: MarkerId("My location"), position: myLoc!));
-    });
+      setState(() {
+        myLoc =
+            (posit != null)
+                ? LatLng(posit.latitude, posit.longitude)
+                : LatLng(40.105833, -88.227222);
+        if (center == null) center = myLoc;
+        markers.add(
+          Marker(markerId: MarkerId("My location"), position: myLoc!),
+        );
+      });
+    }
   }
 
   Future<void> getEvents() async {
@@ -453,7 +458,9 @@ class _MapPageState extends State<MapPage> {
                                 ),
                               ),
                               generateAutocomplete(
-                                autocompleteController.text.trim().toLowerCase(),
+                                autocompleteController.text
+                                    .trim()
+                                    .toLowerCase(),
                               ),
                             ],
                           ),

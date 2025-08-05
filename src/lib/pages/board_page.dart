@@ -122,7 +122,9 @@ class _BoardPageState extends State<BoardPage> {
         color:
             (pressed != index)
                 ? Colors.white
-                : (index % 4 == 0 || index % 4 == 3) ? Theme.of(context).primaryColorLight : Theme.of(context).primaryColorDark,
+                : (index % 4 == 0 || index % 4 == 3)
+                ? Theme.of(context).primaryColorLight
+                : Theme.of(context).primaryColorDark,
         child: TextButton(
           style: ButtonStyle(
             shape: WidgetStatePropertyAll(
@@ -228,9 +230,7 @@ class _BoardPageState extends State<BoardPage> {
               padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
               child: Text(
                 "Presenting the Illini Dads Association Board for 2025!",
-                style: Theme.of(
-                  context,
-                ).typography.black.headlineSmall!.apply(fontSizeDelta: -1),
+                style: Theme.of(context).typography.black.headlineMedium,
                 textAlign: TextAlign.center,
               ),
             ),
