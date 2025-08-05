@@ -144,7 +144,9 @@ def send_donation(name: str, email: str, amount: float):
     Thank you so much for your donation! Here is a copy of your receipt:
     <br><br>
     <b>Name:</b> {name}
+    <br>
     <b>Email:</b> {email}
+    <br>
     <b>Amount:</b> {amount}
     <br><br>
     This email was sent automatically, do not reply to it.
