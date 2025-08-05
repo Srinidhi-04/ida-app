@@ -80,15 +80,14 @@ def send_verification_code(name: str, code: int, email: str):
     message["From"] = "illinidadsassociation@gmail.com"
     message["To"] = email
 
-    session = smtplib.SMTP("smtp.gmail.com", 587)
-    session.starttls()
-    session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
-    session.sendmail("illinidadsassociation@gmail.com", email, message.as_string())
-    session.quit()
+    with smtplib.SMTP("smtp.gmail.com", 587) as session:
+        session.starttls()
+        session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
+        session.sendmail("illinidadsassociation@gmail.com", email, message.as_string())
 
     print("Verification code sent successfully")
 
-def send_new_subscriber(name: str, email: str, subscribe: bool):
+def send_subscriber(name: str, email: str, subscribe: bool):
     if subscribe:
         text = f"""
 <html>
@@ -128,10 +127,42 @@ def send_new_subscriber(name: str, email: str, subscribe: bool):
     message["From"] = "illinidadsassociation@gmail.com"
     message["To"] = "communications@illinidads.com"
 
-    session = smtplib.SMTP("smtp.gmail.com", 587)
-    session.starttls()
-    session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
-    session.sendmail("illinidadsassociation@gmail.com", "communications@illinidads.com", message.as_string())
-    session.quit()
+    with smtplib.SMTP("smtp.gmail.com", 587) as session:
+        session.starttls()
+        session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
+        session.sendmail("illinidadsassociation@gmail.com", "communications@illinidads.com", message.as_string())
 
     print("Subscriber mail sent successfully")
+
+def send_donation(name: str, email: str, amount: float):
+    text = f"""
+<html>
+<body>
+    <p>
+    Hi {name}!
+    <br><br>
+    Thank you so much for your donation! Here is a copy of your receipt:
+    <br><br>
+    <b>Name:</b> {name}
+    <b>Email:</b> {email}
+    <b>Amount:</b> {amount}
+    <br><br>
+    This email was sent automatically, do not reply to it.
+    </p>
+    <br>
+    <img src="https://i.imgur.com/0FHQKN4.png" alt="image">
+</body>
+</html>
+"""
+    
+    message = MIMEText(text, "html")
+    message["Subject"] = "Thank you for your donation!"
+    message["From"] = "illinidadsassociation@gmail.com"
+    message["To"] = email
+
+    with smtplib.SMTP("smtp.gmail.com", 587) as session:
+        session.starttls()
+        session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
+        session.sendmail("illinidadsassociation@gmail.com", [email, "communications@illinidads.com"], message.as_string())
+
+    print("Donation mail sent successfully")

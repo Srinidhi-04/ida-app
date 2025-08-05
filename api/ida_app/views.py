@@ -52,7 +52,7 @@ def signup(request: HttpRequest):
 
     send_verification_code(user.name, user.signup_code, user.email)
     if mailing:
-        send_new_subscriber(user.name, user.email, mailing)
+        send_subscriber(user.name, user.email, mailing)
 
     return JsonResponse({"message": "User successfully signed up", "user_id": user.user_id, "email": user.email})
 
@@ -502,7 +502,7 @@ def change_settings(request: HttpRequest):
         user.mailing = mailing
         user.save()
         
-        send_new_subscriber(user.name, user.email, mailing)
+        send_subscriber(user.name, user.email, mailing)
 
     return JsonResponse({"message": "Settings changed successfully"})
 
@@ -697,6 +697,8 @@ def log_donation(request: HttpRequest):
     try:
         receipt: DonationReceipts = DonationReceipts(user = user, name = name, email = email, amount = amount)
         receipt.save()
+        
+        send_donation(name, email, amount)
     except:
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
 
