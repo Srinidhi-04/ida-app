@@ -70,7 +70,7 @@ def send_verification_code(name: str, code: int, email: str):
     This email was sent automatically, do not reply to it.
     </p>
     <br>
-    <img src="https://i.imgur.com/0FHQKN4.png" alt="image">
+    <img src="https://i.imgur.com/0FHQKN4.png" alt="ida-logo">
 </body>
 </html>
 """
@@ -100,7 +100,7 @@ def send_subscriber(name: str, email: str, subscribe: bool):
     This email was sent automatically, do not reply to it.
     </p>
     <br>
-    <img src="https://i.imgur.com/0FHQKN4.png" alt="image">
+    <img src="https://i.imgur.com/0FHQKN4.png" alt="ida-logo">
 </body>
 </html>
 """
@@ -117,7 +117,7 @@ def send_subscriber(name: str, email: str, subscribe: bool):
     This email was sent automatically, do not reply to it.
     </p>
     <br>
-    <img src="https://i.imgur.com/0FHQKN4.png" alt="image">
+    <img src="https://i.imgur.com/0FHQKN4.png" alt="ida-logo">
 </body>
 </html>
 """
@@ -152,7 +152,7 @@ def send_donation(name: str, email: str, amount: float):
     This email was sent automatically, do not reply to it.
     </p>
     <br>
-    <img src="https://i.imgur.com/0FHQKN4.png" alt="image">
+    <img src="https://i.imgur.com/0FHQKN4.png" alt="ida-logo">
 </body>
 </html>
 """
