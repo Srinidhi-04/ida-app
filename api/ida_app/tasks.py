@@ -147,7 +147,7 @@ def send_donation(name: str, email: str, amount: float):
     <br>
     <b>Email:</b> {email}
     <br>
-    <b>Amount:</b> {amount}
+    <b>Amount:</b> ${round(amount, 2)}
     <br><br>
     This email was sent automatically, do not reply to it.
     </p>
