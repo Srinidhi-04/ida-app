@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -79,6 +80,11 @@ void main() async {
         options: DefaultFirebaseOptions.currentPlatform,
       );
 
+      final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
+      final FirebaseAnalyticsObserver observer = FirebaseAnalyticsObserver(
+        analytics: analytics,
+      );
+
       final permission = await FirebaseMessaging.instance.requestPermission();
 
       if (permission.authorizationStatus == AuthorizationStatus.authorized) {
@@ -115,6 +121,8 @@ void main() async {
 
       runApp(
         MaterialApp(
+          title: "Illini Dads",
+          navigatorObservers: [observer],
           routes: {
             "/": (context) => SplashPage(),
             "/login": (context) => LoginPage(),
