@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:http/http.dart';
 
@@ -40,16 +41,27 @@ class NotificationsManager {
           "ida-event-${event_id}-${alerts.indexOf(reminders) - 1}",
         );
       }
-    } catch (e) {
-      print(e);
+    } catch (e, stack) {
+      await FirebaseCrashlytics.instance.recordError(
+        e,
+        stack,
+        fatal: false,
+        reason: "Error while subscribing to all notifications",
+        information: ["user_id: ${user_id}"],
+      );
     }
   }
 
   static Future<void> unsubscribeAllNotifications() async {
     try {
       await FirebaseMessaging.instance.deleteToken();
-    } catch (e) {
-      print(e);
+    } catch (e, stack) {
+      await FirebaseCrashlytics.instance.recordError(
+        e,
+        stack,
+        fatal: false,
+        reason: "Error while unsubscribing from all notifications",
+      );
     }
   }
 
@@ -75,8 +87,14 @@ class NotificationsManager {
       } else if (reminders == "6 hours before") {
         FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-2");
       }
-    } catch (e) {
-      print(e);
+    } catch (e, stack) {
+      await FirebaseCrashlytics.instance.recordError(
+        e,
+        stack,
+        fatal: false,
+        reason: "Error while subscribing to a notification",
+        information: ["user_id: ${user_id}", "event_id: ${event_id}"],
+      );
     }
   }
 
@@ -108,32 +126,50 @@ class NotificationsManager {
           "ida-event-${event_id}-2",
         );
       }
-    } catch (e) {
-      print(e);
+    } catch (e, stack) {
+      await FirebaseCrashlytics.instance.recordError(
+        e,
+        stack,
+        fatal: false,
+        reason: "Error while unsubscribing from a notification",
+        information: ["user_id: ${user_id}", "event_id: ${event_id}"],
+      );
     }
   }
 
   static Future<void> subscribeTopic(String topic) async {
     try {
       FirebaseMessaging.instance.subscribeToTopic(topic);
-    } catch (e) {
-      print(e);
+    } catch (e, stack) {
+      await FirebaseCrashlytics.instance.recordError(
+        e,
+        stack,
+        fatal: false,
+        reason: "Error while subscribing to a topic",
+        information: ["topic: ${topic}"],
+      );
     }
   }
 
   static Future<void> unsubscribeTopic(String topic) async {
     try {
       FirebaseMessaging.instance.unsubscribeFromTopic(topic);
-    } catch (e) {
-      print(e);
+    } catch (e, stack) {
+      await FirebaseCrashlytics.instance.recordError(
+        e,
+        stack,
+        fatal: false,
+        reason: "Error while unsubscribing from a topic",
+        information: ["topic: ${topic}"],
+      );
     }
   }
 
   static Future<void> changeInterval(
     int user_id,
     String token,
-    String original_alert,
-    String new_alert,
+    String original_interval,
+    String new_interval,
   ) async {
     try {
       var response = await get(
@@ -144,20 +180,26 @@ class NotificationsManager {
       List notifs = info["data"];
 
       for (int event_id in notifs) {
-        if (original_alert != "Off") {
+        if (original_interval != "Off") {
           FirebaseMessaging.instance.unsubscribeFromTopic(
-            "ida-event-${event_id}-${alerts.indexOf(original_alert) - 1}",
+            "ida-event-${event_id}-${alerts.indexOf(original_interval) - 1}",
           );
         }
 
-        if (new_alert != "Off") {
+        if (new_interval != "Off") {
           FirebaseMessaging.instance.subscribeToTopic(
-            "ida-event-${event_id}-${alerts.indexOf(new_alert) - 1}",
+            "ida-event-${event_id}-${alerts.indexOf(new_interval) - 1}",
           );
         }
       }
-    } catch (e) {
-      print(e);
+    } catch (e, stack) {
+      await FirebaseCrashlytics.instance.recordError(
+        e,
+        stack,
+        fatal: false,
+        reason: "Error while changing notification interval",
+        information: ["user_id: ${user_id}", "old_interval: ${original_interval}", "new_interval: ${new_interval}"],
+      );
     }
   }
 }
