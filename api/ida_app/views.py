@@ -15,10 +15,8 @@ def index(request: HttpRequest):
     return HttpResponse("API is up and running")
 
 @auth_exempt
-def check_update(request: HttpRequest):
-    if request.method != "GET":
-        return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
-    
+@request_type("GET")
+def check_update(request: HttpRequest):    
     try:
         version = float(request.GET.get("version"))
     except:
@@ -33,10 +31,8 @@ def check_update(request: HttpRequest):
     return JsonResponse({"message": "Updated"})
 
 @auth_exempt
+@request_type("POST")
 def signup(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-    
     email = request.POST.get("email")
     name = request.POST.get("name")
     password = request.POST.get("password")
@@ -61,10 +57,8 @@ def signup(request: HttpRequest):
     return JsonResponse({"message": "User successfully signed up", "user_id": user.user_id, "email": user.email})
 
 @auth_exempt
+@request_type("POST")
 def verify_code(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-    
     try:
         user_id = int(request.POST.get("user_id"))
     except:
@@ -97,10 +91,8 @@ def verify_code(request: HttpRequest):
     return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
 
 @auth_exempt
+@request_type("POST")
 def send_code(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-    
     email = request.POST.get("email")
     if not email:
         return JsonResponse({"error": "'email' field is required"}, status = 400)
@@ -131,10 +123,8 @@ def send_code(request: HttpRequest):
     return JsonResponse({"message": "Code successfully resent", "user_id": user.user_id, "email": user.email})
 
 @auth_exempt
+@request_type("POST")
 def change_password(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-    
     email = request.POST.get("email")
     if not email:
         return JsonResponse({"error": "'email' field is required"}, status = 400)
@@ -170,10 +160,8 @@ def change_password(request: HttpRequest):
     return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
 
 @auth_exempt
+@request_type("POST")
 def login(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-    
     email = request.POST.get("email")
     password = request.POST.get("password")
 
@@ -214,10 +202,8 @@ def login(request: HttpRequest):
     return JsonResponse({"error": "Email or password is incorrect"}, status = 400)
 
 @requires_roles(["admin"])
+@request_type("POST")
 def add_event(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
     name = request.POST.get("name")
     date = request.POST.get("date")
     timezone = request.POST.get("timezone")
@@ -272,10 +258,8 @@ def add_event(request: HttpRequest):
     return JsonResponse({"message": "Event successfully added", "event_id": event.event_id})
 
 @requires_roles(["admin"])
+@request_type("POST")
 def edit_event(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
     try:
         event_id = int(request.POST.get("event_id"))
     except:
@@ -354,10 +338,8 @@ def edit_event(request: HttpRequest):
     return JsonResponse({"message": "Event successfully edited", "event_id": event.event_id})
 
 @requires_roles(["admin"])
+@request_type("POST")
 def delete_event(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
     try:
         event_id = int(request.POST.get("event_id"))
     except:
@@ -380,10 +362,8 @@ def delete_event(request: HttpRequest):
     
     return JsonResponse({"message": "Event deleted successfully"})
 
+@request_type("GET")
 def get_events(request: HttpRequest):
-    if request.method != "GET":
-        return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
-
     user: UserCredentials = request.user
 
     completed = request.GET.get("completed")
@@ -406,10 +386,8 @@ def get_events(request: HttpRequest):
 
     return JsonResponse({"data": events})
 
+@request_type("POST")
 def toggle_rsvp(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-    
     user: UserCredentials = request.user
 
     try:
@@ -431,10 +409,8 @@ def toggle_rsvp(request: HttpRequest):
     
     return JsonResponse({"message": "Event successfully RSVPed"})
 
+@request_type("GET")
 def get_rsvp(request: HttpRequest):
-    if request.method != "GET":
-        return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
-    
     user: UserCredentials = request.user
 
     Events.objects.filter(date__lte = datetime.datetime.now(tz = datetime.timezone.utc)).update(completed = True)
@@ -450,10 +426,8 @@ def get_rsvp(request: HttpRequest):
 
     return JsonResponse({"data": events})
 
+@request_type("POST")
 def toggle_notification(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
     user: UserCredentials = request.user
     
     try:
@@ -475,20 +449,16 @@ def toggle_notification(request: HttpRequest):
     
     return JsonResponse({"message": "Notification successfully toggled"})
 
+@request_type("GET")
 def get_notifications(request: HttpRequest):
-    if request.method != "GET":
-        return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
-
     user: UserCredentials = request.user
 
     notifs = list(user.user_notifications.values("event_id"))
     
     return JsonResponse({"data": [x["event_id"] for x in notifs]})
 
+@request_type("POST")
 def change_settings(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-    
     user: UserCredentials = request.user
     
     announcements = request.POST.get("announcements")
@@ -536,10 +506,8 @@ def change_settings(request: HttpRequest):
 
     return JsonResponse({"message": "Settings changed successfully"})
 
+@request_type("GET")
 def get_settings(request: HttpRequest):
-    if request.method != "GET":
-        return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
-    
     user: UserCredentials = request.user
     
     settings: dict = user.user_settings.__dict__
@@ -548,10 +516,8 @@ def get_settings(request: HttpRequest):
 
     return JsonResponse({"data": settings})
 
+@request_type("POST")
 def edit_profile(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-    
     user: UserCredentials = request.user
     
     name = request.POST.get("name")
@@ -570,10 +536,8 @@ def edit_profile(request: HttpRequest):
     return JsonResponse({"message": "Profile edited successfully"})
 
 @requires_roles(["admin"])
+@request_type("POST")
 def add_item(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
     name = request.POST.get("name")
     if not name:
         return JsonResponse({"error": "'name' field is required"}, status = 400)
@@ -596,10 +560,8 @@ def add_item(request: HttpRequest):
     return JsonResponse({"message": "Item successfully added", "item_id": item.item_id})
 
 @requires_roles(["admin"])
+@request_type("POST")
 def edit_item(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
     try:
         item_id = int(request.POST.get("item_id"))
     except:
@@ -629,19 +591,15 @@ def edit_item(request: HttpRequest):
 
     return JsonResponse({"message": "Item successfully edited", "item_id": item.item_id})
 
+@request_type("GET")
 def get_items(request: HttpRequest):
-    if request.method != "GET":
-        return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
-
     items = list(ShopItems.objects.values())
 
     return JsonResponse({"data": items})
 
 @requires_roles(["admin"])
+@request_type("POST")
 def delete_item(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
     try:
         item_id = int(request.POST.get("item_id"))
     except:
@@ -659,10 +617,8 @@ def delete_item(request: HttpRequest):
 
     return JsonResponse({"message": "Item deleted successfully"})
 
+@request_type("POST")
 def edit_cart(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
     user: UserCredentials = request.user
     
     try:
@@ -696,20 +652,16 @@ def edit_cart(request: HttpRequest):
 
     return JsonResponse({"message": "Cart successfully edited"})
 
+@request_type("GET")
 def get_cart(request: HttpRequest):
-    if request.method != "GET":
-        return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
-
     user: UserCredentials = request.user
 
     cart_item = list(user.user_carts.values("item_id", "quantity"))
 
     return JsonResponse({"data": cart_item})
 
+@request_type("POST")
 def stripe_payment(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-
     try:
         amount = int(float(request.POST.get("amount")) * 100)
         if amount < 50:
@@ -725,10 +677,8 @@ def stripe_payment(request: HttpRequest):
 
     return JsonResponse({"message": "Stripe payment sheet successfully created", "payment_intent": payment_intent.client_secret, "publishable_key": "pk_test_51RnYlzQkArntKpGlapTuIf51Fvsi1CittiW7jyvqGN4mKEg9z5baV4kWtOKWHWiW14TzzRqxbSXHZQz01xRJeK8k00gJ2IaMpr"})
 
+@request_type("POST")
 def log_donation(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-    
     user: UserCredentials = request.user
     
     name = request.POST.get("name")
@@ -753,10 +703,8 @@ def log_donation(request: HttpRequest):
     return JsonResponse({"message": "Donation successfully logged"})
 
 @requires_roles(["admin"])
+@request_type("POST")
 def send_announcement(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-    
     title = request.POST.get("title")
     if not title:
         return JsonResponse({"error": "'title' field is required"}, status = 400)
@@ -776,10 +724,8 @@ def send_announcement(request: HttpRequest):
     return JsonResponse({"message": "Announcement sent successfully"})
 
 @requires_roles(["admin"])
+@request_type("POST")
 def edit_role(request: HttpRequest):
-    if request.method != "POST":
-        return JsonResponse({"error": "This endpoint can only be accessed via POST"}, status = 400)
-    
     email = request.POST.get("email")
     if not email:
         return JsonResponse({"error": "'email' field is required"}, status = 400)
@@ -799,10 +745,8 @@ def edit_role(request: HttpRequest):
     return JsonResponse({"message": "Role edited successfully"})
 
 @requires_roles(["admin"])
+@request_type("GET")
 def get_roles(request: HttpRequest):
-    if request.method != "GET":
-        return JsonResponse({"error": "This endpoint can only be accessed via GET"}, status = 400)
-    
     emails = list(UserCredentials.objects.values("email", "role"))
     roles = list(set([x["role"] for x in emails]))
 

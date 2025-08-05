@@ -11,6 +11,12 @@ def requires_roles(roles: list):
         return view
     return set_roles
 
+def request_type(type: str):
+    def set_type(view):
+        view.type = type
+        return view
+    return set_type
+
 class AuthMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
@@ -20,6 +26,10 @@ class AuthMiddleware:
         return self.get_response(request)
 
     def process_view(self, request: HttpRequest, view_func, view_args, view_kwargs):
+        request_type = getattr(view_func, "type", "GET")
+        if request.method != request_type:
+            return JsonResponse({"error": f"This endpoint can only be accessed via {request_type}"}, status = 400)
+        
         request.user = None
         roles = getattr(view_func, "roles", None)
 
