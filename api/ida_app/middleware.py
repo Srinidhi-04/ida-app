@@ -1,20 +1,30 @@
+from functools import wraps
 from django.http import HttpRequest, JsonResponse
 from ida_app.models import UserCredentials
 
 def auth_exempt(view):
-    view.auth_exempt = True
-    return view
+    @wraps(view)
+    def wrapper(*args, **kwargs):
+        return view(*args, **kwargs)
+    wrapper.auth_exempt = True
+    return wrapper
 
 def requires_roles(roles: list):
     def set_roles(view):
-        view.roles = roles
-        return view
+        @wraps(view)
+        def wrapper(*args, **kwargs):
+            return view(*args, **kwargs)
+        wrapper.roles = roles
+        return wrapper
     return set_roles
 
 def request_type(type: str):
     def set_type(view):
-        view.type = type
-        return view
+        @wraps(view)
+        def wrapper(*args, **kwargs):
+            return view(*args, **kwargs)
+        wrapper.type = type
+        return wrapper
     return set_type
 
 class AuthMiddleware:
