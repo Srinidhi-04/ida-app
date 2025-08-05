@@ -255,7 +255,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             "avatar": selected.toString(),
                           });
                           var response = await post(
-                            Uri.parse(baseUrl + "/edit-profile/"),
+                            Uri.parse(baseUrl + "/edit-profile"),
                             headers: {"Authorization": "Bearer ${token}"},
                             body: {
                               "user_id": user_id.toString(),

@@ -51,7 +51,7 @@ class _SignupPageState extends State<SignupPage> {
       submitted = true;
     });
     var response = await post(
-      Uri.parse(baseUrl + "/signup/"),
+      Uri.parse(baseUrl + "/signup"),
       body: {"name": name, "email": email, "password": password, "mailing": (mailing) ? "yes" : "no"},
     );
     Map info = jsonDecode(response.body);

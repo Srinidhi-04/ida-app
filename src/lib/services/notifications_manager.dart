@@ -73,7 +73,7 @@ class NotificationsManager {
   ) async {
     try {
       post(
-        Uri.parse(baseUrl + "/toggle-notification/"),
+        Uri.parse(baseUrl + "/toggle-notification"),
         headers: {"Authorization": "Bearer ${token}"},
         body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
       );
@@ -106,7 +106,7 @@ class NotificationsManager {
   ) async {
     try {
       post(
-        Uri.parse(baseUrl + "/toggle-notification/"),
+        Uri.parse(baseUrl + "/toggle-notification"),
         headers: {"Authorization": "Bearer ${token}"},
         body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
       );

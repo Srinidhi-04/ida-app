@@ -126,7 +126,7 @@ class _EventsPageState extends State<EventsPage> {
                   }
                 });
                 var response = await post(
-                  Uri.parse(baseUrl + "/delete-event/"),
+                  Uri.parse(baseUrl + "/delete-event"),
                   headers: {"Authorization": "Bearer ${token}"},
                   body: {
                     "user_id": user_id.toString(),
@@ -198,7 +198,7 @@ class _EventsPageState extends State<EventsPage> {
                     }
                   });
                   var response = await post(
-                    Uri.parse(baseUrl + "/delete-event/"),
+                    Uri.parse(baseUrl + "/delete-event"),
                     headers: {"Authorization": "Bearer ${token}"},
                     body: {
                       "user_id": user_id.toString(),

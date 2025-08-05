@@ -55,7 +55,7 @@ class _LoginPageState extends State<LoginPage> {
       submitted = true;
     });
     var response = await post(
-      Uri.parse(baseUrl + "/login/"),
+      Uri.parse(baseUrl + "/login"),
       body: {"email": email, "password": password},
     );
     Map info = jsonDecode(response.body);

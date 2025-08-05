@@ -217,7 +217,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               changed = false;
                             });
                             var response = await post(
-                              Uri.parse(baseUrl + "/change-settings/"),
+                              Uri.parse(baseUrl + "/change-settings"),
                               headers: {"Authorization": "Bearer ${token}"},
                               body: {
                                 "user_id": user_id.toString(),

@@ -53,7 +53,7 @@ class _ForgotPageState extends State<ForgotPage> {
       submitted = true;
     });
     var response = await post(
-      Uri.parse(baseUrl + "/send-code/"),
+      Uri.parse(baseUrl + "/send-code"),
       body: {"email": email, "forgot": "yes"},
     );
     Map info = jsonDecode(response.body);
@@ -79,7 +79,7 @@ class _ForgotPageState extends State<ForgotPage> {
       submitted = true;
     });
     var response = await post(
-      Uri.parse(baseUrl + "/change-password/"),
+      Uri.parse(baseUrl + "/change-password"),
       body: {"email": email, "password": password, "code": code},
     );
     Map info = jsonDecode(response.body);

@@ -48,7 +48,7 @@ class _VerifyPageState extends State<VerifyPage> {
       submitted = true;
     });
     var response = await post(
-      Uri.parse(baseUrl + "/verify-code/"),
+      Uri.parse(baseUrl + "/verify-code"),
       body: {"user_id": user_id.toString(), "code": code},
     );
     Map info = jsonDecode(response.body);
@@ -213,7 +213,7 @@ class _VerifyPageState extends State<VerifyPage> {
                                 TextButton(
                                   onPressed: () async {
                                     await post(
-                                      Uri.parse(baseUrl + "/send-code/"),
+                                      Uri.parse(baseUrl + "/send-code"),
                                       body: {"email": email},
                                     );
                                     setState(() {

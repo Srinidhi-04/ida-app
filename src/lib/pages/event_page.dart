@@ -210,7 +210,7 @@ class _EventPageState extends State<EventPage> {
                           PopupMenuItem(
                             onTap: () async {
                               var response = await post(
-                                Uri.parse(baseUrl + "/delete-event/"),
+                                Uri.parse(baseUrl + "/delete-event"),
                                 headers: {"Authorization": "Bearer ${token}"},
                                 body: {
                                   "user_id": user_id.toString(),
@@ -451,7 +451,7 @@ class _EventPageState extends State<EventPage> {
                           });
 
                           var response = await post(
-                            Uri.parse(baseUrl + "/toggle-rsvp/"),
+                            Uri.parse(baseUrl + "/toggle-rsvp"),
                             headers: {"Authorization": "Bearer ${token}"},
                             body: {
                               "user_id": user_id.toString(),
@@ -503,7 +503,7 @@ class _EventPageState extends State<EventPage> {
                                 callback();
 
                                 var response = await post(
-                                  Uri.parse(baseUrl + "/toggle-rsvp/"),
+                                  Uri.parse(baseUrl + "/toggle-rsvp"),
                                   headers: {"Authorization": "Bearer ${token}"},
                                   body: {
                                     "user_id": user_id.toString(),

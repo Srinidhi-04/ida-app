@@ -222,7 +222,7 @@ class _ItemPageState extends State<ItemPage> {
 
                             if (item_id == null) {
                               var response = await post(
-                                Uri.parse(baseUrl + "/add-item/"),
+                                Uri.parse(baseUrl + "/add-item"),
                                 headers: {"Authorization": "Bearer ${token}"},
                                 body: {
                                   "user_id": user_id.toString(),
@@ -250,7 +250,7 @@ class _ItemPageState extends State<ItemPage> {
                               callback();
                             } else {
                               var response = await post(
-                                Uri.parse(baseUrl + "/edit-item/"),
+                                Uri.parse(baseUrl + "/edit-item"),
                                 headers: {"Authorization": "Bearer ${token}"},
                                 body: {
                                   "user_id": user_id.toString(),

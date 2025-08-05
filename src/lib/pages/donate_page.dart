@@ -319,7 +319,7 @@ class _DonatePageState extends State<DonatePage> {
                                       });
 
                                       var response = await post(
-                                        Uri.parse(baseUrl + "/stripe-payment/"),
+                                        Uri.parse(baseUrl + "/stripe-payment"),
                                         headers: {
                                           "Authorization": "Bearer ${token}",
                                         },
@@ -384,7 +384,7 @@ class _DonatePageState extends State<DonatePage> {
                                         });
 
                                         var response = await post(
-                                          Uri.parse(baseUrl + "/log-donation/"),
+                                          Uri.parse(baseUrl + "/log-donation"),
                                           headers: {
                                             "Authorization": "Bearer ${token}",
                                           },

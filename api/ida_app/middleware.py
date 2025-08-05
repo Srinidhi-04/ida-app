@@ -26,10 +26,6 @@ class AuthMiddleware:
         return self.get_response(request)
 
     def process_view(self, request: HttpRequest, view_func, view_args, view_kwargs):
-        print(1, getattr(view_func, "type", None))
-        print(2, getattr(view_func, "auth_exempt", None))
-        print(3, getattr(view_func, "roles", None))
-
         method = getattr(view_func, "type", "GET")
         if request.method != method:
             return JsonResponse({"error": f"This endpoint can only be accessed via {method}"}, status = 400)

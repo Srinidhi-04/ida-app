@@ -541,7 +541,7 @@ class _ManagePageState extends State<ManagePage> {
 
                             if (event_id == null) {
                               var response = await post(
-                                Uri.parse(baseUrl + "/add-event/"),
+                                Uri.parse(baseUrl + "/add-event"),
                                 headers: {"Authorization": "Bearer ${token}"},
                                 body: {
                                   "user_id": user_id.toString(),
@@ -579,7 +579,7 @@ class _ManagePageState extends State<ManagePage> {
                               callback();
                             } else {
                               var response = await post(
-                                Uri.parse(baseUrl + "/edit-event/"),
+                                Uri.parse(baseUrl + "/edit-event"),
                                 headers: {"Authorization": "Bearer ${token}"},
                                 body: {
                                   "user_id": user_id.toString(),

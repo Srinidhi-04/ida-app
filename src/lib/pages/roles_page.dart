@@ -418,7 +418,7 @@ class _RolesPageState extends State<RolesPage> {
                                 });
 
                                 var response = await post(
-                                  Uri.parse(baseUrl + "/edit-role/"),
+                                  Uri.parse(baseUrl + "/edit-role"),
                                   headers: {"Authorization": "Bearer ${token}"},
                                   body: {
                                     "user_id": user_id.toString(),

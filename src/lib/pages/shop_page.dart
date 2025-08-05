@@ -56,7 +56,7 @@ class _ShopPageState extends State<ShopPage> {
                   items.removeAt(index);
                 });
                 var response = await post(
-                  Uri.parse(baseUrl + "/delete-item/"),
+                  Uri.parse(baseUrl + "/delete-item"),
                   headers: {"Authorization": "Bearer ${token}"},
                   body: {
                     "user_id": user_id.toString,
@@ -106,7 +106,7 @@ class _ShopPageState extends State<ShopPage> {
                     items.removeAt(index);
                   });
                   var response = await post(
-                    Uri.parse(baseUrl + "/delete-item/"),
+                    Uri.parse(baseUrl + "/delete-item"),
                     headers: {"Authorization": "Bearer ${token}"},
                     body: {
                       "user_id": user_id.toString(),
@@ -202,7 +202,7 @@ class _ShopPageState extends State<ShopPage> {
                                           quantity[item_id] = 1;
                                         });
                                         var response = await post(
-                                          Uri.parse(baseUrl + "/edit-cart/"),
+                                          Uri.parse(baseUrl + "/edit-cart"),
                                           headers: {
                                             "Authorization": "Bearer ${token}",
                                           },
@@ -282,7 +282,7 @@ class _ShopPageState extends State<ShopPage> {
                                               });
                                               var response = await post(
                                                 Uri.parse(
-                                                  baseUrl + "/edit-cart/",
+                                                  baseUrl + "/edit-cart",
                                                 ),
                                                 headers: {
                                                   "Authorization":
@@ -338,7 +338,7 @@ class _ShopPageState extends State<ShopPage> {
                                               });
                                               var response = await post(
                                                 Uri.parse(
-                                                  baseUrl + "/edit-cart/",
+                                                  baseUrl + "/edit-cart",
                                                 ),
                                                 headers: {
                                                   "Authorization":
