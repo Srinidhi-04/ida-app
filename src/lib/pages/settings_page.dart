@@ -232,6 +232,8 @@ class _SettingsPageState extends State<SettingsPage> {
                   (original != name || avatar != selected)
                       ? TextButton(
                         onPressed: () async {
+                          FocusScope.of(context).unfocus();
+
                           if (name.isEmpty) {
                             setState(() {
                               error = "Name cannot be empty";

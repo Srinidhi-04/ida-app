@@ -119,6 +119,8 @@ class _HelpPageState extends State<HelpPage> {
                         padding: const EdgeInsets.only(top: 20.0),
                         child: TextButton(
                           onPressed: () async {
+                            FocusScope.of(context).unfocus();
+
                             setState(() {
                               submitted = true;
                             });
