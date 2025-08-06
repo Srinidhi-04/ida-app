@@ -49,7 +49,11 @@ class _NavigationState extends State<Navigation> {
         children: [
           NavigationButton(0, Icon(Icons.home_outlined, size: 28), "/home"),
           NavigationButton(1, Icon(Icons.event_outlined, size: 28), "/events"),
-          NavigationButton(2, Icon(Icons.explore_outlined, size: 28), "/map"),
+          NavigationButton(
+            2,
+            Icon(Icons.directions_outlined, size: 28),
+            "/map",
+          ),
           NavigationButton(
             3,
             Icon(Icons.storefront_outlined, size: 28),
