@@ -12,6 +12,7 @@ import 'package:src/pages/announcement_page.dart';
 import 'package:src/pages/board_page.dart';
 import 'package:src/pages/donate_page.dart';
 import 'package:src/pages/forgot_page.dart';
+import 'package:src/pages/help_page.dart';
 import 'package:src/pages/item_page.dart';
 import 'package:src/pages/manage_page.dart';
 import 'package:src/pages/event_page.dart';
@@ -144,6 +145,7 @@ void main() async {
             "/board": (context) => BoardPage(),
             "/announcement": (context) => AnnouncementPage(),
             "/roles": (context) => RolesPage(),
+            "/help": (context) => HelpPage(),
           },
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(

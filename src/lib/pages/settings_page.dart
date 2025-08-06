@@ -122,6 +122,7 @@ class _SettingsPageState extends State<SettingsPage> {
               minHeight:
                   MediaQuery.of(context).size.height -
                   kToolbarHeight -
+                  MediaQuery.of(context).padding.top -
                   kBottomNavigationBarHeight,
             ),
             child: Padding(

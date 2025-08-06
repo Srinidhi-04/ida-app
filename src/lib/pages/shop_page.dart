@@ -572,6 +572,7 @@ class _ShopPageState extends State<ShopPage> {
                       minHeight:
                           MediaQuery.of(context).size.height -
                           kToolbarHeight -
+                          MediaQuery.of(context).padding.top -
                           kBottomNavigationBarHeight,
                       minWidth: MediaQuery.of(context).size.width,
                     ),

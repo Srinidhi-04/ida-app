@@ -168,3 +168,32 @@ def send_donation(name: str, email: str, amount: float):
         session.sendmail("illinidadsassociation@gmail.com", [email, "communications@illinidads.com"], message.as_string())
 
     print("Donation mail sent successfully")
+
+def send_question(name: str, email: str, question: str):
+    text = f"""
+<html>
+<body>
+    <p>
+    <b>{name} ({email})</b> has asked the following question:
+    <br><br>
+    {question}
+    <br><br>
+    This email was sent automatically, do not reply to it.
+    </p>
+    <br>
+    <img src="https://i.imgur.com/0FHQKN4.png" alt="ida-logo">
+</body>
+</html>
+"""
+    
+    message = MIMEText(text, "html")
+    message["Subject"] = "New question"
+    message["From"] = "illinidadsassociation@gmail.com"
+    message["To"] = "communications@illinidads.com"
+
+    with smtplib.SMTP("smtp.gmail.com", 587) as session:
+        session.starttls()
+        session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
+        session.sendmail("illinidadsassociation@gmail.com", "communications@illinidads.com", message.as_string())
+
+    print("Question mail sent successfully")

@@ -753,3 +753,15 @@ def get_roles(request: HttpRequest):
     roles = list(set([x["role"] for x in emails]))
 
     return JsonResponse({"data": {"emails": emails, "roles": roles}})
+
+@request_type("POST")
+def send_query(request: HttpRequest):
+    user: UserCredentials = request.user
+
+    query = request.POST.get("query")
+    if not query:
+        return JsonResponse({"error": "'query' field is required"}, status = 400)
+    
+    send_question(user.name, user.email, query)
+
+    return JsonResponse({"message": "Query sent successfully"})

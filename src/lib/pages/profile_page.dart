@@ -365,6 +365,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   minHeight:
                       MediaQuery.of(context).size.height -
                       kToolbarHeight -
+                      MediaQuery.of(context).padding.top -
                       kBottomNavigationBarHeight,
                 ),
                 child: Column(
@@ -614,6 +615,15 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
+          ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed("/help");
+            },
+            child: Icon(Icons.help_outline),
+            backgroundColor: Theme.of(context).primaryColorDark,
+            foregroundColor: Theme.of(context).primaryColorLight,
+            shape: CircleBorder(),
           ),
           bottomNavigationBar: Navigation(selected: 4),
         ),

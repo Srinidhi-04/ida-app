@@ -185,6 +185,7 @@ class _RolesPageState extends State<RolesPage> {
                   minHeight:
                       MediaQuery.of(context).size.height -
                       kToolbarHeight -
+                      MediaQuery.of(context).padding.top -
                       kBottomNavigationBarHeight,
                 ),
                 child: Padding(
@@ -326,11 +327,13 @@ class _RolesPageState extends State<RolesPage> {
                                                                 context,
                                                               ).primaryColor,
                                                           onChanged:
-                                                              (value) =>
-                                                                  setState(() {
-                                                                    new_role =
-                                                                        value.trim();
-                                                                  }),
+                                                              (
+                                                                value,
+                                                              ) => setState(() {
+                                                                new_role =
+                                                                    value
+                                                                        .trim();
+                                                              }),
                                                         ),
                                                       ),
                                                     ],

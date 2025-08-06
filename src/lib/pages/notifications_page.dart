@@ -165,6 +165,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               minHeight:
                   MediaQuery.of(context).size.height -
                   kToolbarHeight -
+                  MediaQuery.of(context).padding.top -
                   kBottomNavigationBarHeight,
             ),
             child: Padding(

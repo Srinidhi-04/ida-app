@@ -254,133 +254,57 @@ class _EventPageState extends State<EventPage> {
                 ]
                 : [],
       ),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          await checkLogin();
-        },
-        color: Theme.of(context).primaryColorLight,
-        backgroundColor: Colors.white,
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            SingleChildScrollView(
-              physics: AlwaysScrollableScrollPhysics(),
-              child: Container(
-                constraints: BoxConstraints(
-                  minHeight:
-                      MediaQuery.of(context).size.height -
-                      kToolbarHeight -
-                      kBottomNavigationBarHeight,
-                  minWidth: MediaQuery.of(context).size.width,
-                ),
-                child: Column(
+      body: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Stack(
+                  alignment: Alignment.bottomCenter,
                   children: [
-                    Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        Container(
-                          height: 0.3 * MediaQuery.of(context).size.height,
-                          width: MediaQuery.of(context).size.width,
-                          color: Theme.of(context).primaryColorDark,
-                          child: Image(
-                            image: NetworkImage(image),
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                        Container(
-                          color: Theme.of(
-                            context,
-                          ).primaryColorDark.withAlpha(150),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Container(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.3,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              right: 5,
-                                            ),
-                                            child: Icon(
-                                              Icons.event_available_outlined,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          Text(
-                                            "${date.day} ${months[date.month - 1]}, ${date.year}",
-                                            style: Theme.of(context)
-                                                .typography
-                                                .white
-                                                .labelMedium!
-                                                .apply(fontWeightDelta: 3),
-                                          ),
-                                        ],
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                              right: 5,
-                                            ),
-                                            child: Icon(
-                                              Icons.alarm_outlined,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          Text(
-                                            "${(date.hour % 12 < 10 && date.hour % 12 > 0) ? "0" : ""}${(date.hour % 12 == 0) ? "12" : date.hour % 12}:${(date.minute < 10 ? "0" : "")}${date.minute} ${(date.hour < 12) ? "AM" : "PM"}",
-                                            style: Theme.of(context)
-                                                .typography
-                                                .white
-                                                .labelMedium!
-                                                .apply(fontWeightDelta: 3),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      "/map",
-                                      arguments: {
-                                        "coordinates": LatLng(
-                                          latitude,
-                                          longitude,
-                                        ),
-                                      },
-                                    );
-                                  },
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
+                    Container(
+                      height: 0.3 * MediaQuery.of(context).size.height,
+                      width: MediaQuery.of(context).size.width,
+                      color: Theme.of(context).primaryColorDark,
+                      child: Image(
+                        image: NetworkImage(image),
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    Container(
+                      color: Theme.of(
+                        context,
+                      ).primaryColorDark.withAlpha(150),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Container(
+                              width:
+                                  MediaQuery.of(context).size.width * 0.3,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.stretch,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Padding(
                                         padding: const EdgeInsets.only(
                                           right: 5,
                                         ),
                                         child: Icon(
-                                          Icons.location_on_outlined,
+                                          Icons.event_available_outlined,
                                           color: Colors.white,
                                         ),
                                       ),
                                       Text(
-                                        "${location}",
+                                        "${date.day} ${months[date.month - 1]}, ${date.year}",
                                         style: Theme.of(context)
                                             .typography
                                             .white
@@ -389,206 +313,265 @@ class _EventPageState extends State<EventPage> {
                                       ),
                                     ],
                                   ),
-                                ),
-                              ],
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 5,
+                                        ),
+                                        child: Icon(
+                                          Icons.alarm_outlined,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      Text(
+                                        "${(date.hour % 12 < 10 && date.hour % 12 > 0) ? "0" : ""}${(date.hour % 12 == 0) ? "12" : date.hour % 12}:${(date.minute < 10 ? "0" : "")}${date.minute} ${(date.hour < 12) ? "AM" : "PM"}",
+                                        style: Theme.of(context)
+                                            .typography
+                                            .white
+                                            .labelMedium!
+                                            .apply(fontWeightDelta: 3),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.all(20),
-                      child: Container(
-                        constraints: BoxConstraints(
-                          minWidth: MediaQuery.of(context).size.width,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              title,
-                              style: Theme.of(context)
-                                  .typography
-                                  .black
-                                  .headlineMedium!
-                                  .apply(fontWeightDelta: 3),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  "/map",
+                                  arguments: {
+                                    "coordinates": LatLng(
+                                      latitude,
+                                      longitude,
+                                    ),
+                                  },
+                                );
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                      right: 5,
+                                    ),
+                                    child: Icon(
+                                      Icons.location_on_outlined,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  Text(
+                                    "${location}",
+                                    style: Theme.of(context)
+                                        .typography
+                                        .white
+                                        .labelMedium!
+                                        .apply(fontWeightDelta: 3),
+                                  ),
+                                ],
+                              ),
                             ),
-                            SizedBox(height: 20),
-                            Text(
-                              "About the event",
-                              style: Theme.of(context)
-                                  .typography
-                                  .black
-                                  .labelLarge!
-                                  .apply(fontWeightDelta: 3),
-                            ),
-                            SizedBox(height: 20),
-                            Text(
-                              body,
-                              style: Theme.of(context)
-                                  .typography
-                                  .black
-                                  .bodyMedium!
-                                  .apply(fontSizeDelta: 2),
-                            ),
-                            SizedBox(height: 50),
                           ],
                         ),
                       ),
                     ),
                   ],
                 ),
-              ),
+                Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Container(
+                    constraints: BoxConstraints(
+                      minWidth: MediaQuery.of(context).size.width,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          title,
+                          style: Theme.of(context)
+                              .typography
+                              .black
+                              .headlineMedium!
+                              .apply(fontWeightDelta: 3),
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          "About the event",
+                          style: Theme.of(context)
+                              .typography
+                              .black
+                              .labelLarge!
+                              .apply(fontWeightDelta: 3),
+                        ),
+                        SizedBox(height: 20),
+                        Text(
+                          body,
+                          style: Theme.of(context)
+                              .typography
+                              .black
+                              .bodyMedium!
+                              .apply(fontSizeDelta: 2),
+                        ),
+                        SizedBox(height: 50),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
-            (!past)
-                ? (ticket == "")
-                    ? Padding(
-                      padding: const EdgeInsets.all(10.0),
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          setState(() {
-                            rsvp = !rsvp;
-                          });
-
-                          var response = await post(
-                            Uri.parse(baseUrl + "/toggle-rsvp"),
-                            headers: {"Authorization": "Bearer ${token}"},
-                            body: {
-                              "user_id": user_id.toString(),
-                              "event_id": event_id.toString(),
-                            },
+          ),
+          (!past)
+              ? (ticket == "")
+                  ? Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        setState(() {
+                          rsvp = !rsvp;
+                        });
+      
+                        var response = await post(
+                          Uri.parse(baseUrl + "/toggle-rsvp"),
+                          headers: {"Authorization": "Bearer ${token}"},
+                          body: {
+                            "user_id": user_id.toString(),
+                            "event_id": event_id.toString(),
+                          },
+                        );
+                        Map info = jsonDecode(response.body);
+                        if (info.containsKey("error") &&
+                            info["error"] == "Invalid authorization token") {
+                          await NotificationsManager.unsubscribeAllNotifications();
+                          await SecureStorage.delete();
+                          await Navigator.of(context).pushNamedAndRemoveUntil(
+                            "/login",
+                            (route) => false,
                           );
-                          Map info = jsonDecode(response.body);
-                          if (info.containsKey("error") &&
-                              info["error"] == "Invalid authorization token") {
-                            await NotificationsManager.unsubscribeAllNotifications();
-                            await SecureStorage.delete();
-                            await Navigator.of(context).pushNamedAndRemoveUntil(
-                              "/login",
-                              (route) => false,
-                            );
-                            return;
-                          }
-                        },
-                        child: Text(
-                          (!rsvp) ? "RSVP" : "UNREGISTER",
-                          style: Theme.of(context).typography.white.labelMedium!
-                              .apply(fontSizeDelta: 2, fontWeightDelta: 3),
-                        ),
-                        style: ButtonStyle(
-                          backgroundColor: WidgetStatePropertyAll(
-                            (!rsvp)
-                                ? Theme.of(context).primaryColorLight
-                                : Theme.of(context).primaryColor,
-                          ),
-                          fixedSize: WidgetStatePropertyAll(
-                            Size(0.6 * MediaQuery.of(context).size.width, 50),
-                          ),
-                          elevation: WidgetStatePropertyAll(10),
-                        ),
+                          return;
+                        }
+                      },
+                      child: Text(
+                        (!rsvp) ? "RSVP" : "UNREGISTER",
+                        style: Theme.of(context).typography.white.labelMedium!
+                            .apply(fontSizeDelta: 2, fontWeightDelta: 3),
                       ),
-                    )
-                    : Padding(
-                      padding: const EdgeInsets.only(bottom: 5.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                setState(() {
-                                  rsvp = !rsvp;
-                                });
-                                callback();
-
-                                var response = await post(
-                                  Uri.parse(baseUrl + "/toggle-rsvp"),
-                                  headers: {"Authorization": "Bearer ${token}"},
-                                  body: {
-                                    "user_id": user_id.toString(),
-                                    "event_id": event_id.toString(),
-                                  },
-                                );
-                                Map info = jsonDecode(response.body);
-                                if (info.containsKey("error") &&
-                                    info["error"] ==
-                                        "Invalid authorization token") {
-                                  await NotificationsManager.unsubscribeAllNotifications();
-                                  await SecureStorage.delete();
-                                  await Navigator.of(
-                                    context,
-                                  ).pushNamedAndRemoveUntil(
-                                    "/login",
-                                    (route) => false,
-                                  );
-                                  return;
-                                }
-                              },
-                              child: Text(
-                                (!rsvp) ? "RSVP" : "UNREGISTER",
-                                style: Theme.of(
+                      style: ButtonStyle(
+                        backgroundColor: WidgetStatePropertyAll(
+                          (!rsvp)
+                              ? Theme.of(context).primaryColorLight
+                              : Theme.of(context).primaryColor,
+                        ),
+                        fixedSize: WidgetStatePropertyAll(
+                          Size(0.6 * MediaQuery.of(context).size.width, 50),
+                        ),
+                        elevation: WidgetStatePropertyAll(10),
+                      ),
+                    ),
+                  )
+                  : Padding(
+                    padding: const EdgeInsets.only(bottom: 5.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              setState(() {
+                                rsvp = !rsvp;
+                              });
+                              callback();
+      
+                              var response = await post(
+                                Uri.parse(baseUrl + "/toggle-rsvp"),
+                                headers: {"Authorization": "Bearer ${token}"},
+                                body: {
+                                  "user_id": user_id.toString(),
+                                  "event_id": event_id.toString(),
+                                },
+                              );
+                              Map info = jsonDecode(response.body);
+                              if (info.containsKey("error") &&
+                                  info["error"] ==
+                                      "Invalid authorization token") {
+                                await NotificationsManager.unsubscribeAllNotifications();
+                                await SecureStorage.delete();
+                                await Navigator.of(
                                   context,
-                                ).typography.white.labelMedium!.apply(
-                                  fontSizeDelta: 2,
-                                  fontWeightDelta: 3,
-                                ),
-                              ),
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(
-                                  (!rsvp)
-                                      ? Theme.of(context).primaryColorLight
-                                      : Theme.of(context).primaryColor,
-                                ),
-                                fixedSize: WidgetStatePropertyAll(
-                                  Size(
-                                    0.45 * MediaQuery.of(context).size.width,
-                                    50,
-                                  ),
-                                ),
-                                elevation: WidgetStatePropertyAll(10),
+                                ).pushNamedAndRemoveUntil(
+                                  "/login",
+                                  (route) => false,
+                                );
+                                return;
+                              }
+                            },
+                            child: Text(
+                              (!rsvp) ? "RSVP" : "UNREGISTER",
+                              style: Theme.of(
+                                context,
+                              ).typography.white.labelMedium!.apply(
+                                fontSizeDelta: 2,
+                                fontWeightDelta: 3,
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: ElevatedButton(
-                              onPressed: () {
-                                launchUrl(
-                                  Uri.parse(ticket),
-                                  mode: LaunchMode.inAppBrowserView,
-                                );
-                              },
-                              child: Text(
-                                "BUY TICKET",
-                                style: Theme.of(
-                                  context,
-                                ).typography.white.labelMedium!.apply(
-                                  fontSizeDelta: 2,
-                                  fontWeightDelta: 3,
-                                  color: Theme.of(context).primaryColorLight,
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                (!rsvp)
+                                    ? Theme.of(context).primaryColorLight
+                                    : Theme.of(context).primaryColor,
+                              ),
+                              fixedSize: WidgetStatePropertyAll(
+                                Size(
+                                  0.45 * MediaQuery.of(context).size.width,
+                                  50,
                                 ),
                               ),
-                              style: ButtonStyle(
-                                backgroundColor: WidgetStatePropertyAll(
-                                  Colors.white,
-                                ),
-                                fixedSize: WidgetStatePropertyAll(
-                                  Size(
-                                    0.45 * MediaQuery.of(context).size.width,
-                                    50,
-                                  ),
-                                ),
-                                elevation: WidgetStatePropertyAll(10),
-                              ),
+                              elevation: WidgetStatePropertyAll(10),
                             ),
                           ),
-                        ],
-                      ),
-                    )
-                : SizedBox(),
-          ],
-        ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: ElevatedButton(
+                            onPressed: () {
+                              launchUrl(
+                                Uri.parse(ticket),
+                                mode: LaunchMode.inAppBrowserView,
+                              );
+                            },
+                            child: Text(
+                              "BUY TICKET",
+                              style: Theme.of(
+                                context,
+                              ).typography.white.labelMedium!.apply(
+                                fontSizeDelta: 2,
+                                fontWeightDelta: 3,
+                                color: Theme.of(context).primaryColorLight,
+                              ),
+                            ),
+                            style: ButtonStyle(
+                              backgroundColor: WidgetStatePropertyAll(
+                                Colors.white,
+                              ),
+                              fixedSize: WidgetStatePropertyAll(
+                                Size(
+                                  0.45 * MediaQuery.of(context).size.width,
+                                  50,
+                                ),
+                              ),
+                              elevation: WidgetStatePropertyAll(10),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+              : SizedBox(),
+        ],
       ),
       bottomNavigationBar: Navigation(selected: 1),
     );

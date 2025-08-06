@@ -52,7 +52,7 @@ class _NavigationState extends State<Navigation> {
           NavigationButton(2, Icon(Icons.explore_outlined, size: 28), "/map"),
           NavigationButton(
             3,
-            Icon(Icons.shopping_bag_outlined, size: 28),
+            Icon(Icons.storefront_outlined, size: 28),
             "/shop",
           ),
           NavigationButton(

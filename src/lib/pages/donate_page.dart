@@ -177,6 +177,7 @@ class _DonatePageState extends State<DonatePage> {
                           minHeight:
                               MediaQuery.of(context).size.height -
                               kToolbarHeight -
+                              MediaQuery.of(context).padding.top -
                               kBottomNavigationBarHeight,
                         ),
                         child: Padding(
