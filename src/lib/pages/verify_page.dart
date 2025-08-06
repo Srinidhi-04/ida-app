@@ -151,7 +151,10 @@ class _VerifyPageState extends State<VerifyPage> {
                             Padding(
                               padding: const EdgeInsets.only(bottom: 25.0),
                               child: Container(
-                                color: Colors.lightGreen,
+                                decoration: BoxDecoration(
+                                  color: Colors.lightGreen,
+                                  borderRadius: BorderRadius.circular(5),
+                                ),
                                 width: MediaQuery.of(context).size.width - 60,
                                 child: Padding(
                                   padding: const EdgeInsets.all(10.0),

@@ -77,18 +77,19 @@ class _HelpPageState extends State<HelpPage> {
                   Divider(color: Theme.of(context).primaryColor),
                   (sent)
                       ? Padding(
-                        padding: const EdgeInsets.only(bottom: 5),
+                        padding: const EdgeInsets.fromLTRB(0, 20, 0, 5),
                         child: Container(
-                          color: Colors.lightGreen,
+                          decoration: BoxDecoration(
+                            color: Colors.lightGreen,
+                            borderRadius: BorderRadius.circular(5),
+                          ),
                           width: MediaQuery.of(context).size.width - 60,
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: Text(
                               "Your question has been sent successfully. You will receive an email with the response soon.",
                               style:
-                                  Theme.of(
-                                    context,
-                                  ).typography.white.bodyMedium,
+                                  Theme.of(context).typography.white.bodyMedium,
                             ),
                           ),
                         ),
@@ -121,7 +122,7 @@ class _HelpPageState extends State<HelpPage> {
                             setState(() {
                               submitted = true;
                             });
-            
+
                             var response = await post(
                               Uri.parse(baseUrl + "/send-query"),
                               headers: {"Authorization": "Bearer ${token}"},
@@ -144,30 +145,27 @@ class _HelpPageState extends State<HelpPage> {
                               );
                               return;
                             }
-            
+
                             setState(() {
                               submitted = false;
                               sent = true;
+                              query = "";
                             });
                           },
                           child: Text(
                             "Send",
-                            style: Theme.of(
-                              context,
-                            ).typography.white.labelLarge!.apply(
-                              fontSizeDelta: 2,
-                              fontWeightDelta: 3,
-                            ),
+                            style: Theme.of(context)
+                                .typography
+                                .white
+                                .labelLarge!
+                                .apply(fontSizeDelta: 2, fontWeightDelta: 3),
                           ),
                           style: ButtonStyle(
                             backgroundColor: WidgetStatePropertyAll(
                               Theme.of(context).primaryColor,
                             ),
                             fixedSize: WidgetStatePropertyAll(
-                              Size(
-                                0.6 * MediaQuery.of(context).size.width,
-                                50,
-                              ),
+                              Size(0.6 * MediaQuery.of(context).size.width, 50),
                             ),
                             elevation: WidgetStatePropertyAll(10),
                           ),

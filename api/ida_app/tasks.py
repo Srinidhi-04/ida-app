@@ -175,9 +175,9 @@ def send_question(name: str, email: str, question: str):
 <body>
     <p>
     <b>{name} ({email})</b> has asked the following question:
-    <br><br>
+    <p>
     {question}
-    <br><br>
+    </p>
     This email was sent automatically, do not reply to it.
     </p>
     <br>
