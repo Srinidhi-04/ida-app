@@ -581,7 +581,7 @@ class _ShopPageState extends State<ShopPage> {
                       child: Column(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(right: 20.0),
+                            padding: const EdgeInsets.fromLTRB(0, 0, 20, 5),
                             child: Align(
                               alignment: Alignment.centerRight,
                               child: Text.rich(

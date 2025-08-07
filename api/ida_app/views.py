@@ -749,10 +749,12 @@ def edit_role(request: HttpRequest):
 @requires_roles(["admin"])
 @request_type("GET")
 def get_roles(request: HttpRequest):
+    total_users = UserCredentials.objects.count()
+    
     emails = list(UserCredentials.objects.values("email", "role"))
     roles = list(set([x["role"] for x in emails]))
 
-    return JsonResponse({"data": {"emails": emails, "roles": roles}})
+    return JsonResponse({"data": {"total_users": total_users, "emails": emails, "roles": roles}})
 
 @request_type("POST")
 def send_query(request: HttpRequest):

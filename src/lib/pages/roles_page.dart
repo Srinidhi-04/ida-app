@@ -25,6 +25,7 @@ class _RolesPageState extends State<RolesPage> {
 
   late List roles;
   late List emails;
+  late int total_users;
 
   bool autocomplete = true;
 
@@ -55,6 +56,7 @@ class _RolesPageState extends State<RolesPage> {
       role = "";
       roles = info["data"]["roles"];
       emails = info["data"]["emails"];
+      total_users = info["data"]["total_users"];
       loaded = true;
     });
   }
@@ -194,6 +196,21 @@ class _RolesPageState extends State<RolesPage> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Divider(color: Theme.of(context).primaryColor),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20),
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              TextSpan(
+                                text: "Total Users: ",
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              TextSpan(text: total_users.toString()),
+                            ],
+                          ),
+                          style: Theme.of(context).typography.black.labelMedium,
+                        ),
+                      ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(0, 20, 0, 5),
                         child: TextFormField(

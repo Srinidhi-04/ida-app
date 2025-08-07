@@ -19,6 +19,7 @@ class _HelpPageState extends State<HelpPage> {
   late String token;
 
   String query = "";
+  TextEditingController controller = TextEditingController();
 
   bool submitted = false;
   bool sent = false;
@@ -96,8 +97,9 @@ class _HelpPageState extends State<HelpPage> {
                       )
                       : Container(),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 5),
+                    padding: const EdgeInsets.only(top: 20),
                     child: TextFormField(
+                      controller: controller,
                       textAlignVertical: TextAlignVertical.center,
                       decoration: InputDecoration(
                         prefixIcon: Icon(
@@ -152,6 +154,7 @@ class _HelpPageState extends State<HelpPage> {
                               submitted = false;
                               sent = true;
                               query = "";
+                              controller.text = "";
                             });
                           },
                           child: Text(
