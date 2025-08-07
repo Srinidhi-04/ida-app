@@ -321,7 +321,7 @@ class _ItemPageState extends State<ItemPage> {
                 size: 100,
               ),
             )
-            : Container(),
+            : SizedBox.shrink(),
       ],
     );
   }

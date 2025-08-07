@@ -254,7 +254,7 @@ class _VerifyPageState extends State<VerifyPage> {
                                         .apply(color: Colors.red),
                                   ),
                                 )
-                                : Container(),
+                                : SizedBox.shrink(),
                           ],
                         ),
                         Column(
@@ -322,7 +322,7 @@ class _VerifyPageState extends State<VerifyPage> {
                 size: 100,
               ),
             )
-            : Container(),
+            : SizedBox.shrink(),
       ],
     );
   }

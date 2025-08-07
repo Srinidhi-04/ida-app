@@ -234,7 +234,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                 size: 100,
               ),
             )
-            : Container(),
+            : SizedBox.shrink(),
       ],
     );
   }

@@ -390,7 +390,7 @@ class _ShopPageState extends State<ShopPage> {
                                         ),
                                       ),
                                     )
-                                    : Container(),
+                                    : SizedBox.shrink(),
                               ],
                             ),
                           ),
@@ -624,7 +624,7 @@ class _ShopPageState extends State<ShopPage> {
                                                 e["price"],
                                                 e["image"],
                                               )
-                                              : Container(),
+                                              : SizedBox.shrink(),
                                     )
                                     .toList(),
                           ),

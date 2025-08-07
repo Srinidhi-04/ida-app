@@ -9,6 +9,7 @@ urlpatterns = [
     path("send-code", send_code),
     path("change-password", change_password),
     path("login", login),
+    path("delete-account", delete_account),
     path("add-event", add_event),
     path("edit-event", edit_event),
     path("delete-event", delete_event),

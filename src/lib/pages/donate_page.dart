@@ -465,7 +465,7 @@ class _DonatePageState extends State<DonatePage> {
                 size: 100,
               ),
             )
-            : Container(),
+            : SizedBox.shrink(),
       ],
     );
   }

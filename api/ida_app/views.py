@@ -201,6 +201,17 @@ def login(request: HttpRequest):
     
     return JsonResponse({"error": "Email or password is incorrect"}, status = 400)
 
+@request_type("POST")
+def delete_account(request: HttpRequest):
+    user: UserCredentials = request.user
+
+    try:
+        user.delete()
+    except:
+        return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
+    
+    return JsonResponse({"message": "Account deleted successfully"})
+
 @requires_roles(["admin"])
 @request_type("POST")
 def add_event(request: HttpRequest):

@@ -52,7 +52,12 @@ class _SignupPageState extends State<SignupPage> {
     });
     var response = await post(
       Uri.parse(baseUrl + "/signup"),
-      body: {"name": name, "email": email, "password": password, "mailing": (mailing) ? "yes" : "no"},
+      body: {
+        "name": name,
+        "email": email,
+        "password": password,
+        "mailing": (mailing) ? "yes" : "no",
+      },
     );
     Map info = jsonDecode(response.body);
     if (info.containsKey("error")) {
@@ -279,7 +284,7 @@ class _SignupPageState extends State<SignupPage> {
                                         .apply(color: Colors.red),
                                   ),
                                 )
-                                : Container(),
+                                : SizedBox.shrink(),
                           ],
                         ),
                         Column(
@@ -416,7 +421,7 @@ class _SignupPageState extends State<SignupPage> {
                 size: 100,
               ),
             )
-            : Container(),
+            : SizedBox.shrink(),
       ],
     );
   }

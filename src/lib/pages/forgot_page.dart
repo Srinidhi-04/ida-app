@@ -199,7 +199,7 @@ class _ForgotPageState extends State<ForgotPage> {
                                     ),
                                   ),
                                 )
-                                : Container(),
+                                : SizedBox.shrink(),
                             Text(
                               "Forgot Password",
                               style: Theme.of(
@@ -351,7 +351,7 @@ class _ForgotPageState extends State<ForgotPage> {
                                     ),
                                   ],
                                 )
-                                : Container(),
+                                : SizedBox.shrink(),
                             (error.isNotEmpty)
                                 ? Padding(
                                   padding: const EdgeInsets.fromLTRB(
@@ -369,7 +369,7 @@ class _ForgotPageState extends State<ForgotPage> {
                                         .apply(color: Colors.red),
                                   ),
                                 )
-                                : Container(),
+                                : SizedBox.shrink(),
                           ],
                         ),
                         Column(
@@ -506,7 +506,7 @@ class _ForgotPageState extends State<ForgotPage> {
                 size: 100,
               ),
             )
-            : Container(),
+            : SizedBox.shrink(),
       ],
     );
   }

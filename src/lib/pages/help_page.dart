@@ -95,7 +95,7 @@ class _HelpPageState extends State<HelpPage> {
                           ),
                         ),
                       )
-                      : Container(),
+                      : SizedBox.shrink(),
                   Padding(
                     padding: const EdgeInsets.only(top: 20),
                     child: TextFormField(
@@ -176,7 +176,7 @@ class _HelpPageState extends State<HelpPage> {
                           ),
                         ),
                       )
-                      : Container(),
+                      : SizedBox.shrink(),
                 ],
               ),
             ),
@@ -193,7 +193,7 @@ class _HelpPageState extends State<HelpPage> {
                 size: 100,
               ),
             )
-            : Container(),
+            : SizedBox.shrink(),
       ],
     );
   }

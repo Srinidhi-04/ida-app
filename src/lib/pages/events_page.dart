@@ -377,7 +377,7 @@ class _EventsPageState extends State<EventsPage> {
                                         visualDensity: VisualDensity.compact,
                                       ),
                                     )
-                                    : Container(),
+                                    : SizedBox.shrink(),
                               ],
                             ),
                             Row(
@@ -612,7 +612,7 @@ class _EventsPageState extends State<EventsPage> {
                         }),
                   ),
                 )
-                : Container(),
+                : SizedBox.shrink(),
             Expanded(
               child: SingleChildScrollView(
                 physics: AlwaysScrollableScrollPhysics(),
@@ -671,7 +671,7 @@ class _EventsPageState extends State<EventsPage> {
                               ),
                             ),
                           )
-                          : Container(),
+                          : SizedBox.shrink(),
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children:
@@ -848,7 +848,7 @@ class _EventsPageState extends State<EventsPage> {
                               ),
                             ),
                           )
-                          : Container(),
+                          : SizedBox.shrink(),
                       (selected == 0 && upcoming["essential"]!.isNotEmpty)
                           ? Column(
                             mainAxisSize: MainAxisSize.min,
@@ -863,7 +863,7 @@ class _EventsPageState extends State<EventsPage> {
                                                   )),
                                             )
                                             .isEmpty)
-                                    ? [Container()]
+                                    ? [SizedBox.shrink()]
                                     : upcoming["essential"]!
                                         .where(
                                           (e) =>
@@ -892,7 +892,7 @@ class _EventsPageState extends State<EventsPage> {
                                         )
                                         .toList()),
                           )
-                          : Container(),
+                          : SizedBox.shrink(),
                     ],
                   ),
                 ),

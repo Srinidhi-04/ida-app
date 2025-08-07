@@ -233,7 +233,7 @@ class _ManagePageState extends State<ManagePage> {
                                         .bodyMedium!
                                         .apply(color: Colors.red),
                                   )
-                                  : Container()),
+                                  : SizedBox.shrink()),
                             ],
                           ),
                           Column(
@@ -287,7 +287,7 @@ class _ManagePageState extends State<ManagePage> {
                                         .bodyMedium!
                                         .apply(color: Colors.red),
                                   )
-                                  : Container()),
+                                  : SizedBox.shrink()),
                             ],
                           ),
                         ],
@@ -341,7 +341,9 @@ class _ManagePageState extends State<ManagePage> {
                                     (value) => setState(() {
                                       try {
                                         if (value.trim() != "")
-                                          latlng[0] = double.parse(value.trim());
+                                          latlng[0] = double.parse(
+                                            value.trim(),
+                                          );
                                         else
                                           latlng[0] = null;
                                         errors[4] = null;
@@ -375,7 +377,9 @@ class _ManagePageState extends State<ManagePage> {
                                     (value) => setState(() {
                                       try {
                                         if (value.trim() != "")
-                                          latlng[1] = double.parse(value.trim());
+                                          latlng[1] = double.parse(
+                                            value.trim(),
+                                          );
                                         else
                                           latlng[1] = null;
                                         errors[5] = null;
@@ -672,7 +676,7 @@ class _ManagePageState extends State<ManagePage> {
                 size: 100,
               ),
             )
-            : Container(),
+            : SizedBox.shrink(),
       ],
     );
   }

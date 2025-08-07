@@ -284,7 +284,7 @@ class _LoginPageState extends State<LoginPage> {
                                         .apply(color: Colors.red),
                                   ),
                                 )
-                                : Container(),
+                                : SizedBox.shrink(),
                           ],
                         ),
                         Column(
@@ -391,7 +391,7 @@ class _LoginPageState extends State<LoginPage> {
                 size: 100,
               ),
             )
-            : Container(),
+            : SizedBox.shrink(),
       ],
     );
   }

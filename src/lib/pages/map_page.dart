@@ -174,7 +174,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   Widget generateAutocomplete(String text) {
-    if (text == "") return Container();
+    if (text == "") return SizedBox.shrink();
 
     return Container(
       color: Colors.white,
@@ -490,12 +490,12 @@ class _MapPageState extends State<MapPage> {
                                       "http://maps.apple.com/?saddr=${myLoc!.latitude},${myLoc!.longitude}&daddr=${center!.latitude},${center!.longitude}",
                                     ),
                                   )
-                                  : Container(),
+                                  : SizedBox.shrink(),
                             ],
                           ),
                         ),
                       )
-                      : Container(),
+                      : SizedBox.shrink(),
                 ],
               ),
             ),

@@ -286,7 +286,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                           ),
                         ),
                       )
-                      : Container(),
+                      : SizedBox.shrink(),
                 ],
               ),
             ),

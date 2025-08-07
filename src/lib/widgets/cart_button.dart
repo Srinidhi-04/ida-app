@@ -53,7 +53,7 @@ class _CartButtonState extends State<CartButton> {
                   ),
                 ),
               )
-              : Container(),
+              : SizedBox.shrink(),
         ],
       ),
     );

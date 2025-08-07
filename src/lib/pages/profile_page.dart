@@ -424,7 +424,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 Theme.of(context).typography.black.labelSmall,
                           ),
                         )
-                        : Container(),
+                        : SizedBox.shrink(),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(10, 5, 10, 0),
                       child: Text(
@@ -462,7 +462,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       .apply(fontWeightDelta: 3),
                                 ),
                               )
-                              : Container(),
+                              : SizedBox.shrink(),
                           (registered.isNotEmpty)
                               ? Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -505,7 +505,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ],
                               )
-                              : Container(),
+                              : SizedBox.shrink(),
 
                           (past.isNotEmpty)
                               ? Column(
@@ -549,7 +549,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ],
                               )
-                              : Container(),
+                              : SizedBox.shrink(),
                         ],
                       ),
                     ),
@@ -574,10 +574,10 @@ class _ProfilePageState extends State<ProfilePage> {
                                 indent: 20,
                                 endIndent: 20,
                               )
-                              : Container(),
+                              : SizedBox.shrink(),
                           (admin_roles.contains(role))
                               ? profileButton("Assign Roles", "/roles")
-                              : Container(),
+                              : SizedBox.shrink(),
                         ],
                       ),
                     ),
@@ -637,7 +637,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 size: 100,
               ),
             )
-            : Container(),
+            : SizedBox.shrink(),
       ],
     );
   }

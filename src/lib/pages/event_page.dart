@@ -570,7 +570,7 @@ class _EventPageState extends State<EventPage> {
                       ],
                     ),
                   )
-              : SizedBox(),
+              : SizedBox.shrink(),
         ],
       ),
       bottomNavigationBar: Navigation(selected: 1),

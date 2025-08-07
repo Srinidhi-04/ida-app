@@ -62,7 +62,7 @@ class _RolesPageState extends State<RolesPage> {
   }
 
   Widget generateAutocomplete(String text, bool generate) {
-    if (text == "" || !autocomplete) return Container();
+    if (text == "" || !autocomplete) return SizedBox.shrink();
 
     return Container(
       decoration: BoxDecoration(
@@ -319,48 +319,34 @@ class _RolesPageState extends State<RolesPage> {
                                                           .black
                                                           .headlineMedium,
                                                 ),
-                                                content: SingleChildScrollView(
-                                                  child: Column(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Padding(
-                                                        padding:
-                                                            const EdgeInsets.all(
-                                                              10.0,
-                                                            ),
-                                                        child: TextFormField(
-                                                          textAlignVertical:
-                                                              TextAlignVertical
-                                                                  .center,
-                                                          decoration: InputDecoration(
-                                                            prefixIcon: Icon(
-                                                              Icons
-                                                                  .shield_outlined,
-                                                              color:
-                                                                  Theme.of(
-                                                                    context,
-                                                                  ).primaryColor,
-                                                            ),
-                                                            hintText: "Role",
-                                                            errorText:
-                                                                dialog_error,
-                                                          ),
-                                                          cursorColor:
-                                                              Theme.of(
-                                                                context,
-                                                              ).primaryColor,
-                                                          onChanged:
-                                                              (
-                                                                value,
-                                                              ) => setState(() {
-                                                                new_role =
-                                                                    value
-                                                                        .trim();
-                                                              }),
-                                                        ),
+                                                content: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                    10.0,
+                                                  ),
+                                                  child: TextFormField(
+                                                    textAlignVertical:
+                                                        TextAlignVertical
+                                                            .center,
+                                                    decoration: InputDecoration(
+                                                      prefixIcon: Icon(
+                                                        Icons.shield_outlined,
+                                                        color:
+                                                            Theme.of(
+                                                              context,
+                                                            ).primaryColor,
                                                       ),
-                                                    ],
+                                                      hintText: "Role",
+                                                      errorText: dialog_error,
+                                                    ),
+                                                    cursorColor:
+                                                        Theme.of(
+                                                          context,
+                                                        ).primaryColor,
+                                                    onChanged:
+                                                        (value) => setState(() {
+                                                          new_role =
+                                                              value.trim();
+                                                        }),
                                                   ),
                                                 ),
                                                 actions: [
@@ -434,7 +420,7 @@ class _RolesPageState extends State<RolesPage> {
                               ],
                             ),
                           )
-                          : Container(),
+                          : SizedBox.shrink(),
                       (original != role)
                           ? Padding(
                             padding: const EdgeInsets.only(top: 20.0),
@@ -499,7 +485,7 @@ class _RolesPageState extends State<RolesPage> {
                               ),
                             ),
                           )
-                          : Container(),
+                          : SizedBox.shrink(),
                     ],
                   ),
                 ),
@@ -518,7 +504,7 @@ class _RolesPageState extends State<RolesPage> {
                 size: 100,
               ),
             )
-            : Container(),
+            : SizedBox.shrink(),
       ],
     );
   }
