@@ -1,3 +1,9 @@
+<div style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+  <a href="https://github.com/illini-dads/ida-app" target="_blank" title="Open Repository">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" alt="GitHub Repository" width="30">
+  </a>
+</div>
+
 <p align="center">
   <img src="https://i.imgur.com/0FHQKN4.png" alt="Illini Dads Logo" width="250"/>
 </p>
