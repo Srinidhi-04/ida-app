@@ -309,7 +309,7 @@ class _LoginPageState extends State<LoginPage> {
                                 await login();
                               },
                               child: Text(
-                                "LOGIN",
+                                "LOG IN",
                                 style: Theme.of(
                                   context,
                                 ).typography.white.labelMedium!.apply(

@@ -339,7 +339,7 @@ class _SignupPageState extends State<SignupPage> {
                                 await signup();
                               },
                               child: Text(
-                                "SIGNUP",
+                                "SIGN UP",
                                 style: Theme.of(
                                   context,
                                 ).typography.white.labelMedium!.apply(
