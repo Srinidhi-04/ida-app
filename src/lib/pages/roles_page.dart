@@ -198,17 +198,24 @@ class _RolesPageState extends State<RolesPage> {
                       Divider(color: Theme.of(context).primaryColor),
                       Padding(
                         padding: const EdgeInsets.only(top: 20),
-                        child: Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: "Total Users: ",
-                                style: TextStyle(fontWeight: FontWeight.bold),
-                              ),
-                              TextSpan(text: total_users.toString()),
-                            ],
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text.rich(
+                            TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: "Total Users: ",
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                TextSpan(text: total_users.toString()),
+                              ],
+                            ),
+                            style: Theme.of(context)
+                                .typography
+                                .black
+                                .labelMedium!
+                                .apply(fontSizeDelta: 2),
                           ),
-                          style: Theme.of(context).typography.black.labelMedium,
                         ),
                       ),
                       Padding(

@@ -603,6 +603,7 @@ class _ShopPageState extends State<ShopPage> {
                                   context,
                                 ).typography.black.labelMedium!.apply(
                                   color: Theme.of(context).primaryColorDark,
+                                  fontSizeDelta: 2,
                                 ),
                               ),
                             ),
