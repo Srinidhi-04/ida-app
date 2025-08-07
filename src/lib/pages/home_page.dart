@@ -583,10 +583,11 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                     child: Text(
                                       "Learn More",
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).typography.white.labelMedium,
+                                      style: Theme.of(context)
+                                          .typography
+                                          .white
+                                          .labelMedium!
+                                          .apply(fontWeightDelta: 3),
                                     ),
                                   ),
                                   style: ButtonStyle(
