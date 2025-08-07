@@ -112,7 +112,7 @@ class _HelpPageState extends State<HelpPage> {
                       cursorColor: Theme.of(context).primaryColor,
                       onChanged:
                           (value) => setState(() {
-                            query = value;
+                            query = value.trim();
                           }),
                     ),
                   ),

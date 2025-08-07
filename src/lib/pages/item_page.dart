@@ -158,8 +158,8 @@ class _ItemPageState extends State<ItemPage> {
                         onChanged:
                             (value) => setState(() {
                               try {
-                                if (value != "") {
-                                  price = double.parse(value);
+                                if (value.trim() != "") {
+                                  price = double.parse(value.trim());
                                   if (price! <= 0) {
                                     errors[1] = "Price must be positive";
                                   } else {

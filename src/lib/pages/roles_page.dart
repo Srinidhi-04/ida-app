@@ -371,18 +371,9 @@ class _RolesPageState extends State<RolesPage> {
                                                         return;
                                                       }
 
-                                                      setState(() {
-                                                        roles.add(
-                                                          new_role
-                                                              .toLowerCase(),
-                                                        );
-                                                        role =
-                                                            new_role
-                                                                .toLowerCase();
-                                                        Navigator.pop(
-                                                          dialogContext,
-                                                        );
-                                                      });
+                                                      Navigator.of(
+                                                        dialogContext,
+                                                      ).pop(new_role);
                                                     },
                                                     child: Text(
                                                       "Create",
@@ -399,7 +390,14 @@ class _RolesPageState extends State<RolesPage> {
                                               ),
                                         );
                                       },
-                                    );
+                                    ).then((new_role) {
+                                      if (new_role != null) {
+                                        setState(() {
+                                          roles.add(new_role.toLowerCase());
+                                          role = new_role.toLowerCase();
+                                        });
+                                      }
+                                    });
                                   },
                                   label: Text(
                                     "Create Role",
