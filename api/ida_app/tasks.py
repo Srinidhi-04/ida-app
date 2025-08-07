@@ -194,6 +194,6 @@ def send_question(name: str, email: str, question: str):
     with smtplib.SMTP("smtp.gmail.com", 587) as session:
         session.starttls()
         session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
-        session.sendmail("illinidadsassociation@gmail.com", "communications@illinidads.com", message.as_string())
+        session.sendmail("illinidadsassociation@gmail.com", ["communications@illinidads.com", email], message.as_string())
 
     print("Question mail sent successfully")
