@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://i.imgur.com/0FHQKN4.png" alt="Illini Dads Logo" width="250"/>
+</p>
+
 # How to Delete Your Account
 
 Effective Date: **August 7, 2025**

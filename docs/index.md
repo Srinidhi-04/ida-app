@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://i.imgur.com/0FHQKN4.png" alt="Illini Dads Logo" width="250"/>
+</p>
+
 # Legal & Account Information – Illini Dads
 
 Welcome to the legal and account information portal for the *Illini Dads* mobile application. Below you'll find links to important policies and documentation related to your use of the app.
