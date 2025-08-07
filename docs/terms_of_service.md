@@ -6,7 +6,7 @@
 
 Effective Date: **August 7, 2025**
 
-Welcome to *Illini Dads*. These Terms of Service ("Terms") govern your use of our mobile application and related services (the "App"). By using the App, you agree to these Terms. If you do not agree, please do not use the App.
+Welcome to _Illini Dads_. These Terms of Service ("Terms") govern your use of our mobile application and related services (the "App"). By using the App, you agree to these Terms. If you do not agree, please do not use the App.
 
 ## 1. Use of the App
 
@@ -26,13 +26,13 @@ The App provides information about events and related activities. We do not guar
 
 ## 4. Location Services
 
-Some features of the App require access to your approximate location to show nearby events. By using those features, you consent to our use of location data as described in our [Privacy Policy](https://vsmart-06.github.io/ida-app/privacy_policy).
+Some features of the App require access to your approximate location to show nearby events. By using those features, you consent to our use of location data as described in our [Privacy Policy](https://illini-dads.github.io/ida-app/privacy_policy).
 
 ## 5. Termination
 
 We may suspend or terminate your access to the App at any time, without prior notice or liability, for any reason, including if you violate these Terms.
 
-You may delete your account at any time through the app. For details, see our [Account Deletion Instructions](https://vsmart-06.github.io/ida-app/account_deletion).
+You may delete your account at any time through the app. For details, see our [Account Deletion Instructions](https://illini-dads.github.io/ida-app/account_deletion).
 
 ## 6. Disclaimer and Limitation of Liability
 
@@ -54,4 +54,4 @@ If you have questions about these Terms, please contact us at:
 
 ---
 
-*These Terms may be updated from time to time. Please review them periodically for any changes.*
+_These Terms may be updated from time to time. Please review them periodically for any changes._

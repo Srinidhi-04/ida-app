@@ -6,7 +6,7 @@
 
 Effective Date: **August 7, 2025**
 
-Illini Dads ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and share your information when you use our mobile application, *Illini Dads*.
+Illini Dads ("we", "our", or "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and share your information when you use our mobile application, _Illini Dads_.
 
 ## 1. Information We Collect
 
@@ -43,12 +43,13 @@ We use the following third-party services, which may collect data as described i
 - **Google Maps SDK** – for displaying map-based content
 
 Please review their privacy policies for more information:
+
 - [Firebase Privacy and Security](https://firebase.google.com/support/privacy)
 - [Google Maps Platform Terms of Service](https://cloud.google.com/maps-platform/terms)
 
 ## 5. Account Deletion
 
-You may delete your account at any time from within the app. For detailed instructions, visit our [Account Deletion Instructions](https://vsmart-06.github.io/ida-app/account_deletion).
+You may delete your account at any time from within the app. For detailed instructions, visit our [Account Deletion Instructions](https://illini-dads.github.io/ida-app/account_deletion).
 
 Once your account is deleted, all associated personal data will be permanently removed from our systems.
 
@@ -64,4 +65,4 @@ If you have any questions or concerns about this Privacy Policy, please contact 
 
 ---
 
-*This policy may be updated from time to time. Please review it periodically for any changes.*
+_This policy may be updated from time to time. Please review it periodically for any changes._
