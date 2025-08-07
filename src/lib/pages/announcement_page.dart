@@ -2,9 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
+import 'package:src/widgets/submit_overlay.dart';
 
 class AnnouncementPage extends StatefulWidget {
   const AnnouncementPage({super.key});
@@ -224,17 +224,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
             ),
           ),
         ),
-        (submitted)
-            ? Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: Color(0x99FFFFFF),
-              child: LoadingAnimationWidget.threeArchedCircle(
-                color: Theme.of(context).primaryColorLight,
-                size: 100,
-              ),
-            )
-            : SizedBox.shrink(),
+        SubmitOverlay(submitted: submitted),
       ],
     );
   }

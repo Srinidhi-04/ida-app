@@ -6,6 +6,7 @@ import "package:loading_animation_widget/loading_animation_widget.dart";
 import "package:src/services/notifications_manager.dart";
 import "package:src/services/secure_storage.dart";
 import "package:src/widgets/navigation.dart";
+import "package:src/widgets/submit_overlay.dart";
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -236,21 +237,21 @@ class _SettingsPageState extends State<SettingsPage> {
                           ? TextButton(
                             onPressed: () async {
                               FocusScope.of(context).unfocus();
-        
+
                               if (name.isEmpty) {
                                 setState(() {
                                   error = "Name cannot be empty";
                                 });
                                 return;
                               }
-        
+
                               if (RegExp(r"[^a-zA-Z ]").hasMatch(name)) {
                                 setState(() {
                                   error = "Invalid name";
                                 });
                                 return;
                               }
-        
+
                               setState(() {
                                 original = name;
                                 avatar = selected;
@@ -271,10 +272,13 @@ class _SettingsPageState extends State<SettingsPage> {
                               );
                               Map info = jsonDecode(response.body);
                               if (info.containsKey("error") &&
-                                  info["error"] == "Invalid authorization token") {
+                                  info["error"] ==
+                                      "Invalid authorization token") {
                                 await NotificationsManager.unsubscribeAllNotifications();
                                 await SecureStorage.delete();
-                                await Navigator.of(context).pushNamedAndRemoveUntil(
+                                await Navigator.of(
+                                  context,
+                                ).pushNamedAndRemoveUntil(
                                   "/login",
                                   (route) => false,
                                 );
@@ -283,7 +287,10 @@ class _SettingsPageState extends State<SettingsPage> {
                             },
                             child: Text(
                               "Save",
-                              style: Theme.of(context).typography.white.labelLarge!
+                              style: Theme.of(context)
+                                  .typography
+                                  .white
+                                  .labelLarge!
                                   .apply(fontSizeDelta: 2, fontWeightDelta: 3),
                             ),
                             style: ButtonStyle(
@@ -291,7 +298,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                 Theme.of(context).primaryColor,
                               ),
                               fixedSize: WidgetStatePropertyAll(
-                                Size(0.6 * MediaQuery.of(context).size.width, 50),
+                                Size(
+                                  0.6 * MediaQuery.of(context).size.width,
+                                  50,
+                                ),
                               ),
                               elevation: WidgetStatePropertyAll(10),
                             ),
@@ -302,7 +312,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: TextButton(
                           onPressed: () async {
                             FocusScope.of(context).unfocus();
-        
+
                             showDialog(
                               context: context,
                               builder: (dialogContext) {
@@ -350,30 +360,37 @@ class _SettingsPageState extends State<SettingsPage> {
                                 setState(() {
                                   submitted = true;
                                 });
-        
+
                                 await post(
                                   Uri.parse(baseUrl + "/delete-account"),
                                   headers: {"Authorization": "Bearer ${token}"},
-                                  body: {
-                                    "user_id": user_id.toString(),
-                                  },
+                                  body: {"user_id": user_id.toString()},
                                 );
-        
+
                                 await NotificationsManager.unsubscribeAllNotifications();
                                 await SecureStorage.delete();
                                 await Navigator.of(
                                   context,
-                                ).pushNamedAndRemoveUntil("/login", (route) => false);
+                                ).pushNamedAndRemoveUntil(
+                                  "/login",
+                                  (route) => false,
+                                );
                               }
                             });
                           },
                           child: Text(
                             "Delete Account",
-                            style: Theme.of(context).typography.white.labelLarge!
-                                .apply(fontWeightDelta: 3, color: Colors.red[900]),
+                            style: Theme.of(
+                              context,
+                            ).typography.white.labelLarge!.apply(
+                              fontWeightDelta: 3,
+                              color: Colors.red[900],
+                            ),
                           ),
                           style: ButtonStyle(
-                            backgroundColor: WidgetStatePropertyAll(Colors.white),
+                            backgroundColor: WidgetStatePropertyAll(
+                              Colors.white,
+                            ),
                             foregroundColor: WidgetStatePropertyAll(
                               Colors.red[900],
                             ),
@@ -397,17 +414,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           bottomNavigationBar: Navigation(selected: 4),
         ),
-        (submitted)
-            ? Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              color: Color(0x99FFFFFF),
-              child: LoadingAnimationWidget.threeArchedCircle(
-                color: Theme.of(context).primaryColorLight,
-                size: 100,
-              ),
-            )
-            : SizedBox.shrink(),
+        SubmitOverlay(submitted: submitted),
       ],
     );
   }
