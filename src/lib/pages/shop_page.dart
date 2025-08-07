@@ -170,9 +170,8 @@ class _ShopPageState extends State<ShopPage> {
                                   name,
                                   style: Theme.of(
                                     context,
-                                  ).typography.white.labelMedium!.apply(
+                                  ).typography.white.labelLarge!.apply(
                                     color: Theme.of(context).primaryColorLight,
-                                    fontSizeDelta: 2,
                                     fontWeightDelta: 3,
                                   ),
                                 ),
@@ -180,7 +179,7 @@ class _ShopPageState extends State<ShopPage> {
                                   "\$${price.toStringAsFixed(2)}",
                                   style: Theme.of(
                                     context,
-                                  ).typography.black.labelSmall!.apply(
+                                  ).typography.black.labelMedium!.apply(
                                     color: Theme.of(context).primaryColorDark,
                                     fontWeightDelta: 3,
                                   ),
