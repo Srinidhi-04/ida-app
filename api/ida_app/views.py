@@ -8,7 +8,7 @@ from ida_app.tasks import *
 from ida_app.models import *
 from ida_app.middleware import *
 
-APP_VERSION = 10.3
+APP_VERSION = 10.4
 
 @auth_exempt
 def index(request: HttpRequest):
