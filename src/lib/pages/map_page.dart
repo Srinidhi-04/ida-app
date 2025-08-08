@@ -413,6 +413,7 @@ class _MapPageState extends State<MapPage> {
             initialCameraPosition: CameraPosition(target: center!, zoom: 14),
             markers: markers,
             zoomControlsEnabled: false,
+            myLocationButtonEnabled: false,
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(
