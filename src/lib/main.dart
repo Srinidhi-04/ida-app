@@ -122,6 +122,7 @@ void main() async {
 
       runApp(
         MaterialApp(
+          debugShowCheckedModeBanner: false,
           title: "Illini Dads",
           navigatorObservers: [observer],
           routes: {
