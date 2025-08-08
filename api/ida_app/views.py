@@ -598,6 +598,7 @@ def edit_item(request: HttpRequest):
 
     item.name = name
     item.price = price
+    item.image = image
     item.save()
 
     return JsonResponse({"message": "Item successfully edited", "item_id": item.item_id})
