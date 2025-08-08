@@ -415,7 +415,12 @@ class _MapPageState extends State<MapPage> {
             zoomControlsEnabled: false,
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 50, 20, 20),
+            padding: EdgeInsets.fromLTRB(
+              20,
+              MediaQuery.of(context).padding.top,
+              20,
+              20,
+            ),
             child: Padding(
               padding: const EdgeInsets.all(5.0),
               child: Column(

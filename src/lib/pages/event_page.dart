@@ -262,7 +262,6 @@ class _EventPageState extends State<EventPage> {
               constraints: BoxConstraints(
                 minHeight:
                     MediaQuery.of(context).size.height -
-                    MediaQuery.of(context).padding.top -
                     kBottomNavigationBarHeight,
                 minWidth: MediaQuery.of(context).size.width,
               ),
@@ -433,7 +432,7 @@ class _EventPageState extends State<EventPage> {
           (!past)
               ? (ticket == "")
                   ? Padding(
-                    padding: const EdgeInsets.all(10.0),
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 20),
                     child: ElevatedButton(
                       onPressed: () async {
                         setState(() {
@@ -478,7 +477,7 @@ class _EventPageState extends State<EventPage> {
                     ),
                   )
                   : Padding(
-                    padding: const EdgeInsets.only(bottom: 5.0),
+                    padding: const EdgeInsets.only(bottom: 15.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
