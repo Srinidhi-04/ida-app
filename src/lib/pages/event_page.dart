@@ -262,7 +262,6 @@ class _EventPageState extends State<EventPage> {
               constraints: BoxConstraints(
                 minHeight:
                     MediaQuery.of(context).size.height -
-                    kToolbarHeight -
                     MediaQuery.of(context).padding.top -
                     kBottomNavigationBarHeight,
                 minWidth: MediaQuery.of(context).size.width,
