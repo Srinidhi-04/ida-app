@@ -21,6 +21,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   String title = "";
   String body = "";
   bool everyone = false;
+  bool banner = false;
 
   List<String?> errors = [null, null];
 
@@ -147,6 +148,31 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                       ),
                     ),
                     Padding(
+                      padding: EdgeInsets.only(bottom: 20),
+                      child: Row(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(right: 20.0),
+                            child: Text(
+                              "Send as in-app alert?",
+                              style:
+                                  Theme.of(context).typography.black.labelLarge,
+                            ),
+                          ),
+                          Switch(
+                            thumbColor: WidgetStatePropertyAll(Colors.white),
+                            activeTrackColor: Colors.green,
+                            inactiveTrackColor: Theme.of(context).primaryColor,
+                            value: banner,
+                            onChanged:
+                                (value) => setState(() {
+                                  banner = value;
+                                }),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
                       padding: const EdgeInsets.only(top: 10.0),
                       child: TextButton(
                         onPressed: () async {
@@ -167,16 +193,30 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                               submitted = true;
                             });
 
-                            var response = await post(
-                              Uri.parse(baseUrl + "/send-announcement"),
-                              headers: {"Authorization": "Bearer ${token}"},
-                              body: {
-                                "user_id": user_id.toString(),
-                                "title": title,
-                                "body": body,
-                                "everyone": (everyone) ? "yes" : "no",
-                              },
-                            );
+                            late Response response;
+                            if (!banner) {
+                              response = await post(
+                                Uri.parse(baseUrl + "/send-announcement"),
+                                headers: {"Authorization": "Bearer ${token}"},
+                                body: {
+                                  "user_id": user_id.toString(),
+                                  "title": title,
+                                  "body": body,
+                                  "everyone": (everyone) ? "yes" : "no",
+                                },
+                              );
+                            } else {
+                              response = await post(
+                                Uri.parse(baseUrl + "/add-announcement"),
+                                headers: {"Authorization": "Bearer ${token}"},
+                                body: {
+                                  "user_id": user_id.toString(),
+                                  "title": title,
+                                  "body": body,
+                                },
+                              );
+                            }
+
                             Map info = jsonDecode(response.body);
                             if (info.containsKey("error") &&
                                 info["error"] ==

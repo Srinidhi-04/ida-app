@@ -44,6 +44,8 @@ class _HomePageState extends State<HomePage> {
   bool loaded = false;
   bool? loadingEvents;
 
+  PageController dialog_controller = PageController();
+
   List<String> admin_roles = ["admin"];
 
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
@@ -306,6 +308,129 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  Future<void> getAnnouncements(BuildContext context) async {
+    var response = await get(
+      Uri.parse(baseUrl + "/get-announcements?user_id=${user_id}"),
+      headers: {"Authorization": "Bearer ${token}"},
+    );
+    Map info = jsonDecode(response.body);
+    if (info.containsKey("error") &&
+        info["error"] == "Invalid authorization token") {
+      await NotificationsManager.unsubscribeAllNotifications();
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    }
+
+    List data = info["data"];
+
+    Map<int, List> announcements = {};
+    int last_announcement = 0;
+    for (var announcement in data) {
+      announcements[announcement["announcement_id"]] = [
+        announcement["title"],
+        announcement["body"],
+      ];
+      if (announcement["announcement_id"] > last_announcement) {
+        last_announcement = announcement["announcement_id"];
+      }
+    }
+
+    if (data.isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (dialogContext) {
+          int page = 1;
+
+          return StatefulBuilder(
+            builder: (stateContext, setDialogState) {
+              return AlertDialog(
+                backgroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                actionsAlignment: MainAxisAlignment.spaceBetween,
+                title: Text(
+                  "Announcements",
+                  style: Theme.of(context).typography.black.headlineMedium,
+                ),
+                content: Container(
+                  height: MediaQuery.of(context).size.height * 0.2,
+                  width: double.maxFinite,
+                  child: PageView.builder(
+                    controller: dialog_controller,
+                    itemCount: data.length,
+                    onPageChanged:
+                        (value) => setDialogState(() {
+                          page = value + 1;
+                        }),
+                    itemBuilder: (BuildContext pageContext, int index) {
+                      return SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 10),
+                              child: Text(
+                                data[index]["title"],
+                                style: Theme.of(context)
+                                    .typography
+                                    .black
+                                    .labelLarge!
+                                    .apply(fontWeightDelta: 3),
+                              ),
+                            ),
+                            Text(
+                              data[index]["body"],
+                              style: Theme.of(context)
+                                  .typography
+                                  .black
+                                  .bodyMedium!
+                                  .apply(fontSizeDelta: 2),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                actions: [
+                  Text(
+                    "${page} of ${data.length}",
+                    style: Theme.of(context).typography.black.labelLarge,
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(dialogContext);
+                    },
+                    child: Text(
+                      "Close",
+                      style: Theme.of(
+                        context,
+                      ).typography.black.labelMedium!.apply(fontSizeDelta: 2),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        },
+      ).then((value) async {
+        await post(
+          Uri.parse(baseUrl + "/update-announcement"),
+          headers: {"Authorization": "Bearer ${token}"},
+          body: {
+            "user_id": user_id.toString(),
+            "last_announcement": last_announcement.toString(),
+          },
+        );
+      });
+    }
+  }
+
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
     if (info["last_login"] != null) {
@@ -330,7 +455,7 @@ class _HomePageState extends State<HomePage> {
       role = info["role"]!;
       loaded = true;
     });
-    await Future.wait([getCart(), getEvents()]);
+    await Future.wait([getCart(), getEvents(), getAnnouncements(context)]);
   }
 
   @override
