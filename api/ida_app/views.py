@@ -779,3 +779,25 @@ def send_query(request: HttpRequest):
     send_question(user.name, user.email, query)
 
     return JsonResponse({"message": "Query sent successfully"})
+
+@requires_roles(["admin"])
+@request_type("POST")
+def add_announcement(request: HttpRequest):
+    title = request.POST.get("title")
+    if not title:
+        return JsonResponse({"error": "'title' field is required"}, status = 400)
+    
+    body = request.POST.get("body")
+    if not body:
+        return JsonResponse({"error": "'body' field is required"}, status = 400)
+    
+    announcement = BannerAnnouncements(title = title, body = body)
+    announcement.save()
+
+    return JsonResponse({"message": "Announcement created successfully"})
+
+@request_type("GET")
+def get_announcements(request: HttpRequest):
+    announcements = list(BannerAnnouncements.objects.values())
+
+    return JsonResponse({"data": announcements})

@@ -111,3 +111,9 @@ class DonationReceipts(models.Model):
     name = models.TextField(unique = False, null = False)
     email = models.TextField(unique = False, null = False)
     amount = models.FloatField(unique = False, null = False)
+
+
+class BannerAnnouncements(models.Model):
+    announcement_id = models.AutoField(primary_key = True, unique = True, null = False)
+    title = models.TextField(unique = False, null = False)
+    body = models.TextField(unique = False, null = False)
