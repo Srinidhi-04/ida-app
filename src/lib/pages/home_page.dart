@@ -757,7 +757,9 @@ class _HomePageState extends State<HomePage> {
           (admin_roles.contains(role))
               ? FloatingActionButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed("/announcement");
+                  Navigator.of(
+                    context,
+                  ).pushNamed("/announcement").then((_) async => checkLogin());
                 },
                 child: Icon(Icons.campaign_outlined),
                 backgroundColor: Theme.of(context).primaryColorDark,
