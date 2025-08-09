@@ -815,6 +815,6 @@ def get_announcements(request: HttpRequest):
     user: UserCredentials = request.user
 
     last_announcement = user.last_announcement
-    announcements = list(BannerAnnouncements.objects.values())
+    announcements = list(BannerAnnouncements.objects.filter(announcement_id__gt = last_announcement).values())
 
-    return JsonResponse({"data": {"last_announcement": last_announcement, "announcements": announcements}})
+    return JsonResponse({"data": announcements})
