@@ -34,5 +34,6 @@ urlpatterns = [
     path("get-roles", get_roles),
     path("send-query", send_query),
     path("add-announcement", add_announcement),
+    path("update-announcement", update_announcement),
     path("get-announcements", get_announcements),
 ]

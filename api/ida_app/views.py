@@ -796,8 +796,25 @@ def add_announcement(request: HttpRequest):
 
     return JsonResponse({"message": "Announcement created successfully"})
 
+@request_type("POST")
+def update_announcement(request: HttpRequest):
+    user: UserCredentials = request.user
+
+    try:
+        last_announcement = int(request.POST.get("last_announcement"))
+    except:
+        return JsonResponse({"error": "'last_announcement' is required as an int"}, status = 400)
+    
+    user.last_announcement = last_announcement
+    user.save()
+
+    return JsonResponse({"message": "Last announcement updated successfully"})
+
 @request_type("GET")
 def get_announcements(request: HttpRequest):
+    user: UserCredentials = request.user
+
+    last_announcement = user.last_announcement
     announcements = list(BannerAnnouncements.objects.values())
 
-    return JsonResponse({"data": announcements})
+    return JsonResponse({"data": {"last_announcement": last_announcement, "announcements": announcements}})
