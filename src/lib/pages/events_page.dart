@@ -543,7 +543,9 @@ class _EventsPageState extends State<EventsPage> {
   @override
   void initState() {
     super.initState();
-    checkLogin();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkLogin();
+    });
   }
 
   @override

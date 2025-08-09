@@ -68,7 +68,9 @@ class _DonatePageState extends State<DonatePage> {
   @override
   void initState() {
     super.initState();
-    checkLogin();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkLogin();
+    });
   }
 
   @override

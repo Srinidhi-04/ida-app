@@ -103,7 +103,9 @@ class _VerifyPageState extends State<VerifyPage> {
   @override
   void initState() {
     super.initState();
-    checkLogin();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkLogin();
+    });
   }
 
   @override

@@ -383,8 +383,10 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-    checkLogin();
-    getPosition();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkLogin();
+      getPosition();
+    });
   }
 
   @override
