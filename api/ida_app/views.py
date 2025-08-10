@@ -823,7 +823,7 @@ def get_announcements(request: HttpRequest):
 def get_permissions(request: HttpRequest):
     user: UserCredentials = request.user
 
-    category = request.POST.get("category")
+    category = request.GET.get("category")
     if not category:
         return JsonResponse({"error": "'category' field is required"}, status = 400)
     
