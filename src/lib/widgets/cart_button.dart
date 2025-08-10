@@ -21,9 +21,7 @@ class _CartButtonState extends State<CartButton> {
               "/shop",
               arguments: {"cart": true, "quantity": widget.quantity},
             )
-            .then((value) {
-              widget.callback();
-            });
+            .then((_) => widget.callback());
       },
       child: Stack(
         children: [

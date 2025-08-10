@@ -59,7 +59,7 @@ class _ProfilePageState extends State<ProfilePage> {
       child: TextButton(
         style: ButtonStyle(visualDensity: VisualDensity.compact),
         onPressed: () {
-          Navigator.pushNamed(context, route).then((value) => checkLogin());
+          Navigator.pushNamed(context, route).then((_) => checkLogin());
         },
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -118,9 +118,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   "featured": featured,
                   "past": past,
                 },
-              ).then((_) {
-                getEvents();
-              });
+              ).then((_) => checkLogin());
             },
             style: ButtonStyle(
               padding: WidgetStatePropertyAll(EdgeInsets.zero),
@@ -417,7 +415,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               () => Navigator.pushNamed(
                                 context,
                                 "/settings",
-                              ).then((value) => checkLogin()),
+                              ).then((_) => checkLogin()),
                           child: Container(
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,

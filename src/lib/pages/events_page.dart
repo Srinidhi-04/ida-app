@@ -168,10 +168,7 @@ class _EventsPageState extends State<EventsPage> {
                           "featured": featured,
                         },
                       )
-                      .then((_) {
-                        getEvents();
-                        getNotifications();
-                      });
+                      .then((_) => checkLogin());
                 },
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -243,10 +240,7 @@ class _EventsPageState extends State<EventsPage> {
                     "featured": featured,
                     "past": (type == 2),
                   },
-                ).then((_) {
-                  getEvents();
-                  getNotifications();
-                });
+                ).then((_) => checkLogin());
               },
               style: ButtonStyle(
                 padding: WidgetStatePropertyAll(EdgeInsets.zero),
@@ -922,10 +916,9 @@ class _EventsPageState extends State<EventsPage> {
           (admin_roles.contains(role) || admin_access)
               ? FloatingActionButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed("/manage").then((_) {
-                    getEvents();
-                    getNotifications();
-                  });
+                  Navigator.of(
+                    context,
+                  ).pushNamed("/manage").then((_) => checkLogin());
                 },
                 child: Icon(Icons.add_rounded),
                 backgroundColor: Theme.of(context).primaryColorDark,

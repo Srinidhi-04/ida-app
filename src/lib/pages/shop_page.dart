@@ -92,10 +92,7 @@ class _ShopPageState extends State<ShopPage> {
                           "image": image,
                         },
                       )
-                      .then((_) {
-                        getItems();
-                        getCart();
-                      });
+                      .then((_) => checkLogin());
                 },
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -664,10 +661,9 @@ class _ShopPageState extends State<ShopPage> {
           ((admin_roles.contains(role) || admin_access) && !cart)
               ? FloatingActionButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed("/item").then((_) {
-                    getItems();
-                    getCart();
-                  });
+                  Navigator.of(
+                    context,
+                  ).pushNamed("/item").then((_) => checkLogin());
                 },
                 child: Icon(Icons.add_rounded),
                 backgroundColor: Theme.of(context).primaryColorDark,

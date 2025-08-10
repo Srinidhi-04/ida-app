@@ -123,9 +123,7 @@ class _HomePageState extends State<HomePage> {
                 "featured": featured,
                 "past": past,
               },
-            ).then((_) {
-              getEvents();
-            });
+            ).then((_) => checkLogin());
           },
           child: Card(
             shape: RoundedRectangleBorder(
@@ -444,7 +442,7 @@ class _HomePageState extends State<HomePage> {
             },
           );
         },
-      ).then((value) async {
+      ).then((_) async {
         await post(
           Uri.parse(baseUrl + "/update-announcement"),
           headers: {"Authorization": "Bearer ${token}"},
