@@ -76,6 +76,8 @@ class _EventPageState extends State<EventPage> {
       return;
     }
 
+    await SecureStorage.writeOne("role", info["data"]["role"]);
+
     setState(() {
       admin_roles = info["data"]["roles"].cast<String>();
       admin_access = info["data"]["access"];

@@ -836,4 +836,4 @@ def get_permissions(request: HttpRequest):
     elif category == "roles":
         roles = ["admin"]
 
-    return JsonResponse({"data": {"roles": roles, "access": user.role in roles}})
+    return JsonResponse({"data": {"roles": roles, "access": user.role in roles, "role": user.role}})
