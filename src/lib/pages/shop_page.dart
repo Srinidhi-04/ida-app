@@ -81,19 +81,20 @@ class _ShopPageState extends State<ShopPage> {
             children: [
               CustomSlidableAction(
                 onPressed: (slideContext) async {
-                  Navigator.of(context).pushNamed(
-                    "/item",
-                    arguments: {
-                      "item_id": item_id,
-                      "name": name,
-                      "price": price,
-                      "image": image,
-                      "callback": () {
+                  Navigator.of(context)
+                      .pushNamed(
+                        "/item",
+                        arguments: {
+                          "item_id": item_id,
+                          "name": name,
+                          "price": price,
+                          "image": image,
+                        },
+                      )
+                      .then((_) {
                         getItems();
                         getCart();
-                      },
-                    },
-                  );
+                      });
                 },
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -640,15 +641,10 @@ class _ShopPageState extends State<ShopPage> {
           (admin_roles.contains(role) && !cart)
               ? FloatingActionButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed(
-                    "/item",
-                    arguments: {
-                      "callback": () {
-                        getItems();
-                        getCart();
-                      },
-                    },
-                  );
+                  Navigator.of(context).pushNamed("/item").then((_) {
+                    getItems();
+                    getCart();
+                  });
                 },
                 child: Icon(Icons.add_rounded),
                 backgroundColor: Theme.of(context).primaryColorDark,

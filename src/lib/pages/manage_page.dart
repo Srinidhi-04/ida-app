@@ -30,7 +30,6 @@ class _ManagePageState extends State<ManagePage> {
   bool featured = false;
   List<String?> errors = [null, null, null, null, null, null, null];
   bool initialized = false;
-  late Function callback;
 
   bool submitted = false;
 
@@ -73,9 +72,12 @@ class _ManagePageState extends State<ManagePage> {
     super.didChangeDependencies();
 
     if (!initialized) {
-      Map args = ModalRoute.of(context)!.settings.arguments as Map;
+      Map args = {};
+      if (ModalRoute.of(context)!.settings.arguments != null) {
+        args = ModalRoute.of(context)!.settings.arguments as Map;
+      }
 
-      if (args.containsKey("event_id")) {
+      if (args.isNotEmpty) {
         setState(() {
           event_id = args["event_id"];
 
@@ -109,7 +111,6 @@ class _ManagePageState extends State<ManagePage> {
 
       setState(() {
         initialized = true;
-        callback = args["callback"];
       });
     }
   }
@@ -582,7 +583,6 @@ class _ManagePageState extends State<ManagePage> {
                               }
 
                               Navigator.pop(context);
-                              callback();
                             } else {
                               var response = await post(
                                 Uri.parse(baseUrl + "/edit-event"),
@@ -620,8 +620,7 @@ class _ManagePageState extends State<ManagePage> {
                                 return;
                               }
 
-                              Navigator.pop(context);
-                              callback(
+                              Navigator.of(context).pop([
                                 name,
                                 final_date,
                                 location,
@@ -633,7 +632,7 @@ class _ManagePageState extends State<ManagePage> {
                                 body,
                                 ticket,
                                 featured,
-                              );
+                              ]);
                               return;
                             }
                           }

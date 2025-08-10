@@ -117,15 +117,14 @@ class _HomePageState extends State<HomePage> {
                 "ticket": ticket,
                 "event_id": event_id,
                 "rsvp": rsvp,
-                "callback": () async {
-                  await getEvents();
-                },
                 "latitude": latitude,
                 "longitude": longitude,
                 "featured": featured,
                 "past": past,
               },
-            );
+            ).then((_) {
+              getEvents();
+            });
           },
           child: Card(
             shape: RoundedRectangleBorder(

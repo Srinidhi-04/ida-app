@@ -112,15 +112,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   "ticket": ticket,
                   "event_id": event_id,
                   "rsvp": rsvp,
-                  "callback": () {
-                    getEvents();
-                  },
                   "latitude": coordinates.latitude,
                   "longitude": coordinates.longitude,
                   "featured": featured,
                   "past": past,
                 },
-              );
+              ).then((_) {
+                getEvents();
+              });
             },
             style: ButtonStyle(
               padding: WidgetStatePropertyAll(EdgeInsets.zero),

@@ -24,7 +24,6 @@ class _ItemPageState extends State<ItemPage> {
   String image = "";
   List<String?> errors = [null, null];
   bool initialized = false;
-  late Function callback;
 
   bool submitted = false;
 
@@ -63,9 +62,12 @@ class _ItemPageState extends State<ItemPage> {
     super.didChangeDependencies();
 
     if (!initialized) {
-      Map args = ModalRoute.of(context)!.settings.arguments as Map;
+      Map args = {};
+      if (ModalRoute.of(context)!.settings.arguments != null) {
+        args = ModalRoute.of(context)!.settings.arguments as Map;
+      }
 
-      if (args.containsKey("item_id")) {
+      if (args.isNotEmpty) {
         setState(() {
           item_id = args["item_id"];
 
@@ -82,7 +84,6 @@ class _ItemPageState extends State<ItemPage> {
 
       setState(() {
         initialized = true;
-        callback = args["callback"];
       });
     }
   }
@@ -249,7 +250,6 @@ class _ItemPageState extends State<ItemPage> {
                               }
 
                               Navigator.pop(context);
-                              callback();
                             } else {
                               var response = await post(
                                 Uri.parse(baseUrl + "/edit-item"),
@@ -278,7 +278,6 @@ class _ItemPageState extends State<ItemPage> {
                               }
 
                               Navigator.pop(context);
-                              callback();
                               return;
                             }
                           }

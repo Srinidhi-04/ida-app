@@ -32,7 +32,6 @@ class _EventPageState extends State<EventPage> {
   late String title;
   late String body;
   late String ticket;
-  late Function callback;
   late double latitude;
   late double longitude;
   late bool featured;
@@ -98,7 +97,6 @@ class _EventPageState extends State<EventPage> {
         title = args["title"];
         body = args["body"];
         ticket = args["ticket"];
-        callback = args["callback"];
         latitude = args["latitude"];
         longitude = args["longitude"];
         featured = args["featured"];
@@ -152,48 +150,43 @@ class _EventPageState extends State<EventPage> {
                         (popupContext) => [
                           PopupMenuItem(
                             onTap: () {
-                              Navigator.of(context).pushNamed(
-                                "/manage",
-                                arguments: {
-                                  "event_id": event_id,
-                                  "name": title,
-                                  "date": date,
-                                  "location": location,
-                                  "latitude": latitude,
-                                  "longitude": longitude,
-                                  "image": image,
-                                  "body": body,
-                                  "ticket": ticket,
-                                  "featured": featured,
-                                  "callback": (
-                                    String new_name,
-                                    DateTime new_date,
-                                    String new_location,
-                                    double new_latitude,
-                                    double new_longitude,
-                                    String new_image,
-                                    String new_body,
-                                    String new_ticket,
-                                    bool new_featured,
-                                  ) {
-                                    setState(() {
-                                      title = new_name;
-                                      date = new_date;
-                                      location = new_location;
-                                      latitude = new_latitude;
-                                      longitude = new_longitude;
-                                      image = new_image;
-                                      body = new_body;
-                                      ticket = new_ticket;
-                                      featured = new_featured;
-                                      past =
-                                          (new_date.compareTo(DateTime.now()) <=
-                                              0);
-                                    });
-                                    callback();
-                                  },
-                                },
-                              );
+                              Navigator.of(context)
+                                  .pushNamed(
+                                    "/manage",
+                                    arguments: {
+                                      "event_id": event_id,
+                                      "name": title,
+                                      "date": date,
+                                      "location": location,
+                                      "latitude": latitude,
+                                      "longitude": longitude,
+                                      "image": image,
+                                      "body": body,
+                                      "ticket": ticket,
+                                      "featured": featured,
+                                    },
+                                  )
+                                  .then((value) {
+                                    if (value != null) {
+                                      List args = value as List;
+                                      setState(() {
+                                        title = args[0];
+                                        date = args[1];
+                                        location = args[2];
+                                        latitude = args[3];
+                                        longitude = args[4];
+                                        image = args[5];
+                                        body = args[6];
+                                        ticket = args[7];
+                                        featured = args[8];
+                                        past =
+                                            (args[1].compareTo(
+                                                  DateTime.now(),
+                                                ) <=
+                                                0);
+                                      });
+                                    }
+                                  });
                             },
                             child: Row(
                               children: [
@@ -234,7 +227,6 @@ class _EventPageState extends State<EventPage> {
                                 return;
                               }
 
-                              callback();
                               Navigator.pop(context);
                             },
                             child: Row(
@@ -490,7 +482,6 @@ class _EventPageState extends State<EventPage> {
                               setState(() {
                                 rsvp = !rsvp;
                               });
-                              callback();
 
                               var response = await post(
                                 Uri.parse(baseUrl + "/toggle-rsvp"),

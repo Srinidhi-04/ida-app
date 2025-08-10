@@ -151,35 +151,26 @@ class _EventsPageState extends State<EventsPage> {
             children: [
               CustomSlidableAction(
                 onPressed: (slideContext) async {
-                  Navigator.of(context).pushNamed(
-                    "/manage",
-                    arguments: {
-                      "event_id": event_id,
-                      "name": name,
-                      "date": date,
-                      "location": location,
-                      "latitude": coordinates.latitude,
-                      "longitude": coordinates.longitude,
-                      "image": image,
-                      "body": body,
-                      "ticket": ticket,
-                      "featured": featured,
-                      "callback": (
-                        String new_name,
-                        DateTime new_date,
-                        String new_location,
-                        double new_latitude,
-                        double new_longitude,
-                        String new_image,
-                        String new_body,
-                        String new_ticket,
-                        bool new_featured,
-                      ) {
+                  Navigator.of(context)
+                      .pushNamed(
+                        "/manage",
+                        arguments: {
+                          "event_id": event_id,
+                          "name": name,
+                          "date": date,
+                          "location": location,
+                          "latitude": coordinates.latitude,
+                          "longitude": coordinates.longitude,
+                          "image": image,
+                          "body": body,
+                          "ticket": ticket,
+                          "featured": featured,
+                        },
+                      )
+                      .then((_) {
                         getEvents();
                         getNotifications();
-                      },
-                    },
-                  );
+                      });
                 },
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,
@@ -246,16 +237,15 @@ class _EventsPageState extends State<EventsPage> {
                     "ticket": ticket,
                     "event_id": event_id,
                     "rsvp": rsvp,
-                    "callback": () {
-                      getEvents();
-                      getNotifications();
-                    },
                     "latitude": coordinates.latitude,
                     "longitude": coordinates.longitude,
                     "featured": featured,
                     "past": (type == 2),
                   },
-                );
+                ).then((_) {
+                  getEvents();
+                  getNotifications();
+                });
               },
               style: ButtonStyle(
                 padding: WidgetStatePropertyAll(EdgeInsets.zero),
@@ -907,14 +897,10 @@ class _EventsPageState extends State<EventsPage> {
           (admin_roles.contains(role))
               ? FloatingActionButton(
                 onPressed: () {
-                  Navigator.of(context).pushNamed(
-                    "/manage",
-                    arguments: {
-                      "callback": () {
-                        getEvents();
-                      },
-                    },
-                  );
+                  Navigator.of(context).pushNamed("/manage").then((_) {
+                    getEvents();
+                    getNotifications();
+                  });
                 },
                 child: Icon(Icons.add_rounded),
                 backgroundColor: Theme.of(context).primaryColorDark,
