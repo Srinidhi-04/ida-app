@@ -30,6 +30,7 @@ class _ShopPageState extends State<ShopPage> {
   List<bool> loaded = [false, false];
 
   List<String> admin_roles = ["admin"];
+  bool admin_access = false;
 
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
@@ -47,7 +48,7 @@ class _ShopPageState extends State<ShopPage> {
         padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
         child: Slidable(
           key: ValueKey(item_id),
-          enabled: (admin_roles.contains(role) && !cart),
+          enabled: ((admin_roles.contains(role) || admin_access) && !cart),
           endActionPane: ActionPane(
             motion: BehindMotion(),
             dismissible: DismissiblePane(
@@ -473,6 +474,28 @@ class _ShopPageState extends State<ShopPage> {
     });
   }
 
+  Future<void> getPermissions() async {
+    var response = await get(
+      Uri.parse(baseUrl + "/get-permissions?category=shop&user_id=${user_id}"),
+      headers: {"Authorization": "Bearer ${token}"},
+    );
+    Map info = jsonDecode(response.body);
+    if (info.containsKey("error") &&
+        info["error"] == "Invalid authorization token") {
+      await NotificationsManager.unsubscribeAllNotifications();
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    }
+
+    setState(() {
+      admin_roles = info["data"]["roles"];
+      admin_access = info["data"]["access"];
+    });
+  }
+
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
     if (info["last_login"] != null) {
@@ -496,7 +519,7 @@ class _ShopPageState extends State<ShopPage> {
       token = info["token"]!;
       role = info["role"]!;
     });
-    await Future.wait([getItems(), getCart()]);
+    await Future.wait([getItems(), getCart(), getPermissions()]);
   }
 
   @override
@@ -638,7 +661,7 @@ class _ShopPageState extends State<ShopPage> {
                 ),
               ),
       floatingActionButton:
-          (admin_roles.contains(role) && !cart)
+          ((admin_roles.contains(role) || admin_access) && !cart)
               ? FloatingActionButton(
                 onPressed: () {
                   Navigator.of(context).pushNamed("/item").then((_) {

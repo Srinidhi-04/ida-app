@@ -49,6 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
   List<String> days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
   List<String> admin_roles = ["admin"];
+  bool admin_access = false;
 
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
@@ -283,6 +284,28 @@ class _ProfilePageState extends State<ProfilePage> {
       registered = upcoming;
       past = old;
       loaded = true;
+    });
+  }
+
+  Future<void> getPermissions() async {
+    var response = await get(
+      Uri.parse(baseUrl + "/get-permissions?category=roles&user_id=${user_id}"),
+      headers: {"Authorization": "Bearer ${token}"},
+    );
+    Map info = jsonDecode(response.body);
+    if (info.containsKey("error") &&
+        info["error"] == "Invalid authorization token") {
+      await NotificationsManager.unsubscribeAllNotifications();
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    }
+
+    setState(() {
+      admin_roles = info["data"]["roles"];
+      admin_access = info["data"]["access"];
     });
   }
 
@@ -570,14 +593,14 @@ class _ProfilePageState extends State<ProfilePage> {
                             endIndent: 20,
                           ),
                           profileButton("Profile Settings", "/settings"),
-                          (admin_roles.contains(role))
+                          (admin_roles.contains(role) || admin_access)
                               ? Divider(
                                 color: Theme.of(context).primaryColor,
                                 indent: 20,
                                 endIndent: 20,
                               )
                               : SizedBox.shrink(),
-                          (admin_roles.contains(role))
+                          (admin_roles.contains(role) || admin_access)
                               ? profileButton("Assign Roles", "/roles")
                               : SizedBox.shrink(),
                         ],

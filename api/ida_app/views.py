@@ -818,3 +818,22 @@ def get_announcements(request: HttpRequest):
     announcements = list(BannerAnnouncements.objects.filter(announcement_id__gt = last_announcement).values())
 
     return JsonResponse({"data": announcements})
+
+@request_type("GET")
+def get_permissions(request: HttpRequest):
+    user: UserCredentials = request.user
+
+    category = request.POST.get("category")
+    if not category:
+        return JsonResponse({"error": "'category' field is required"}, status = 400)
+    
+    if category == "announcements":
+        roles = ["admin"]
+    elif category == "events":
+        roles = ["admin"]
+    elif category == "shop":
+        roles = ["admin"]
+    elif category == "roles":
+        roles = ["admin"]
+
+    return JsonResponse({"data": {"roles": roles, "access": user.role in roles}})

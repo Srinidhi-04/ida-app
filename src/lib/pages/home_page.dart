@@ -47,6 +47,7 @@ class _HomePageState extends State<HomePage> {
   PageController dialog_controller = PageController();
 
   List<String> admin_roles = ["admin"];
+  bool admin_access = false;
 
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
@@ -306,8 +307,30 @@ class _HomePageState extends State<HomePage> {
       quantity = cart;
     });
   }
+  
+  Future<void> getPermissions() async {
+    var response = await get(
+      Uri.parse(baseUrl + "/get-permissions?category=announcements&user_id=${user_id}"),
+      headers: {"Authorization": "Bearer ${token}"},
+    );
+    Map info = jsonDecode(response.body);
+    if (info.containsKey("error") &&
+        info["error"] == "Invalid authorization token") {
+      await NotificationsManager.unsubscribeAllNotifications();
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    }
 
-  Future<void> getAnnouncements(BuildContext context) async {
+    setState(() {
+      admin_roles = info["data"]["roles"];
+      admin_access = info["data"]["access"];
+    });
+  }
+
+  Future<void> getAnnouncements() async {
     var response = await get(
       Uri.parse(baseUrl + "/get-announcements?user_id=${user_id}"),
       headers: {"Authorization": "Bearer ${token}"},
@@ -456,7 +479,7 @@ class _HomePageState extends State<HomePage> {
       role = info["role"]!;
       loaded = true;
     });
-    await Future.wait([getCart(), getEvents(), getAnnouncements(context)]);
+    await Future.wait([getCart(), getEvents(), getAnnouncements(), getPermissions()]);
   }
 
   @override
@@ -755,7 +778,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       floatingActionButton:
-          (admin_roles.contains(role))
+          (admin_roles.contains(role) || admin_access)
               ? FloatingActionButton(
                 onPressed: () {
                   Navigator.of(
