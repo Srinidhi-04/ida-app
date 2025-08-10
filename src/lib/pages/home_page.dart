@@ -329,6 +329,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       admin_roles = info["data"]["roles"].cast<String>();
       admin_access = info["data"]["access"];
+      role = info["data"]["role"];
     });
   }
 

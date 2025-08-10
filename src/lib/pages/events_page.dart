@@ -521,6 +521,7 @@ class _EventsPageState extends State<EventsPage> {
     setState(() {
       admin_roles = info["data"]["roles"].cast<String>();
       admin_access = info["data"]["access"];
+      role = info["data"]["role"];
     });
   }
 

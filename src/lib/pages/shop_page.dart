@@ -492,6 +492,7 @@ class _ShopPageState extends State<ShopPage> {
     setState(() {
       admin_roles = info["data"]["roles"].cast<String>();
       admin_access = info["data"]["access"];
+      role = info["data"]["role"];
     });
   }
 
