@@ -506,7 +506,9 @@ class _EventsPageState extends State<EventsPage> {
 
   Future<void> getPermissions() async {
     var response = await get(
-      Uri.parse(baseUrl + "/get-permissions?category=events&user_id=${user_id}"),
+      Uri.parse(
+        baseUrl + "/get-permissions?category=events&user_id=${user_id}",
+      ),
       headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
@@ -521,7 +523,7 @@ class _EventsPageState extends State<EventsPage> {
     }
 
     setState(() {
-      admin_roles = info["data"]["roles"];
+      admin_roles = info["data"]["roles"].cast<String>();
       admin_access = info["data"]["access"];
     });
   }

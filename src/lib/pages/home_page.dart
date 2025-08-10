@@ -307,10 +307,12 @@ class _HomePageState extends State<HomePage> {
       quantity = cart;
     });
   }
-  
+
   Future<void> getPermissions() async {
     var response = await get(
-      Uri.parse(baseUrl + "/get-permissions?category=announcements&user_id=${user_id}"),
+      Uri.parse(
+        baseUrl + "/get-permissions?category=announcements&user_id=${user_id}",
+      ),
       headers: {"Authorization": "Bearer ${token}"},
     );
     Map info = jsonDecode(response.body);
@@ -325,7 +327,7 @@ class _HomePageState extends State<HomePage> {
     }
 
     setState(() {
-      admin_roles = info["data"]["roles"];
+      admin_roles = info["data"]["roles"].cast<String>();
       admin_access = info["data"]["access"];
     });
   }
@@ -479,7 +481,12 @@ class _HomePageState extends State<HomePage> {
       role = info["role"]!;
       loaded = true;
     });
-    await Future.wait([getCart(), getEvents(), getAnnouncements(), getPermissions()]);
+    await Future.wait([
+      getCart(),
+      getEvents(),
+      getAnnouncements(),
+      getPermissions(),
+    ]);
   }
 
   @override

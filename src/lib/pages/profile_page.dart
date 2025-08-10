@@ -304,7 +304,7 @@ class _ProfilePageState extends State<ProfilePage> {
     }
 
     setState(() {
-      admin_roles = info["data"]["roles"];
+      admin_roles = info["data"]["roles"].cast<String>();
       admin_access = info["data"]["access"];
     });
   }
