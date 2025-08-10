@@ -399,7 +399,9 @@ class _HomePageState extends State<HomePage> {
                 actions: [
                   Text(
                     "${page} of ${data.length}",
-                    style: Theme.of(context).typography.black.labelLarge,
+                    style: Theme.of(
+                      context,
+                    ).typography.black.labelMedium!.apply(fontSizeDelta: 2),
                   ),
                   TextButton(
                     onPressed: () {
