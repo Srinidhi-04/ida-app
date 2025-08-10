@@ -637,6 +637,78 @@ class _EventsPageState extends State<EventsPage> {
                         ),
                       ),
                       ((selected == 0 &&
+                                  upcoming["essential"]!.isNotEmpty &&
+                                  !searching) ||
+                              (selected == 0 &&
+                                  searching &&
+                                  upcoming["essential"]!
+                                      .where(
+                                        (e) => (e["name"]
+                                            .toLowerCase()
+                                            .contains(search.toLowerCase())),
+                                      )
+                                      .isNotEmpty))
+                          ? Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                "Don't Miss These",
+                                style: Theme.of(
+                                  context,
+                                ).typography.black.labelLarge!.apply(
+                                  color: Theme.of(context).primaryColorDark,
+                                  fontWeightDelta: 3,
+                                ),
+                              ),
+                            ),
+                          )
+                          : SizedBox.shrink(),
+                      (selected == 0 && upcoming["essential"]!.isNotEmpty)
+                          ? Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children:
+                                ((searching &&
+                                        upcoming["essential"]!
+                                            .where(
+                                              (e) => (e["name"]
+                                                  .toLowerCase()
+                                                  .contains(
+                                                    search.toLowerCase(),
+                                                  )),
+                                            )
+                                            .isEmpty)
+                                    ? [SizedBox.shrink()]
+                                    : upcoming["essential"]!
+                                        .where(
+                                          (e) =>
+                                              (!searching ||
+                                                  e["name"]
+                                                      .toLowerCase()
+                                                      .contains(
+                                                        search.toLowerCase(),
+                                                      )),
+                                        )
+                                        .map(
+                                          (e) => eventCard(
+                                            upcoming["essential"]!.indexOf(e),
+                                            e["event_id"],
+                                            e["name"],
+                                            e["location"],
+                                            e["date"],
+                                            e["image"],
+                                            e["body"],
+                                            e["ticket"],
+                                            e["coordinates"],
+                                            1,
+                                            e["essential"],
+                                            e["rsvp"],
+                                          ),
+                                        )
+                                        .toList()),
+                          )
+                          : SizedBox.shrink(),
+                      ((selected == 0 &&
                                   upcoming["all"]!.isNotEmpty &&
                                   !searching) ||
                               selected == 0 &&
@@ -813,78 +885,6 @@ class _EventsPageState extends State<EventsPage> {
                                         )
                                         .toList()),
                       ),
-                      ((selected == 0 &&
-                                  upcoming["essential"]!.isNotEmpty &&
-                                  !searching) ||
-                              (selected == 0 &&
-                                  searching &&
-                                  upcoming["essential"]!
-                                      .where(
-                                        (e) => (e["name"]
-                                            .toLowerCase()
-                                            .contains(search.toLowerCase())),
-                                      )
-                                      .isNotEmpty))
-                          ? Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 10),
-                            child: Align(
-                              alignment: Alignment.centerLeft,
-                              child: Text(
-                                "Don't Miss These",
-                                style: Theme.of(
-                                  context,
-                                ).typography.black.labelLarge!.apply(
-                                  color: Theme.of(context).primaryColorDark,
-                                  fontWeightDelta: 3,
-                                ),
-                              ),
-                            ),
-                          )
-                          : SizedBox.shrink(),
-                      (selected == 0 && upcoming["essential"]!.isNotEmpty)
-                          ? Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children:
-                                ((searching &&
-                                        upcoming["essential"]!
-                                            .where(
-                                              (e) => (e["name"]
-                                                  .toLowerCase()
-                                                  .contains(
-                                                    search.toLowerCase(),
-                                                  )),
-                                            )
-                                            .isEmpty)
-                                    ? [SizedBox.shrink()]
-                                    : upcoming["essential"]!
-                                        .where(
-                                          (e) =>
-                                              (!searching ||
-                                                  e["name"]
-                                                      .toLowerCase()
-                                                      .contains(
-                                                        search.toLowerCase(),
-                                                      )),
-                                        )
-                                        .map(
-                                          (e) => eventCard(
-                                            upcoming["essential"]!.indexOf(e),
-                                            e["event_id"],
-                                            e["name"],
-                                            e["location"],
-                                            e["date"],
-                                            e["image"],
-                                            e["body"],
-                                            e["ticket"],
-                                            e["coordinates"],
-                                            1,
-                                            e["essential"],
-                                            e["rsvp"],
-                                          ),
-                                        )
-                                        .toList()),
-                          )
-                          : SizedBox.shrink(),
                     ],
                   ),
                 ),
