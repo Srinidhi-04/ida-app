@@ -336,7 +336,7 @@ class _ProfilePageState extends State<ProfilePage> {
       reminders = info["reminders"]!;
       announcements = bool.parse(info["announcements"]!);
     });
-    await getEvents();
+    await Future.wait([getEvents(), getPermissions()]);
   }
 
   @override
