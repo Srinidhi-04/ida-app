@@ -26,7 +26,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late String reminders;
   late bool announcements;
 
-  bool loaded = false;
+  List<bool> loaded = [false, false];
   bool submitted = false;
 
   List registered = [];
@@ -281,7 +281,7 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       registered = upcoming;
       past = old;
-      loaded = true;
+      loaded[0] = true;
     });
   }
 
@@ -307,6 +307,7 @@ class _ProfilePageState extends State<ProfilePage> {
       admin_roles = info["data"]["roles"].cast<String>();
       admin_access = info["data"]["access"];
       role = info["data"]["role"];
+      loaded[1] = true;
     });
   }
 
@@ -350,7 +351,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (!loaded)
+    if (loaded.contains(false))
       return Scaffold(
         body: Center(
           child: LoadingAnimationWidget.inkDrop(

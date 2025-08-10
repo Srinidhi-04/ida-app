@@ -21,7 +21,7 @@ class _EventsPageState extends State<EventsPage> {
   late String token;
   late String role;
   late String reminders;
-  List<bool> loaded = [false, false];
+  List<bool> loaded = [false, false, false];
 
   int selected = 0;
   List<String> months = [
@@ -522,6 +522,7 @@ class _EventsPageState extends State<EventsPage> {
       admin_roles = info["data"]["roles"].cast<String>();
       admin_access = info["data"]["access"];
       role = info["data"]["role"];
+      loaded[2] = true;
     });
   }
 

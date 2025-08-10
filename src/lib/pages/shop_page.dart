@@ -27,7 +27,7 @@ class _ShopPageState extends State<ShopPage> {
   bool cart = false;
   bool initialized = false;
 
-  List<bool> loaded = [false, false];
+  List<bool> loaded = [false, false, false];
 
   List<String> admin_roles = ["admin"];
   bool admin_access = false;
@@ -493,6 +493,7 @@ class _ShopPageState extends State<ShopPage> {
       admin_roles = info["data"]["roles"].cast<String>();
       admin_access = info["data"]["access"];
       role = info["data"]["role"];
+      loaded[2] = true;
     });
   }
 
