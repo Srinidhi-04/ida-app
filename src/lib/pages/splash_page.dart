@@ -34,7 +34,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  final app_version = 11.3;
+  final app_version = 11.4;
   bool update = false;
 
   String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
