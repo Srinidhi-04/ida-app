@@ -1,7 +1,7 @@
 import uuid
 import datetime
 import random as rd
-from django.http import HttpRequest, JsonResponse, HttpResponse
+from django.http import HttpRequest, JsonResponse, HttpResponse, QueryDict
 from django.contrib.auth import authenticate
 import stripe
 from ida_app.tasks import *
@@ -10,6 +10,24 @@ from ida_app.middleware import *
 
 APP_VERSION = 11.4
 
+def requires_fields(body: QueryDict, fields: dict):
+    for field in fields:
+        value = body.get(field)
+        if not value:
+            return JsonResponse({"error": f"'{field}' field is required"}, status = 400)
+        
+        if fields[field] == "int":
+            try:
+                int(value)
+            except:
+                return JsonResponse({"error": f"'{field}' field is required as an int"}, status = 400)
+        
+        if fields[field] == "float":
+            try:
+                float(value)
+            except:
+                return JsonResponse({"error": f"'{field}' field is required as a float"}, status = 400)
+
 @auth_exempt
 def index(request: HttpRequest):
     return HttpResponse("API is up and running")
@@ -17,10 +35,11 @@ def index(request: HttpRequest):
 @auth_exempt
 @request_type("GET")
 def check_update(request: HttpRequest):    
-    try:
-        version = float(request.GET.get("version"))
-    except:
-        return JsonResponse({"error": "'version' field is required"}, status = 400)
+    check = requires_fields(request.GET, {"version": "float"})
+    if check:
+        return check
+
+    version = float(request.GET.get("version"))
     
     if version < int(APP_VERSION):
         return JsonResponse({"message": "Hard update"})
@@ -33,17 +52,14 @@ def check_update(request: HttpRequest):
 @auth_exempt
 @request_type("POST")
 def signup(request: HttpRequest):
+    check = requires_fields(request.POST, {"email": "str", "name": "str", "password": "str"})
+    if check:
+        return check
+
     email = request.POST.get("email")
     name = request.POST.get("name")
     password = request.POST.get("password")
     mailing = request.POST.get("mailing") == "yes"
-
-    if not email:
-        return JsonResponse({"error": "'email' field is required"}, status = 400)
-    if not name:
-        return JsonResponse({"error": "'name' field is required"}, status = 400)
-    if not password:
-        return JsonResponse({"error": "'password' field is required"}, status = 400)
 
     try:
         user: UserCredentials = UserCredentials.objects.create_user(email = email, name = name, password = password, avatar = rd.randint(1, 10), mailing = mailing)
@@ -59,16 +75,13 @@ def signup(request: HttpRequest):
 @auth_exempt
 @request_type("POST")
 def verify_code(request: HttpRequest):
-    try:
-        user_id = int(request.POST.get("user_id"))
-    except:
-        return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+    check = requires_fields(request.POST, {"user_id": "int", "code": "int"})
+    if check:
+        return check
 
-    try:
-        code = int(request.POST.get("code"))
-    except:
-        return JsonResponse({"error": "The code needs to be a number"}, status = 400)
-    
+    user_id = int(request.POST.get("user_id"))
+    code = int(request.POST.get("code"))
+
     try:
         user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
     except:
@@ -93,10 +106,11 @@ def verify_code(request: HttpRequest):
 @auth_exempt
 @request_type("POST")
 def send_code(request: HttpRequest):
+    check = requires_fields(request.POST, {"email": "str"})
+    if check:
+        return check
+
     email = request.POST.get("email")
-    if not email:
-        return JsonResponse({"error": "'email' field is required"}, status = 400)
-    
     forgot = request.POST.get("forgot") == "yes"
     
     try:
@@ -125,19 +139,14 @@ def send_code(request: HttpRequest):
 @auth_exempt
 @request_type("POST")
 def change_password(request: HttpRequest):
+    check = requires_fields(request.POST, {"email": "str", "password": "str", "code": "int"})
+    if check:
+        return check
+
     email = request.POST.get("email")
-    if not email:
-        return JsonResponse({"error": "'email' field is required"}, status = 400)
-    
     password = request.POST.get("password")
-    if not password:
-        return JsonResponse({"error": "'password' field is required"}, status = 400)
-    
-    try:
-        code = int(request.POST.get("code"))
-    except:
-        return JsonResponse({"error": "The code needs to be a number"}, status = 400)
-    
+    code = int(request.POST.get("code"))
+
     try:
         user: UserCredentials = UserCredentials.objects.get(email = email)
     except:
@@ -162,13 +171,12 @@ def change_password(request: HttpRequest):
 @auth_exempt
 @request_type("POST")
 def login(request: HttpRequest):
+    check = requires_fields(request.POST, {"email": "str", "password": "str"})
+    if check:
+        return check
+
     email = request.POST.get("email")
     password = request.POST.get("password")
-
-    if not email:
-        return JsonResponse({"error": "'email' field is required"}, status = 400)
-    if not password:
-        return JsonResponse({"error": "'password' field is required"}, status = 400)
 
     user: UserCredentials = authenticate(request, email = email, password = password)
 
@@ -215,22 +223,17 @@ def delete_account(request: HttpRequest):
 @requires_roles(["admin"])
 @request_type("POST")
 def add_event(request: HttpRequest):
+    check = requires_fields(request.POST, {"name": "str", "date": "str", "timezone": "str", "location": "str", "body": "str", "latitude": "float", "longitude": "float"})
+    if check:
+        return check
+
     name = request.POST.get("name")
     date = request.POST.get("date")
     timezone = request.POST.get("timezone")
     location = request.POST.get("location")
     body = request.POST.get("body")
-
-    try:
-        latitude = float(request.POST.get("latitude"))
-    except:
-        return JsonResponse({"error": "'latitude' field is required as a float"}, status = 400)
-    
-    try:
-        longitude = float(request.POST.get("longitude"))
-    except:
-        return JsonResponse({"error": "'longitude' field is required as a float"}, status = 400)
-    
+    latitude = float(request.POST.get("latitude"))
+    longitude = float(request.POST.get("longitude"))
     image = request.POST.get("image")
     if not image or image == "":
         image = "https://i.imgur.com/Mw85Kfp.png"
@@ -241,17 +244,6 @@ def add_event(request: HttpRequest):
     if not ticket:
         ticket = ""
 
-    if not name:
-        return JsonResponse({"error": "'name' field is required"}, status = 400)
-    if not date:
-        return JsonResponse({"error": "'date' field is required"}, status = 400)
-    if not timezone:
-        return JsonResponse({"error": "'timezone' field is required"}, status = 400)
-    if not location:
-        return JsonResponse({"error": "'location' field is required"}, status = 400)
-    if not body:
-        return JsonResponse({"error": "'body' field is required"}, status = 400)
-    
     try:
         tz = datetime.timezone(offset=datetime.timedelta(hours=float(timezone.split(":")[0]), minutes=float(timezone.split(":")[1])))
         event_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tz)
@@ -271,27 +263,19 @@ def add_event(request: HttpRequest):
 @requires_roles(["admin"])
 @request_type("POST")
 def edit_event(request: HttpRequest):
-    try:
-        event_id = int(request.POST.get("event_id"))
-    except:
-        return JsonResponse({"error": "'event_id' field is required as an int"}, status = 400)
+    check = requires_fields(request.POST, {"event_id": "int", "name": "str", "date": "str", "timezone": "str", "location": "str", "body": "str", "latitude": "float", "longitude": "float"})
+    if check:
+        return check
 
+    event_id = int(request.POST.get("event_id"))
     name = request.POST.get("name")
     date = request.POST.get("date")
     timezone = request.POST.get("timezone")
     location = request.POST.get("location")
     body = request.POST.get("body")
+    latitude = float(request.POST.get("latitude"))
+    longitude = float(request.POST.get("longitude"))
 
-    try:
-        latitude = float(request.POST.get("latitude"))
-    except:
-        return JsonResponse({"error": "'latitude' field is required as a float"}, status = 400)
-    
-    try:
-        longitude = float(request.POST.get("longitude"))
-    except:
-        return JsonResponse({"error": "'longitude' field is required as a float"}, status = 400)
-    
     image = request.POST.get("image")
     if not image or image == "":
         image = "https://i.imgur.com/Mw85Kfp.png"
@@ -302,17 +286,6 @@ def edit_event(request: HttpRequest):
     if not ticket:
         ticket = ""
 
-    if not name:
-        return JsonResponse({"error": "'name' field is required"}, status = 400)
-    if not date:
-        return JsonResponse({"error": "'date' field is required"}, status = 400)
-    if not timezone:
-        return JsonResponse({"error": "'timezone' field is required"}, status = 400)
-    if not location:
-        return JsonResponse({"error": "'location' field is required"}, status = 400)
-    if not body:
-        return JsonResponse({"error": "'body' field is required"}, status = 400)
-    
     try:
         tz = datetime.timezone(offset=datetime.timedelta(hours=float(timezone.split(":")[0]), minutes=float(timezone.split(":")[1])))
         event_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tz)
@@ -351,11 +324,11 @@ def edit_event(request: HttpRequest):
 @requires_roles(["admin"])
 @request_type("POST")
 def delete_event(request: HttpRequest):
-    try:
-        event_id = int(request.POST.get("event_id"))
-    except:
-        return JsonResponse({"error": "'event_id' field is required as an int"}, status = 400)
-    
+    check = requires_fields(request.POST, {"event_id": "int"})
+    if check:
+        return check
+
+    event_id = int(request.POST.get("event_id"))
     try:
         event = Events.objects.get(event_id = event_id)
     except:
@@ -390,7 +363,7 @@ def get_events(request: HttpRequest):
             events = events.filter(essential = essential == "yes").order_by("date")
         events = list(events.values())
     
-    rsvp = list(EventRsvp.objects.filter(user = user).values("event_id"))
+    rsvp = set(EventRsvp.objects.filter(user = user).values("event_id"))
 
     for i in range(len(events)):
         events[i]["rsvp"] = {"event_id": events[i]["event_id"]} in rsvp
@@ -399,13 +372,12 @@ def get_events(request: HttpRequest):
 
 @request_type("POST")
 def toggle_rsvp(request: HttpRequest):
-    user: UserCredentials = request.user
+    check = requires_fields(request.POST, {"event_id": "int"})
+    if check:
+        return check
 
-    try:
-        event_id = int(request.POST.get("event_id"))
-    except:
-        return JsonResponse({"error": "'event_id' field is required as an int"}, status = 400)
-    
+    user: UserCredentials = request.user
+    event_id = int(request.POST.get("event_id"))
     try:
         event = Events.objects.get(event_id = event_id)
     except:
@@ -428,7 +400,7 @@ def get_rsvp(request: HttpRequest):
     
     all_events = list(Events.objects.values())
     
-    rsvp = list(EventRsvp.objects.filter(user = user).values("event_id"))
+    rsvp = set(EventRsvp.objects.filter(user = user).values("event_id"))
 
     events = []
     for event in all_events:
@@ -439,13 +411,12 @@ def get_rsvp(request: HttpRequest):
 
 @request_type("POST")
 def toggle_notification(request: HttpRequest):
+    check = requires_fields(request.POST, {"event_id": "int"})
+    if check:
+        return check
+
     user: UserCredentials = request.user
-    
-    try:
-        event_id = int(request.POST.get("event_id"))
-    except:
-        return JsonResponse({"error": "'event_id' field is required as an int"}, status = 400)
-    
+    event_id = int(request.POST.get("event_id"))
     try:
         event = Events.objects.get(event_id = event_id)
     except:
@@ -470,37 +441,18 @@ def get_notifications(request: HttpRequest):
 
 @request_type("POST")
 def change_settings(request: HttpRequest):
-    user: UserCredentials = request.user
-    
-    announcements = request.POST.get("announcements")
-    if not announcements:
-        return JsonResponse({"error": "'announcements' field is required"}, status = 400)
-    announcements = announcements == "yes"
-    
-    updates = request.POST.get("updates")
-    if not updates:
-        return JsonResponse({"error": "'updates' field is required"}, status = 400)
-    updates = updates == "yes"
-    
-    merch = request.POST.get("merch")
-    if not merch:
-        return JsonResponse({"error": "'merch' field is required"}, status = 400)
-    merch = merch == "yes"
-    
-    status = request.POST.get("status")
-    if not status:
-        return JsonResponse({"error": "'status' field is required"}, status = 400)
-    status = status == "yes"
-    
-    mailing = request.POST.get("mailing")
-    if not mailing:
-        return JsonResponse({"error": "'mailing' field is required"}, status = 400)
-    mailing = mailing == "yes"
+    check = requires_fields(request.POST, {"announcements": "str", "updates": "str", "merch": "str", "status": "str", "mailing": "str", "reminders": "str"})
+    if check:
+        return check
 
+    user: UserCredentials = request.user
+    announcements = request.POST.get("announcements") == "yes"
+    updates = request.POST.get("updates") == "yes"
+    merch = request.POST.get("merch") == "yes"
+    status = request.POST.get("status") == "yes"
+    mailing = request.POST.get("mailing") == "yes"
     reminders = request.POST.get("reminders")
-    if not reminders:
-        return JsonResponse({"error": "'reminders' field is required"}, status = 400)
-    
+
     settings: UserSettings = user.user_settings
     settings.announcements = announcements
     settings.updates = updates
@@ -512,7 +464,7 @@ def change_settings(request: HttpRequest):
     if mailing != user.mailing:
         user.mailing = mailing
         user.save()
-        
+
         send_subscriber(user.name, user.email, mailing)
 
     return JsonResponse({"message": "Settings changed successfully"})
@@ -529,17 +481,14 @@ def get_settings(request: HttpRequest):
 
 @request_type("POST")
 def edit_profile(request: HttpRequest):
+    check = requires_fields(request.POST, {"name": "str", "avatar": "int"})
+    if check:
+        return check
+
     user: UserCredentials = request.user
-    
+
     name = request.POST.get("name")
-    if not name:
-        return JsonResponse({"error": "'name' field is required"}, status = 400)
-    
-    try:
-        avatar = int(request.POST.get("avatar"))
-    except:
-        return JsonResponse({"error": "'avatar' is required as an int"}, status = 400)
-    
+    avatar = int(request.POST.get("avatar"))
     user.name = name
     user.avatar = avatar
     user.save()
@@ -549,15 +498,12 @@ def edit_profile(request: HttpRequest):
 @requires_roles(["admin"])
 @request_type("POST")
 def add_item(request: HttpRequest):
-    name = request.POST.get("name")
-    if not name:
-        return JsonResponse({"error": "'name' field is required"}, status = 400)
+    check = requires_fields(request.POST, {"name": "str", "price": "float"})
+    if check:
+        return check
 
-    try:
-        price = float(request.POST.get("price"))
-    except:
-        return JsonResponse({"error": "'price' field is required as a float"}, status = 400)
-    
+    name = request.POST.get("name")
+    price = float(request.POST.get("price"))
     image = request.POST.get("image")
     if not image or image == "":
         image = "https://i.imgur.com/Mw85Kfp.png"
@@ -573,20 +519,13 @@ def add_item(request: HttpRequest):
 @requires_roles(["admin"])
 @request_type("POST")
 def edit_item(request: HttpRequest):
-    try:
-        item_id = int(request.POST.get("item_id"))
-    except:
-        return JsonResponse({"error": "'item_id' field is required as an int"}, status = 400)
+    check = requires_fields(request.POST, {"item_id": "int", "name": "str", "price": "float"})
+    if check:
+        return check
 
+    item_id = int(request.POST.get("item_id"))
     name = request.POST.get("name")
-    if not name:
-        return JsonResponse({"error": "'name' field is required"}, status = 400)
-
-    try:
-        price = float(request.POST.get("price"))
-    except:
-        return JsonResponse({"error": "'price' field is required as a float"}, status = 400)
-    
+    price = float(request.POST.get("price"))
     image = request.POST.get("image")
     if not image or image == "":
         image = "https://i.imgur.com/Mw85Kfp.png"
@@ -612,11 +551,12 @@ def get_items(request: HttpRequest):
 @requires_roles(["admin"])
 @request_type("POST")
 def delete_item(request: HttpRequest):
-    try:
-        item_id = int(request.POST.get("item_id"))
-    except:
-        return JsonResponse({"error": "'item_id' field is required as an int"}, status = 400)
-    
+    check = requires_fields(request.POST, {"item_id": "int"})
+    if check:
+        return check
+
+    item_id = int(request.POST.get("item_id"))
+
     try:
         item = ShopItems.objects.get(item_id = item_id)
     except:
@@ -631,18 +571,14 @@ def delete_item(request: HttpRequest):
 
 @request_type("POST")
 def edit_cart(request: HttpRequest):
-    user: UserCredentials = request.user
-    
-    try:
-        item_id = int(request.POST.get("item_id"))
-    except:
-        return JsonResponse({"error": "'item_id' field is required as an int"}, status = 400)
+    check = requires_fields(request.POST, {"item_id": "int", "quantity": "int"})
+    if check:
+        return check
 
-    try:
-        quantity = int(request.POST.get("quantity"))
-    except:
-        return JsonResponse({"error": "'quantity' field is required as an int"}, status = 400)
-    
+    user: UserCredentials = request.user
+    item_id = int(request.POST.get("item_id"))
+    quantity = int(request.POST.get("quantity"))
+
     try:
         item = ShopItems.objects.get(item_id = item_id)
     except:
@@ -674,12 +610,13 @@ def get_cart(request: HttpRequest):
 
 @request_type("POST")
 def stripe_payment(request: HttpRequest):
-    try:
-        amount = int(float(request.POST.get("amount")) * 100)
-        if amount < 50:
-            return JsonResponse({"error": "Amount must be at least $0.5"}, status = 400)
-    except:
-        return JsonResponse({"error": "'amount' is required as a float"}, status = 400)
+    check = requires_fields(request.POST, {"amount": "float"})
+    if check:
+        return check
+
+    amount = int(float(request.POST.get("amount")) * 100)
+    if amount < 50:
+        return JsonResponse({"error": "Amount must be at least $0.5"}, status = 400)
 
     payment_intent = stripe.PaymentIntent.create(
         amount = amount,
@@ -691,25 +628,19 @@ def stripe_payment(request: HttpRequest):
 
 @request_type("POST")
 def log_donation(request: HttpRequest):
-    user: UserCredentials = request.user
-    
-    name = request.POST.get("name")
-    if not name:
-        return JsonResponse({"error": "'name' field is required"}, status = 400)
-    
-    email = request.POST.get("email")
-    if not email:
-        return JsonResponse({"error": "'email' field is required"}, status = 400)
+    check = requires_fields(request.POST, {"name": "str", "email": "str", "amount": "float"})
+    if check:
+        return check
 
-    try:
-        amount = float(request.POST.get("amount"))
-    except:
-        return JsonResponse({"error": "'amount' is required as a float"}, status = 400)
-    
+    user: UserCredentials = request.user
+    name = request.POST.get("name")
+    email = request.POST.get("email")
+    amount = float(request.POST.get("amount"))
+
     try:
         receipt: DonationReceipts = DonationReceipts(user = user, name = name, email = email, amount = amount)
         receipt.save()
-        
+
         send_donation(name, email, amount)
     except:
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
@@ -719,16 +650,14 @@ def log_donation(request: HttpRequest):
 @requires_roles(["admin"])
 @request_type("POST")
 def send_announcement(request: HttpRequest):
+    check = requires_fields(request.POST, {"title": "str", "body": "str"})
+    if check:
+        return check
+
     title = request.POST.get("title")
-    if not title:
-        return JsonResponse({"error": "'title' field is required"}, status = 400)
-    
     body = request.POST.get("body")
-    if not body:
-        return JsonResponse({"error": "'body' field is required"}, status = 400)
-    
     everyone = request.POST.get("everyone") == "yes"
-    
+
     if everyone:
         send_topic_notification("ida-app-default", title, body)
 
@@ -740,19 +669,18 @@ def send_announcement(request: HttpRequest):
 @requires_roles(["admin"])
 @request_type("POST")
 def edit_role(request: HttpRequest):
+    check = requires_fields(request.POST, {"email": "str", "role": "str"})
+    if check:
+        return check
+
     email = request.POST.get("email")
-    if not email:
-        return JsonResponse({"error": "'email' field is required"}, status = 400)
-    
     try:
         target: UserCredentials = UserCredentials.objects.get(email = email)
     except:
-        return JsonResponse({"error": "A user with that email does not exist"}, status = 400) 
+        return JsonResponse({"error": "A user with that email does not exist"}, status = 400)
     
     role = request.POST.get("role")
-    if not role:
-        return JsonResponse({"error": "'role' field is required"}, status = 400)
-    
+
     target.role = role
     target.save()
 
@@ -770,12 +698,14 @@ def get_roles(request: HttpRequest):
 
 @request_type("POST")
 def send_query(request: HttpRequest):
+    check = requires_fields(request.POST, {"query": "str"})
+    if check:
+        return check
+
     user: UserCredentials = request.user
 
     query = request.POST.get("query")
-    if not query:
-        return JsonResponse({"error": "'query' field is required"}, status = 400)
-    
+
     send_question(user.name, user.email, query)
 
     return JsonResponse({"message": "Query sent successfully"})
@@ -783,14 +713,13 @@ def send_query(request: HttpRequest):
 @requires_roles(["admin"])
 @request_type("POST")
 def add_announcement(request: HttpRequest):
+    check = requires_fields(request.POST, {"title": "str", "body": "str"})
+    if check:
+        return check
+
     title = request.POST.get("title")
-    if not title:
-        return JsonResponse({"error": "'title' field is required"}, status = 400)
-    
     body = request.POST.get("body")
-    if not body:
-        return JsonResponse({"error": "'body' field is required"}, status = 400)
-    
+
     announcement = BannerAnnouncements(title = title, body = body)
     announcement.save()
 
@@ -798,12 +727,13 @@ def add_announcement(request: HttpRequest):
 
 @request_type("POST")
 def update_announcement(request: HttpRequest):
+    check = requires_fields(request.POST, {"last_announcement": "int"})
+    if check:
+        return check
+
     user: UserCredentials = request.user
 
-    try:
-        last_announcement = int(request.POST.get("last_announcement"))
-    except:
-        return JsonResponse({"error": "'last_announcement' is required as an int"}, status = 400)
+    last_announcement = int(request.POST.get("last_announcement"))
     
     user.last_announcement = last_announcement
     user.save()
@@ -821,12 +751,14 @@ def get_announcements(request: HttpRequest):
 
 @request_type("GET")
 def get_permissions(request: HttpRequest):
+    check = requires_fields(request.GET, {"category": "str"})
+    if check:
+        return check
+
     user: UserCredentials = request.user
 
     category = request.GET.get("category")
-    if not category:
-        return JsonResponse({"error": "'category' field is required"}, status = 400)
-    
+
     if category == "announcements":
         roles = ["admin"]
     elif category == "events":
