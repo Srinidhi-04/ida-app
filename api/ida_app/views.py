@@ -363,10 +363,11 @@ def get_events(request: HttpRequest):
             events = events.filter(essential = essential == "yes").order_by("date")
         events = list(events.values())
     
-    rsvp = set(EventRsvp.objects.filter(user = user).values("event_id"))
+    rsvp = list(EventRsvp.objects.filter(user = user).values("event_id"))
+    rsvp_ids = {x["event_id"] for x in rsvp}
 
     for i in range(len(events)):
-        events[i]["rsvp"] = {"event_id": events[i]["event_id"]} in rsvp
+        events[i]["rsvp"] = events[i]["event_id"] in rsvp_ids
 
     return JsonResponse({"data": events})
 
@@ -400,11 +401,12 @@ def get_rsvp(request: HttpRequest):
     
     all_events = list(Events.objects.values())
     
-    rsvp = set(EventRsvp.objects.filter(user = user).values("event_id"))
+    rsvp = list(EventRsvp.objects.filter(user = user).values("event_id"))
+    rsvp_ids = {x["event_id"] for x in rsvp}
 
     events = []
     for event in all_events:
-        if {"event_id": event["event_id"]} in rsvp:
+        if event["event_id"] in rsvp_ids:
             events.append(event)
 
     return JsonResponse({"data": events})
