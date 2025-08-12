@@ -32,6 +32,8 @@
 	<string>This app needs access to your camera to scan cards and add them automatically.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app needs your location to show nearby events.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app needs your location to show nearby events.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>
