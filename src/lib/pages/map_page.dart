@@ -261,7 +261,7 @@ class _MapPageState extends State<MapPage> {
 
   Future<void> getEvents() async {
     Map info = await EventsService.getEvents(
-      params: {"completed": "no", "user": user_id.toString()},
+      params: {"completed": "no", "user_id": user_id.toString()},
     );
 
     if (info.containsKey("error") &&
