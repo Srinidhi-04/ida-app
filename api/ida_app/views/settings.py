@@ -50,7 +50,7 @@ def get_settings(request: HttpRequest):
     
     settings: UserSettings = user.user_settings
 
-    return JsonResponse({"data": {"announcements": settings.announcements, "updates": settings.announcements, "merch": settings.merch, "status": settings.status, "reminders": settings.reminders, "mailing": user.mailing}})
+    return JsonResponse({"data": {"announcements": settings.announcements, "updates": settings.updates, "merch": settings.merch, "status": settings.status, "reminders": settings.reminders, "mailing": user.mailing}})
 
 @request_type("POST")
 def edit_profile(request: HttpRequest):
