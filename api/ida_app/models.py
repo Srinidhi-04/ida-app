@@ -51,11 +51,21 @@ class UserCredentials(AbstractBaseUser, PermissionsMixin):
     last_announcement = models.IntegerField(default = 0, null = False)
     signup_code = models.IntegerField(unique = True, null = True)
     forgot_code = models.IntegerField(unique = True, null = True)
-    token = models.CharField(max_length = 50, unique = True, null = True)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
     USERNAME_FIELD = "email"
 
     objects: UserManager = UserManager()
+
+
+class UserTokens(models.Model):
+    token_id = models.AutoField(primary_key = True, unique = True, null = False)
+    user = models.ForeignKey(UserCredentials, related_name = "user_tokens", on_delete = models.CASCADE, null = False)
+    token = models.CharField(max_length = 64, unique = True, null = False)
+    expires_at = models.DateTimeField(unique = False, null = False)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
 
 class Events(models.Model):
@@ -70,12 +80,16 @@ class Events(models.Model):
     completed = models.BooleanField(default = False, null = False)
     essential = models.BooleanField(default = False, null = False)
     ticket = models.TextField(unique = False, null = False)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
 
 class UserNotifications(models.Model):
     notification_id = models.AutoField(primary_key = True, unique = True, null = False)
     user = models.ForeignKey(UserCredentials, related_name = "user_notifications", on_delete = models.CASCADE, null = False)
     event = models.ForeignKey(Events, related_name = "event_notifications", on_delete = models.CASCADE, null = False)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
 
 class UserSettings(models.Model):
@@ -85,6 +99,8 @@ class UserSettings(models.Model):
     merch = models.BooleanField(default = True, null = False)
     status = models.BooleanField(default = True, null = False)
     reminders = models.TextField(choices = [("Off", "Off"), ("30 minutes before", "30 minutes before"), ("2 hours before", "2 hours before"), ("6 hours before", "6 hours before")], default = "30 minutes before", null = False)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
 
 class ShopItems(models.Model):
@@ -92,18 +108,24 @@ class ShopItems(models.Model):
     name = models.TextField(unique = False, null = False)
     price = models.FloatField(unique = False, null = False)
     image = models.TextField(default = "https://i.imgur.com/Mw85Kfp.png", null = False)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
 class UserCarts(models.Model):
     record_id = models.AutoField(primary_key = True, unique = True, null = False)
     user = models.ForeignKey(UserCredentials, related_name = "user_carts", on_delete = models.CASCADE, null = False)
     item = models.ForeignKey(ShopItems, related_name = "item_carts", on_delete = models.CASCADE, null = False)
     quantity = models.IntegerField(unique = False, null = True)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
 
 class EventRsvp(models.Model):
     record_id = models.AutoField(primary_key = True, unique = True, null = False)
     user = models.ForeignKey(UserCredentials, related_name = "user_rsvp", on_delete = models.CASCADE, null = False)
     event = models.ForeignKey(Events, related_name = "event_rsvp", on_delete = models.CASCADE, null = False)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
 
 class DonationReceipts(models.Model):
@@ -112,9 +134,13 @@ class DonationReceipts(models.Model):
     name = models.TextField(unique = False, null = False)
     email = models.TextField(unique = False, null = False)
     amount = models.FloatField(unique = False, null = False)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
 
 
 class BannerAnnouncements(models.Model):
     announcement_id = models.AutoField(primary_key = True, unique = True, null = False)
     title = models.TextField(unique = False, null = False)
     body = models.TextField(unique = False, null = False)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)

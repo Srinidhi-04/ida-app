@@ -1,5 +1,7 @@
+import datetime
+from hashlib import sha256
 from django.http import HttpRequest, JsonResponse
-from ida_app.models import UserCredentials
+from ida_app.models import UserCredentials, UserTokens
 
 def auth_exempt(view):
     view.auth_exempt = True
@@ -52,13 +54,20 @@ class AuthMiddleware:
         token = token[7:]
 
         try:
-            user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
-            if user.token != token:
+            user: UserCredentials = UserCredentials.objects.prefetch_related("user_tokens").get(user_id = user_id)
+            token_record: UserTokens = user.user_tokens.get(token = sha256(token.encode()).hexdigest())
+
+            if token_record.expires_at <= datetime.datetime.now(tz = datetime.timezone.utc):
                 return JsonResponse({"error": "Invalid authorization token"}, status = 400)
+            
             if roles and user.role not in roles:
                 return JsonResponse({"error": "Insufficient permissions"}, status = 400)
-        except:
+            
+        except UserCredentials.DoesNotExist:
             return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
+        
+        except UserTokens.DoesNotExist:
+            return JsonResponse({"error": "Invalid authorization token"}, status = 400)
         
         request.user = user
         return None

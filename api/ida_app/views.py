@@ -1,6 +1,7 @@
 import uuid
 import datetime
 import random as rd
+from hashlib import sha256
 from django.http import HttpRequest, JsonResponse, HttpResponse, QueryDict
 from django.contrib.auth import authenticate
 import stripe
@@ -92,8 +93,9 @@ def verify_code(request: HttpRequest):
     
     user.signup_code = None
 
-    uid = uuid.uuid4()
-    user.token = uid.hex
+    uid = uuid.uuid4().hex
+    token = UserTokens(user = user, token = sha256(uid.encode()).hexdigest(), expires_at = (datetime.datetime.now(tz = datetime.timezone.utc) + datetime.timedelta(days = 30)))
+    token.save()
 
     user.last_login = datetime.datetime.now(tz = datetime.timezone.utc)
     user.save()
@@ -101,7 +103,7 @@ def verify_code(request: HttpRequest):
     settings = UserSettings(user = user, announcements = True, updates = True, merch = True, status = True, reminders = "2 hours before")
     settings.save()
 
-    return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
+    return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": uid})
 
 @auth_exempt
 @request_type("POST")
@@ -158,15 +160,18 @@ def change_password(request: HttpRequest):
     user.forgot_code = None
     user.set_password(password)
 
-    uid = uuid.uuid4()
-    user.token = uid.hex
+    user.user_tokens.update(expires_at = datetime.datetime.now(tz = datetime.timezone.utc))
+
+    uid = uuid.uuid4().hex
+    token = UserTokens(user = user, token = sha256(uid.encode()).hexdigest(), expires_at = (datetime.datetime.now(tz = datetime.timezone.utc) + datetime.timedelta(days = 30)))
+    token.save()
 
     user.last_login = datetime.datetime.now(tz = datetime.timezone.utc)
     user.save()
 
     settings: UserSettings = user.user_settings
 
-    return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
+    return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": uid})
 
 @auth_exempt
 @request_type("POST")
@@ -196,16 +201,16 @@ def login(request: HttpRequest):
         return JsonResponse({"message": "Code successfully resent", "user_id": user.user_id, "email": user.email})
 
     if user:
-        if datetime.datetime.now(tz = datetime.timezone.utc) - user.last_login.replace(tzinfo = datetime.timezone.utc) > datetime.timedelta(days = 30):
-            uid = uuid.uuid4()
-            user.token = uid.hex
+        uid = uuid.uuid4().hex
+        token = UserTokens(user = user, token = sha256(uid.encode()).hexdigest(), expires_at = (datetime.datetime.now(tz = datetime.timezone.utc) + datetime.timedelta(days = 30)))
+        token.save()
 
         user.last_login = datetime.datetime.now(tz = datetime.timezone.utc)
         user.save()
 
         settings: UserSettings = user.user_settings
 
-        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": user.token})
+        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": uid})
     
     return JsonResponse({"error": "Email or password is incorrect"}, status = 400)
 
@@ -248,7 +253,7 @@ def add_event(request: HttpRequest):
         tz = datetime.timezone(offset=datetime.timedelta(hours=float(timezone.split(":")[0]), minutes=float(timezone.split(":")[1])))
         event_date = datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S").replace(tzinfo=tz)
 
-        event = Events(name = name, date = event_date, location = location, latitude = latitude, longitude = longitude, image = image, essential = essential, body = body, ticket = ticket)
+        event = Events(name = name, date = event_date, location = location, latitude = latitude, longitude = longitude, image = image, essential = essential, body = body, ticket = ticket, completed = (event_date.astimezone(tz = datetime.timezone.utc) <= datetime.datetime.now(tz = datetime.timezone.utc)))
         event.save()
     except:
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
@@ -311,6 +316,8 @@ def edit_event(request: HttpRequest):
 
     if event_date.astimezone(tz = datetime.timezone.utc) > datetime.datetime.now(tz = datetime.timezone.utc):
         event.completed = False
+    else:
+        event.completed = True
 
     event.save()
     
