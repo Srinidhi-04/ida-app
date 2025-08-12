@@ -270,7 +270,8 @@ class _MapPageState extends State<MapPage> {
     );
     Map info = jsonDecode(response.body);
     if (info.containsKey("error") &&
-        info["error"] == "Invalid authorization token") {
+        (info["error"] == "Invalid authorization token" ||
+            info["error"] == "A user with that user ID does not exist")) {
       await NotificationsManager.unsubscribeAllNotifications();
       await SecureStorage.delete();
       await Navigator.of(
