@@ -1,7 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:src/services/auth_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/submit_overlay.dart';
@@ -44,22 +42,18 @@ class _SignupPageState extends State<SignupPage> {
 
   bool obscure = true;
 
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
-
   Future<bool> signup() async {
     setState(() {
       submitted = true;
     });
-    var response = await post(
-      Uri.parse(baseUrl + "/signup"),
-      body: {
-        "name": name,
-        "email": email,
-        "password": password,
-        "mailing": (mailing) ? "yes" : "no",
-      },
-    );
-    Map info = jsonDecode(response.body);
+
+    Map info = await AuthService.signup({
+      "name": name,
+      "email": email,
+      "password": password,
+      "mailing": (mailing) ? "yes" : "no",
+    });
+
     if (info.containsKey("error")) {
       setState(() {
         error = info["error"];

@@ -1,7 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:src/services/announcements_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/submit_overlay.dart';
@@ -15,7 +13,6 @@ class AnnouncementPage extends StatefulWidget {
 
 class _AnnouncementPageState extends State<AnnouncementPage> {
   late int user_id;
-  late String token;
 
   bool submitted = false;
   String title = "";
@@ -24,8 +21,6 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   bool banner = false;
 
   List<String?> errors = [null, null];
-
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
@@ -47,7 +42,6 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
-      token = info["token"]!;
     });
   }
 
@@ -193,31 +187,24 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                               submitted = true;
                             });
 
-                            late Response response;
+                            late Map info;
                             if (!banner) {
-                              response = await post(
-                                Uri.parse(baseUrl + "/send-announcement"),
-                                headers: {"Authorization": "Bearer ${token}"},
-                                body: {
-                                  "user_id": user_id.toString(),
-                                  "title": title,
-                                  "body": body,
-                                  "everyone": (everyone) ? "yes" : "no",
-                                },
-                              );
+                              info =
+                                  await AnnouncementsService.sendAnnouncement({
+                                    "user_id": user_id.toString(),
+                                    "title": title,
+                                    "body": body,
+                                    "everyone": (everyone) ? "yes" : "no",
+                                  });
                             } else {
-                              response = await post(
-                                Uri.parse(baseUrl + "/add-announcement"),
-                                headers: {"Authorization": "Bearer ${token}"},
-                                body: {
-                                  "user_id": user_id.toString(),
-                                  "title": title,
-                                  "body": body,
-                                },
-                              );
+                              info =
+                                  await AnnouncementsService.addAnnouncement({
+                                    "user_id": user_id.toString(),
+                                    "title": title,
+                                    "body": body,
+                                  });
                             }
 
-                            Map info = jsonDecode(response.body);
                             if (info.containsKey("error") &&
                                 (info["error"] ==
                                         "Invalid authorization token" ||

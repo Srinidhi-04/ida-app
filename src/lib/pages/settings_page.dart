@@ -1,10 +1,8 @@
-import "dart:convert";
-
 import "package:flutter/material.dart";
-import "package:http/http.dart";
 import "package:loading_animation_widget/loading_animation_widget.dart";
 import "package:src/services/notifications_manager.dart";
 import "package:src/services/secure_storage.dart";
+import "package:src/services/settings_service.dart";
 import "package:src/widgets/navigation.dart";
 import "package:src/widgets/submit_overlay.dart";
 
@@ -17,7 +15,6 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   late int user_id;
-  late String token;
   late String name;
   late int avatar;
   String original = "";
@@ -25,8 +22,6 @@ class _SettingsPageState extends State<SettingsPage> {
   bool submitted = false;
   String? error;
   TextEditingController controller = TextEditingController();
-
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   late int selected;
 
@@ -72,7 +67,6 @@ class _SettingsPageState extends State<SettingsPage> {
     }
     setState(() {
       user_id = int.parse(info["user_id"]!);
-      token = info["token"]!;
       name = info["name"]!;
       avatar = int.parse(info["avatar"]!);
       selected = avatar;
@@ -263,16 +257,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                 "name": name,
                                 "avatar": selected.toString(),
                               });
-                              var response = await post(
-                                Uri.parse(baseUrl + "/edit-profile"),
-                                headers: {"Authorization": "Bearer ${token}"},
-                                body: {
-                                  "user_id": user_id.toString(),
-                                  "name": name,
-                                  "avatar": selected.toString(),
-                                },
-                              );
-                              Map info = jsonDecode(response.body);
+
+                              Map info = await SettingsService.editProfile({
+                                "user_id": user_id.toString(),
+                                "name": name,
+                                "avatar": selected.toString(),
+                              });
+
                               if (info.containsKey("error") &&
                                   (info["error"] ==
                                           "Invalid authorization token" ||
@@ -365,11 +356,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   submitted = true;
                                 });
 
-                                await post(
-                                  Uri.parse(baseUrl + "/delete-account"),
-                                  headers: {"Authorization": "Bearer ${token}"},
-                                  body: {"user_id": user_id.toString()},
-                                );
+                                await SettingsService.deleteAccount({"user_id": user_id.toString()});
 
                                 await NotificationsManager.unsubscribeAllNotifications();
                                 await SecureStorage.delete();

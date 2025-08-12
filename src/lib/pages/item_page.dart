@@ -1,9 +1,7 @@
-import "dart:convert";
-
 import "package:flutter/material.dart";
-import "package:http/http.dart";
 import "package:src/services/notifications_manager.dart";
 import "package:src/services/secure_storage.dart";
+import "package:src/services/shop_service.dart";
 import "package:src/widgets/submit_overlay.dart";
 
 class ItemPage extends StatefulWidget {
@@ -15,7 +13,6 @@ class ItemPage extends StatefulWidget {
 
 class _ItemPageState extends State<ItemPage> {
   late int user_id;
-  late String token;
 
   int? item_id;
 
@@ -30,8 +27,6 @@ class _ItemPageState extends State<ItemPage> {
   TextEditingController name_controller = TextEditingController();
   TextEditingController price_controller = TextEditingController();
   TextEditingController image_controller = TextEditingController();
-
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
@@ -53,7 +48,6 @@ class _ItemPageState extends State<ItemPage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
-      token = info["token"]!;
     });
   }
 
@@ -224,17 +218,13 @@ class _ItemPageState extends State<ItemPage> {
                             });
 
                             if (item_id == null) {
-                              var response = await post(
-                                Uri.parse(baseUrl + "/add-item"),
-                                headers: {"Authorization": "Bearer ${token}"},
-                                body: {
-                                  "user_id": user_id.toString(),
-                                  "name": name,
-                                  "price": price.toString(),
-                                  "image": image,
-                                },
-                              );
-                              Map info = jsonDecode(response.body);
+                              Map info = await ShopService.addItem({
+                                "user_id": user_id.toString(),
+                                "name": name,
+                                "price": price.toString(),
+                                "image": image,
+                              });
+
                               if (info.containsKey("error") &&
                                   (info["error"] ==
                                           "Invalid authorization token" ||
@@ -253,18 +243,14 @@ class _ItemPageState extends State<ItemPage> {
 
                               Navigator.pop(context);
                             } else {
-                              var response = await post(
-                                Uri.parse(baseUrl + "/edit-item"),
-                                headers: {"Authorization": "Bearer ${token}"},
-                                body: {
-                                  "user_id": user_id.toString(),
-                                  "item_id": item_id.toString(),
-                                  "name": name,
-                                  "price": price.toString(),
-                                  "image": image,
-                                },
-                              );
-                              Map info = jsonDecode(response.body);
+                              Map info = await ShopService.editItem({
+                                "user_id": user_id.toString(),
+                                "item_id": item_id.toString(),
+                                "name": name,
+                                "price": price.toString(),
+                                "image": image,
+                              });
+
                               if (info.containsKey("error") &&
                                   (info["error"] ==
                                           "Invalid authorization token" ||

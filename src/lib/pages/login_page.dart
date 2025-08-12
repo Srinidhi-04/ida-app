@@ -1,7 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import "package:http/http.dart";
+import 'package:src/services/auth_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/submit_overlay.dart';
@@ -48,17 +46,13 @@ class _LoginPageState extends State<LoginPage> {
     "6 hours before",
   ];
 
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
-
   Future<bool> login() async {
     setState(() {
       submitted = true;
     });
-    var response = await post(
-      Uri.parse(baseUrl + "/login"),
-      body: {"email": email, "password": password},
-    );
-    Map info = jsonDecode(response.body);
+
+    Map info = await AuthService.login({"email": email, "password": password});
+
     if (info.containsKey("error")) {
       setState(() {
         error = info["error"];
@@ -91,7 +85,6 @@ class _LoginPageState extends State<LoginPage> {
 
     await NotificationsManager.subscribeAllNotifications(
       info["user_id"],
-      info["token"],
       info["reminders"],
       info["announcements"],
     );

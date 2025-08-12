@@ -1,11 +1,10 @@
 // ignore_for_file: must_be_immutable
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/auth_service.dart';
+import 'package:src/services/events_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
@@ -20,7 +19,6 @@ class EventPage extends StatefulWidget {
 
 class _EventPageState extends State<EventPage> {
   late int user_id;
-  late String token;
   late String role;
   bool loaded = false;
   bool initialized = false;
@@ -56,16 +54,9 @@ class _EventPageState extends State<EventPage> {
   List<String> admin_roles = ["admin"];
   bool admin_access = false;
 
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
-
   Future<void> getPermissions() async {
-    var response = await get(
-      Uri.parse(
-        baseUrl + "/get-permissions?category=events&user_id=${user_id}",
-      ),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await AuthService.getPermissions({"category": "events", "user_id": user_id.toString()});
+
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
             info["error"] == "A user with that user ID does not exist")) {
@@ -106,7 +97,6 @@ class _EventPageState extends State<EventPage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
-      token = info["token"]!;
       role = info["role"]!;
       loaded = true;
     });
@@ -234,15 +224,10 @@ class _EventPageState extends State<EventPage> {
                           ),
                           PopupMenuItem(
                             onTap: () async {
-                              var response = await post(
-                                Uri.parse(baseUrl + "/delete-event"),
-                                headers: {"Authorization": "Bearer ${token}"},
-                                body: {
-                                  "user_id": user_id.toString(),
-                                  "event_id": event_id.toString(),
-                                },
-                              );
-                              Map info = jsonDecode(response.body);
+                              Map info = await EventsService.deleteEvent({
+                                "user_id": user_id.toString(),
+                                "event_id": event_id.toString(),
+                              });
                               if (info.containsKey("error") &&
                                   info["error"] ==
                                       "Invalid authorization token") {
@@ -474,15 +459,11 @@ class _EventPageState extends State<EventPage> {
                           rsvp = !rsvp;
                         });
 
-                        var response = await post(
-                          Uri.parse(baseUrl + "/toggle-rsvp"),
-                          headers: {"Authorization": "Bearer ${token}"},
-                          body: {
-                            "user_id": user_id.toString(),
-                            "event_id": event_id.toString(),
-                          },
-                        );
-                        Map info = jsonDecode(response.body);
+                        Map info = await EventsService.toggleRsvp({
+                          "user_id": user_id.toString(),
+                          "event_id": event_id.toString(),
+                        });
+
                         if (info.containsKey("error") &&
                             (info["error"] == "Invalid authorization token" ||
                                 info["error"] ==
@@ -526,15 +507,11 @@ class _EventPageState extends State<EventPage> {
                                 rsvp = !rsvp;
                               });
 
-                              var response = await post(
-                                Uri.parse(baseUrl + "/toggle-rsvp"),
-                                headers: {"Authorization": "Bearer ${token}"},
-                                body: {
-                                  "user_id": user_id.toString(),
-                                  "event_id": event_id.toString(),
-                                },
-                              );
-                              Map info = jsonDecode(response.body);
+                              Map info = await EventsService.toggleRsvp({
+                                "user_id": user_id.toString(),
+                                "event_id": event_id.toString(),
+                              });
+
                               if (info.containsKey("error") &&
                                   info["error"] ==
                                       "Invalid authorization token") {

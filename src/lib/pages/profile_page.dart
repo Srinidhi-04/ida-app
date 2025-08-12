@@ -1,9 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/auth_service.dart';
+import 'package:src/services/events_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
@@ -18,7 +17,6 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   late int user_id;
-  late String token;
   late String role;
   late String name;
   late int avatar;
@@ -50,8 +48,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   List<String> admin_roles = ["admin"];
   bool admin_access = false;
-
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Widget profileButton(String name, String route) {
     return Container(
@@ -244,11 +240,8 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getEvents() async {
-    var response = await get(
-      Uri.parse(baseUrl + "/get-rsvp?user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await EventsService.getRsvp({"user_id": user_id.toString()});
+
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
             info["error"] == "A user with that user ID does not exist")) {
@@ -287,11 +280,11 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getPermissions() async {
-    var response = await get(
-      Uri.parse(baseUrl + "/get-permissions?category=roles&user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await AuthService.getPermissions({
+      "category": "roles",
+      "user_id": user_id.toString(),
+    });
+
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
             info["error"] == "A user with that user ID does not exist")) {
@@ -332,7 +325,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     setState(() {
       user_id = int.parse(info["user_id"]!);
-      token = info["token"]!;
       email = info["email"]!;
       name = info["name"]!;
       avatar = int.parse(info["avatar"]!);

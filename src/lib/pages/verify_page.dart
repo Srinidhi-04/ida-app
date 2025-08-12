@@ -1,7 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:src/services/auth_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/submit_overlay.dart';
@@ -41,17 +39,16 @@ class _VerifyPageState extends State<VerifyPage> {
   String top_text = "";
   bool submitted = false;
 
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
-
   Future<bool> verify() async {
     setState(() {
       submitted = true;
     });
-    var response = await post(
-      Uri.parse(baseUrl + "/verify-code"),
-      body: {"user_id": user_id.toString(), "code": code},
-    );
-    Map info = jsonDecode(response.body);
+
+    Map info = await AuthService.verifyCode({
+      "user_id": user_id.toString(),
+      "code": code,
+    });
+
     if (info.containsKey("error")) {
       setState(() {
         error = info["error"];
@@ -217,10 +214,10 @@ class _VerifyPageState extends State<VerifyPage> {
                                 ),
                                 TextButton(
                                   onPressed: () async {
-                                    await post(
-                                      Uri.parse(baseUrl + "/send-code"),
-                                      body: {"email": email},
-                                    );
+                                    await AuthService.sendCode({
+                                      "email": email,
+                                    });
+
                                     setState(() {
                                       top_text =
                                           "Verification code resent to ${email}";

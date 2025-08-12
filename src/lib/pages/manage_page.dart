@@ -1,7 +1,5 @@
-import "dart:convert";
-
 import "package:flutter/material.dart";
-import "package:http/http.dart";
+import "package:src/services/events_service.dart";
 import "package:src/services/notifications_manager.dart";
 import "package:src/services/secure_storage.dart";
 import "package:src/widgets/submit_overlay.dart";
@@ -15,7 +13,6 @@ class ManagePage extends StatefulWidget {
 
 class _ManagePageState extends State<ManagePage> {
   late int user_id;
-  late String token;
 
   int? event_id;
 
@@ -41,8 +38,6 @@ class _ManagePageState extends State<ManagePage> {
   TextEditingController body_controller = TextEditingController();
   TextEditingController ticket_controller = TextEditingController();
 
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
-
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
     if (info["last_login"] != null) {
@@ -63,7 +58,6 @@ class _ManagePageState extends State<ManagePage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
-      token = info["token"]!;
     });
   }
 
@@ -547,27 +541,23 @@ class _ManagePageState extends State<ManagePage> {
                             );
 
                             if (event_id == null) {
-                              var response = await post(
-                                Uri.parse(baseUrl + "/add-event"),
-                                headers: {"Authorization": "Bearer ${token}"},
-                                body: {
-                                  "user_id": user_id.toString(),
-                                  "name": name,
-                                  "date": final_date.toString().split(".")[0],
-                                  "timezone":
-                                      final_date.timeZoneOffset
-                                          .toString()
-                                          .split(".")[0],
-                                  "location": location,
-                                  "latitude": latlng[0].toString(),
-                                  "longitude": latlng[1].toString(),
-                                  "image": image,
-                                  "body": body,
-                                  "ticket": ticket,
-                                  "essential": (featured ? "yes" : "no"),
-                                },
-                              );
-                              Map info = jsonDecode(response.body);
+                              Map info = await EventsService.addEvent({
+                                "user_id": user_id.toString(),
+                                "name": name,
+                                "date": final_date.toString().split(".")[0],
+                                "timezone":
+                                    final_date.timeZoneOffset.toString().split(
+                                      ".",
+                                    )[0],
+                                "location": location,
+                                "latitude": latlng[0].toString(),
+                                "longitude": latlng[1].toString(),
+                                "image": image,
+                                "body": body,
+                                "ticket": ticket,
+                                "essential": (featured ? "yes" : "no"),
+                              });
+
                               if (info.containsKey("error") &&
                                   (info["error"] ==
                                           "Invalid authorization token" ||
@@ -585,29 +575,26 @@ class _ManagePageState extends State<ManagePage> {
                               }
 
                               Navigator.pop(context);
+                              return;
                             } else {
-                              var response = await post(
-                                Uri.parse(baseUrl + "/edit-event"),
-                                headers: {"Authorization": "Bearer ${token}"},
-                                body: {
-                                  "user_id": user_id.toString(),
-                                  "event_id": event_id.toString(),
-                                  "name": name,
-                                  "date": final_date.toString().split(".")[0],
-                                  "timezone":
-                                      final_date.timeZoneOffset
-                                          .toString()
-                                          .split(".")[0],
-                                  "location": location,
-                                  "latitude": latlng[0].toString(),
-                                  "longitude": latlng[1].toString(),
-                                  "image": image,
-                                  "body": body,
-                                  "ticket": ticket,
-                                  "essential": (featured ? "yes" : "no"),
-                                },
-                              );
-                              Map info = jsonDecode(response.body);
+                              Map info = await EventsService.editEvent({
+                                "user_id": user_id.toString(),
+                                "event_id": event_id.toString(),
+                                "name": name,
+                                "date": final_date.toString().split(".")[0],
+                                "timezone":
+                                    final_date.timeZoneOffset.toString().split(
+                                      ".",
+                                    )[0],
+                                "location": location,
+                                "latitude": latlng[0].toString(),
+                                "longitude": latlng[1].toString(),
+                                "image": image,
+                                "body": body,
+                                "ticket": ticket,
+                                "essential": (featured ? "yes" : "no"),
+                              });
+
                               if (info.containsKey("error") &&
                                   (info["error"] ==
                                           "Invalid authorization token" ||

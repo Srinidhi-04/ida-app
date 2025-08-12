@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
+import 'package:src/services/settings_service.dart';
 import 'package:src/widgets/navigation.dart';
 
 class NotificationsPage extends StatefulWidget {
@@ -16,7 +14,6 @@ class NotificationsPage extends StatefulWidget {
 
 class _NotificationsPageState extends State<NotificationsPage> {
   late int user_id;
-  late String token;
   bool loaded = false;
 
   Map notifs = {
@@ -47,8 +44,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   bool changed = false;
 
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
-
   Widget notificationOption(String name) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -73,11 +68,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   Future<void> getSettings() async {
-    var response = await get(
-      Uri.parse(baseUrl + "/get-settings?user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await SettingsService.getSettings({
+      "user_id": user_id.toString(),
+    });
+
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
             info["error"] == "A user with that user ID does not exist")) {
@@ -119,7 +113,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
-      token = info["token"]!;
     });
     await getSettings();
   }
@@ -220,21 +213,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
                             setState(() {
                               changed = false;
                             });
-                            var response = await post(
-                              Uri.parse(baseUrl + "/change-settings"),
-                              headers: {"Authorization": "Bearer ${token}"},
-                              body: {
-                                "user_id": user_id.toString(),
-                                "announcements":
-                                    (notifs["announcements"]) ? "yes" : "no",
-                                "updates": (notifs["updates"]) ? "yes" : "no",
-                                "merch": (notifs["merch"]) ? "yes" : "no",
-                                "status": (notifs["status"]) ? "yes" : "no",
-                                "mailing": (notifs["mailing"]) ? "yes" : "no",
-                                "reminders": alert,
-                              },
-                            );
-                            Map info = jsonDecode(response.body);
+
+                            Map info = await SettingsService.changeSettings({
+                              "user_id": user_id.toString(),
+                              "announcements":
+                                  (notifs["announcements"]) ? "yes" : "no",
+                              "updates": (notifs["updates"]) ? "yes" : "no",
+                              "merch": (notifs["merch"]) ? "yes" : "no",
+                              "status": (notifs["status"]) ? "yes" : "no",
+                              "mailing": (notifs["mailing"]) ? "yes" : "no",
+                              "reminders": alert,
+                            });
+
                             if (info.containsKey("error") &&
                                 (info["error"] ==
                                         "Invalid authorization token" ||
@@ -266,7 +256,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
                               NotificationsManager.changeInterval(
                                 user_id,
-                                token,
                                 original_alert,
                                 alert,
                               );

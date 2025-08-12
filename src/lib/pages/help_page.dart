@@ -1,7 +1,5 @@
-import "dart:convert";
-
 import "package:flutter/material.dart";
-import "package:http/http.dart";
+import "package:src/services/misc_service.dart";
 import "package:src/services/notifications_manager.dart";
 import "package:src/services/secure_storage.dart";
 import "package:src/widgets/navigation.dart";
@@ -16,15 +14,12 @@ class HelpPage extends StatefulWidget {
 
 class _HelpPageState extends State<HelpPage> {
   late int user_id;
-  late String token;
 
   String query = "";
   TextEditingController controller = TextEditingController();
 
   bool submitted = false;
   bool sent = false;
-
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
@@ -45,7 +40,6 @@ class _HelpPageState extends State<HelpPage> {
     }
     setState(() {
       user_id = int.parse(info["user_id"]!);
-      token = info["token"]!;
     });
   }
 
@@ -129,15 +123,11 @@ class _HelpPageState extends State<HelpPage> {
                               submitted = true;
                             });
 
-                            var response = await post(
-                              Uri.parse(baseUrl + "/send-query"),
-                              headers: {"Authorization": "Bearer ${token}"},
-                              body: {
-                                "user_id": user_id.toString(),
-                                "query": query,
-                              },
-                            );
-                            Map info = jsonDecode(response.body);
+                            Map info = await MiscService.sendQuery({
+                              "user_id": user_id.toString(),
+                              "query": query,
+                            });
+
                             if (info.containsKey("error") &&
                                 (info["error"] ==
                                         "Invalid authorization token" ||

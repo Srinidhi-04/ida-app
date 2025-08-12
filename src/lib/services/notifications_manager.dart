@@ -1,23 +1,17 @@
-import 'dart:convert';
-
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:http/http.dart';
+import 'package:src/services/events_service.dart';
 
 class NotificationsManager {
-  static final alerts = [
+  static const alerts = [
     "Off",
     "30 minutes before",
     "2 hours before",
     "6 hours before",
   ];
 
-  static final baseUrl =
-      "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
-
   static Future<void> subscribeAllNotifications(
     int user_id,
-    String token,
     String reminders,
     bool announcements,
   ) async {
@@ -27,11 +21,10 @@ class NotificationsManager {
         FirebaseMessaging.instance.subscribeToTopic("ida-app-announcements");
       }
 
-      var response = await get(
-        Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
-        headers: {"Authorization": "Bearer ${token}"},
-      );
-      Map info = jsonDecode(response.body);
+      Map info = await EventsService.getNotifications({
+        "user_id": user_id.toString(),
+      });
+
       List notifs = info["data"];
 
       for (int event_id in notifs) {
@@ -67,16 +60,14 @@ class NotificationsManager {
 
   static Future<void> subscribeNotification(
     int user_id,
-    String token,
     int event_id,
     String reminders,
   ) async {
     try {
-      post(
-        Uri.parse(baseUrl + "/toggle-notification"),
-        headers: {"Authorization": "Bearer ${token}"},
-        body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
-      );
+      EventsService.toggleNotification({
+        "user_id": user_id.toString(),
+        "event_id": event_id.toString(),
+      });
 
       FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}");
 
@@ -100,16 +91,14 @@ class NotificationsManager {
 
   static Future<void> unsubscribeNotification(
     int user_id,
-    String token,
     int event_id,
     String reminders,
   ) async {
     try {
-      post(
-        Uri.parse(baseUrl + "/toggle-notification"),
-        headers: {"Authorization": "Bearer ${token}"},
-        body: {"user_id": user_id.toString(), "event_id": event_id.toString()},
-      );
+      EventsService.toggleNotification({
+        "user_id": user_id.toString(),
+        "event_id": event_id.toString(),
+      });
 
       FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}");
 
@@ -167,16 +156,14 @@ class NotificationsManager {
 
   static Future<void> changeInterval(
     int user_id,
-    String token,
     String original_interval,
     String new_interval,
   ) async {
     try {
-      var response = await get(
-        Uri.parse(baseUrl + "/get-notifications?user_id=${user_id}"),
-        headers: {"Authorization": "Bearer ${token}"},
-      );
-      Map info = jsonDecode(response.body);
+      Map info = await EventsService.getNotifications({
+        "user_id": user_id.toString(),
+      });
+
       List notifs = info["data"];
 
       for (int event_id in notifs) {
@@ -198,7 +185,11 @@ class NotificationsManager {
         stack,
         fatal: false,
         reason: "Error while changing notification interval",
-        information: ["user_id: ${user_id}", "old_interval: ${original_interval}", "new_interval: ${new_interval}"],
+        information: [
+          "user_id: ${user_id}",
+          "old_interval: ${original_interval}",
+          "new_interval: ${new_interval}",
+        ],
       );
     }
   }

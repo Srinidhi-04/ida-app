@@ -1,11 +1,10 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/events_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,7 +18,6 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   late int user_id;
-  late String token;
 
   bool initialized = false;
 
@@ -46,8 +44,6 @@ class _MapPageState extends State<MapPage> {
   TextEditingController autocompleteController = TextEditingController();
   GoogleMapController? mapController;
   String? mapKey;
-
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Widget eventCard(
     String name,
@@ -264,11 +260,11 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> getEvents() async {
-    var response = await get(
-      Uri.parse(baseUrl + "/get-events?completed=no&user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await EventsService.getEvents({
+      "completed": "no",
+      "user": user_id.toString(),
+    });
+
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
             info["error"] == "A user with that user ID does not exist")) {
@@ -347,7 +343,6 @@ class _MapPageState extends State<MapPage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
-      token = info["token"]!;
     });
     await getEvents();
   }

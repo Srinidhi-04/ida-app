@@ -1,11 +1,10 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/auth_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
+import 'package:src/services/shop_service.dart';
 import 'package:src/widgets/cart_button.dart';
 import 'package:src/widgets/navigation.dart';
 
@@ -18,7 +17,6 @@ class ShopPage extends StatefulWidget {
 
 class _ShopPageState extends State<ShopPage> {
   late int user_id;
-  late String token;
   late String role;
 
   Map<int, int> quantity = {};
@@ -31,8 +29,6 @@ class _ShopPageState extends State<ShopPage> {
 
   List<String> admin_roles = ["admin"];
   bool admin_access = false;
-
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Widget shopItem(
     int index,
@@ -56,15 +52,12 @@ class _ShopPageState extends State<ShopPage> {
                 setState(() {
                   items.removeAt(index);
                 });
-                var response = await post(
-                  Uri.parse(baseUrl + "/delete-item"),
-                  headers: {"Authorization": "Bearer ${token}"},
-                  body: {
-                    "user_id": user_id.toString,
-                    "item_id": item_id.toString(),
-                  },
-                );
-                Map info = jsonDecode(response.body);
+
+                Map info = await ShopService.deleteItem({
+                  "user_id": user_id.toString(),
+                  "item_id": item_id.toString(),
+                });
+
                 if (info.containsKey("error") &&
                     (info["error"] == "Invalid authorization token" ||
                         info["error"] ==
@@ -106,15 +99,12 @@ class _ShopPageState extends State<ShopPage> {
                   setState(() {
                     items.removeAt(index);
                   });
-                  var response = await post(
-                    Uri.parse(baseUrl + "/delete-item"),
-                    headers: {"Authorization": "Bearer ${token}"},
-                    body: {
-                      "user_id": user_id.toString(),
-                      "item_id": item_id.toString(),
-                    },
-                  );
-                  Map info = jsonDecode(response.body);
+
+                  Map info = await ShopService.deleteItem({
+                    "user_id": user_id.toString(),
+                    "item_id": item_id.toString(),
+                  });
+
                   if (info.containsKey("error") &&
                       (info["error"] == "Invalid authorization token" ||
                           info["error"] ==
@@ -203,18 +193,13 @@ class _ShopPageState extends State<ShopPage> {
                                         setState(() {
                                           quantity[item_id] = 1;
                                         });
-                                        var response = await post(
-                                          Uri.parse(baseUrl + "/edit-cart"),
-                                          headers: {
-                                            "Authorization": "Bearer ${token}",
-                                          },
-                                          body: {
-                                            "user_id": user_id.toString(),
-                                            "item_id": item_id.toString(),
-                                            "quantity": "1",
-                                          },
-                                        );
-                                        Map info = jsonDecode(response.body);
+
+                                        Map info = await ShopService.editCart({
+                                          "user_id": user_id.toString(),
+                                          "item_id": item_id.toString(),
+                                          "quantity": "1",
+                                        });
+
                                         if (info.containsKey("error") &&
                                             (info["error"] ==
                                                     "Invalid authorization token" ||
@@ -284,29 +269,22 @@ class _ShopPageState extends State<ShopPage> {
                                                 if (quantity[item_id] == 0)
                                                   quantity.remove(item_id);
                                               });
-                                              var response = await post(
-                                                Uri.parse(
-                                                  baseUrl + "/edit-cart",
-                                                ),
-                                                headers: {
-                                                  "Authorization":
-                                                      "Bearer ${token}",
-                                                },
-                                                body: {
-                                                  "user_id": user_id.toString(),
-                                                  "item_id": item_id.toString(),
-                                                  "quantity":
-                                                      ((quantity.containsKey(
-                                                            item_id,
-                                                          ))
-                                                          ? quantity[item_id]
-                                                              .toString()
-                                                          : "0"),
-                                                },
-                                              );
-                                              Map info = jsonDecode(
-                                                response.body,
-                                              );
+
+                                              Map info =
+                                                  await ShopService.editCart({
+                                                    "user_id":
+                                                        user_id.toString(),
+                                                    "item_id":
+                                                        item_id.toString(),
+                                                    "quantity":
+                                                        ((quantity.containsKey(
+                                                              item_id,
+                                                            ))
+                                                            ? quantity[item_id]
+                                                                .toString()
+                                                            : "0"),
+                                                  });
+
                                               if (info.containsKey("error") &&
                                                   (info["error"] ==
                                                           "Invalid authorization token" ||
@@ -342,25 +320,18 @@ class _ShopPageState extends State<ShopPage> {
                                                 quantity[item_id] =
                                                     quantity[item_id]! + 1;
                                               });
-                                              var response = await post(
-                                                Uri.parse(
-                                                  baseUrl + "/edit-cart",
-                                                ),
-                                                headers: {
-                                                  "Authorization":
-                                                      "Bearer ${token}",
-                                                },
-                                                body: {
-                                                  "user_id": user_id.toString(),
-                                                  "item_id": item_id.toString(),
-                                                  "quantity":
-                                                      quantity[item_id]
-                                                          .toString(),
-                                                },
-                                              );
-                                              Map info = jsonDecode(
-                                                response.body,
-                                              );
+
+                                              Map info =
+                                                  await ShopService.editCart({
+                                                    "user_id":
+                                                        user_id.toString(),
+                                                    "item_id":
+                                                        item_id.toString(),
+                                                    "quantity":
+                                                        quantity[item_id]
+                                                            .toString(),
+                                                  });
+
                                               if (info.containsKey("error") &&
                                                   (info["error"] ==
                                                           "Invalid authorization token" ||
@@ -429,11 +400,8 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   Future<void> getItems() async {
-    var response = await get(
-      Uri.parse(baseUrl + "/get-items?user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await ShopService.getItems({"user_id": user_id.toString()});
+
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
             info["error"] == "A user with that user ID does not exist")) {
@@ -454,11 +422,8 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   Future<void> getCart() async {
-    var response = await get(
-      Uri.parse(baseUrl + "/get-cart?user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await ShopService.getCart({"user_id": user_id.toString()});
+
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
             info["error"] == "A user with that user ID does not exist")) {
@@ -484,11 +449,11 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   Future<void> getPermissions() async {
-    var response = await get(
-      Uri.parse(baseUrl + "/get-permissions?category=shop&user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await AuthService.getPermissions({
+      "category": "shop",
+      "user_id": user_id.toString(),
+    });
+
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
             info["error"] == "A user with that user ID does not exist")) {
@@ -530,7 +495,6 @@ class _ShopPageState extends State<ShopPage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
-      token = info["token"]!;
       role = info["role"]!;
     });
     await Future.wait([getItems(), getCart(), getPermissions()]);

@@ -1,9 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/donations_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
@@ -18,7 +16,6 @@ class DonatePage extends StatefulWidget {
 
 class _DonatePageState extends State<DonatePage> {
   late int user_id;
-  late String token;
   late String name;
   late String email;
 
@@ -33,8 +30,6 @@ class _DonatePageState extends State<DonatePage> {
 
   bool loaded = false;
   bool submitted = false;
-
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
@@ -56,7 +51,6 @@ class _DonatePageState extends State<DonatePage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
-      token = info["token"]!;
       name = info["name"]!;
       email = info["email"]!;
       name_controller.text = name;
@@ -322,17 +316,12 @@ class _DonatePageState extends State<DonatePage> {
                                         submitted = true;
                                       });
 
-                                      var response = await post(
-                                        Uri.parse(baseUrl + "/stripe-payment"),
-                                        headers: {
-                                          "Authorization": "Bearer ${token}",
-                                        },
-                                        body: {
-                                          "user_id": user_id.toString(),
-                                          "amount": amount.toString(),
-                                        },
-                                      );
-                                      Map info = jsonDecode(response.body);
+                                      Map info =
+                                          await DonationsService.stripePayment({
+                                            "user_id": user_id.toString(),
+                                            "amount": amount.toString(),
+                                          });
+
                                       if (info.containsKey("error") &&
                                           (info["error"] ==
                                                   "Invalid authorization token" ||
@@ -389,19 +378,14 @@ class _DonatePageState extends State<DonatePage> {
                                           submitted = true;
                                         });
 
-                                        var response = await post(
-                                          Uri.parse(baseUrl + "/log-donation"),
-                                          headers: {
-                                            "Authorization": "Bearer ${token}",
-                                          },
-                                          body: {
-                                            "user_id": user_id.toString(),
-                                            "name": name,
-                                            "email": email,
-                                            "amount": amount.toString(),
-                                          },
-                                        );
-                                        Map info = jsonDecode(response.body);
+                                        Map info =
+                                            await DonationsService.logDonation({
+                                              "user_id": user_id.toString(),
+                                              "name": name,
+                                              "email": email,
+                                              "amount": amount.toString(),
+                                            });
+
                                         if (info.containsKey("error") &&
                                             (info["error"] ==
                                                     "Invalid authorization token" ||

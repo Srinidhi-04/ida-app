@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:src/services/misc_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import "package:src/services/secure_storage.dart";
 
@@ -37,13 +36,11 @@ class _SplashPageState extends State<SplashPage> {
   final app_version = 11.4;
   bool update = false;
 
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
-
   Future<void> checkUpdate() async {
-    var response = await get(
-      Uri.parse(baseUrl + "/check-update?version=${app_version}"),
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await MiscService.checkUpdate({
+      "version": app_version.toString(),
+    });
+
     if (info["message"] == "Hard update") {
       setState(() {
         update = true;

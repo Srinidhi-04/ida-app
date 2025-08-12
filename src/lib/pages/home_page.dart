@@ -1,10 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:src/services/announcements_service.dart';
+import 'package:src/services/auth_service.dart';
+import 'package:src/services/events_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
+import 'package:src/services/shop_service.dart';
 import 'package:src/widgets/cart_button.dart';
 import 'package:src/widgets/navigation.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -19,7 +20,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late int user_id;
-  late String token;
   late String role;
 
   List<String> months = [
@@ -48,8 +48,6 @@ class _HomePageState extends State<HomePage> {
 
   List<String> admin_roles = ["admin"];
   bool admin_access = false;
-
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
   Widget mainButton(Color color, String text, String path, bool external) {
     return Padding(
@@ -237,11 +235,11 @@ class _HomePageState extends State<HomePage> {
       if (loadingEvents == null) loadingEvents = true;
     });
 
-    var response = await get(
-      Uri.parse(baseUrl + "/get-events?completed=no&user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await EventsService.getEvents({
+      "completed": "no",
+      "user_id": user_id.toString(),
+    });
+
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
             info["error"] == "A user with that user ID does not exist")) {
@@ -280,11 +278,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getCart() async {
-    var response = await get(
-      Uri.parse(baseUrl + "/get-cart?user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await ShopService.getCart({"user_id": user_id.toString()});
+
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
             info["error"] == "A user with that user ID does not exist")) {
@@ -309,13 +304,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getPermissions() async {
-    var response = await get(
-      Uri.parse(
-        baseUrl + "/get-permissions?category=announcements&user_id=${user_id}",
-      ),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await AuthService.getPermissions({
+      "category": "announcements",
+      "user_id": user_id.toString(),
+    });
+
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
             info["error"] == "A user with that user ID does not exist")) {
@@ -337,11 +330,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getAnnouncements() async {
-    var response = await get(
-      Uri.parse(baseUrl + "/get-announcements?user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await AnnouncementsService.getAnnouncements({
+      "user_id": user_id.toString(),
+    });
+
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
             info["error"] == "A user with that user ID does not exist")) {
@@ -450,14 +442,10 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ).then((_) async {
-        await post(
-          Uri.parse(baseUrl + "/update-announcement"),
-          headers: {"Authorization": "Bearer ${token}"},
-          body: {
-            "user_id": user_id.toString(),
-            "last_announcement": last_announcement.toString(),
-          },
-        );
+        await AnnouncementsService.updateAnnouncement({
+          "user_id": user_id.toString(),
+          "last_announcement": last_announcement.toString(),
+        });
       });
     }
   }
@@ -482,7 +470,6 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       user_id = int.parse(info["user_id"]!);
-      token = info["token"]!;
       role = info["role"]!;
       loaded = true;
     });

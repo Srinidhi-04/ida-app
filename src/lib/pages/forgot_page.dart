@@ -1,7 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:src/services/auth_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/submit_overlay.dart';
@@ -46,17 +44,13 @@ class _ForgotPageState extends State<ForgotPage> {
 
   TextEditingController emailController = TextEditingController();
 
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
-
   Future<void> sendCode() async {
     setState(() {
       submitted = true;
     });
-    var response = await post(
-      Uri.parse(baseUrl + "/send-code"),
-      body: {"email": email, "forgot": "yes"},
-    );
-    Map info = jsonDecode(response.body);
+
+    Map info = await AuthService.sendCode({"email": email, "forgot": "yes"});
+
     setState(() {
       submitted = false;
     });
@@ -78,11 +72,13 @@ class _ForgotPageState extends State<ForgotPage> {
     setState(() {
       submitted = true;
     });
-    var response = await post(
-      Uri.parse(baseUrl + "/change-password"),
-      body: {"email": email, "password": password, "code": code},
-    );
-    Map info = jsonDecode(response.body);
+
+    Map info = await AuthService.changePassword({
+      "email": email,
+      "password": password,
+      "code": code,
+    });
+
     if (info.containsKey("error")) {
       setState(() {
         error = info["error"];
@@ -104,7 +100,6 @@ class _ForgotPageState extends State<ForgotPage> {
 
     await NotificationsManager.subscribeAllNotifications(
       info["user_id"],
-      info["token"],
       info["reminders"],
       info["announcements"],
     );

@@ -1,10 +1,8 @@
-import "dart:convert";
-
 import "package:flutter/material.dart";
-import "package:http/http.dart";
 import "package:loading_animation_widget/loading_animation_widget.dart";
 import "package:src/services/notifications_manager.dart";
 import "package:src/services/secure_storage.dart";
+import "package:src/services/settings_service.dart";
 import "package:src/widgets/navigation.dart";
 import "package:src/widgets/submit_overlay.dart";
 
@@ -17,7 +15,6 @@ class RolesPage extends StatefulWidget {
 
 class _RolesPageState extends State<RolesPage> {
   late int user_id;
-  late String token;
   late String email;
   String original = "";
   String role = "";
@@ -32,14 +29,9 @@ class _RolesPageState extends State<RolesPage> {
 
   bool submitted = false;
 
-  String baseUrl = "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
-
   Future<void> getRoles() async {
-    var response = await get(
-      Uri.parse(baseUrl + "/get-roles?user_id=${user_id}"),
-      headers: {"Authorization": "Bearer ${token}"},
-    );
-    Map info = jsonDecode(response.body);
+    Map info = await SettingsService.getRoles({"user_id": user_id.toString()});
+
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
             info["error"] == "A user with that user ID does not exist")) {
@@ -139,7 +131,6 @@ class _RolesPageState extends State<RolesPage> {
     }
     setState(() {
       user_id = int.parse(info["user_id"]!);
-      token = info["token"]!;
       email = info["email"]!;
     });
     await getRoles();
@@ -434,16 +425,12 @@ class _RolesPageState extends State<RolesPage> {
                                   submitted = true;
                                 });
 
-                                var response = await post(
-                                  Uri.parse(baseUrl + "/edit-role"),
-                                  headers: {"Authorization": "Bearer ${token}"},
-                                  body: {
-                                    "user_id": user_id.toString(),
-                                    "email": controller.text,
-                                    "role": role,
-                                  },
-                                );
-                                Map info = jsonDecode(response.body);
+                                Map info = await SettingsService.editRole({
+                                  "user_id": user_id.toString(),
+                                  "email": controller.text,
+                                  "role": role,
+                                });
+
                                 if (info.containsKey("error") &&
                                     (info["error"] ==
                                             "Invalid authorization token" ||
