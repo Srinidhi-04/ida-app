@@ -1,7 +1,25 @@
 import datetime
 from hashlib import sha256
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest, JsonResponse, QueryDict
 from ida_app.models import UserCredentials, UserTokens
+
+def requires_fields(body: QueryDict, fields: dict):
+    for field in fields:
+        value = body.get(field)
+        if not value:
+            return JsonResponse({"error": f"'{field}' field is required"}, status = 400)
+        
+        if fields[field] == "int":
+            try:
+                int(value)
+            except:
+                return JsonResponse({"error": f"'{field}' field is required as an int"}, status = 400)
+        
+        if fields[field] == "float":
+            try:
+                float(value)
+            except:
+                return JsonResponse({"error": f"'{field}' field is required as a float"}, status = 400)
 
 def auth_exempt(view):
     view.auth_exempt = True

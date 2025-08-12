@@ -1,5 +1,11 @@
 from django.urls import path
-from ida_app.views import *
+from ida_app.views.auth import *
+from ida_app.views.events import *
+from ida_app.views.shop import *
+from ida_app.views.settings import *
+from ida_app.views.announcements import *
+from ida_app.views.donations import *
+from ida_app.views.misc import *
 
 urlpatterns = [
     path("", index),
