@@ -218,12 +218,14 @@ class _ItemPageState extends State<ItemPage> {
                             });
 
                             if (item_id == null) {
-                              Map info = await ShopService.addItem({
-                                "user_id": user_id.toString(),
-                                "name": name,
-                                "price": price.toString(),
-                                "image": image,
-                              });
+                              Map info = await ShopService.addItem(
+                                body: {
+                                  "user_id": user_id.toString(),
+                                  "name": name,
+                                  "price": price.toString(),
+                                  "image": image,
+                                },
+                              );
 
                               if (info.containsKey("error") &&
                                   (info["error"] ==
@@ -239,17 +241,39 @@ class _ItemPageState extends State<ItemPage> {
                                   (route) => false,
                                 );
                                 return;
+                              } else if (info.containsKey("error")) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      info["error"],
+                                      style: Theme.of(
+                                        context,
+                                      ).typography.white.bodyMedium!.apply(
+                                        color:
+                                            Theme.of(context).primaryColorLight,
+                                      ),
+                                    ),
+                                    backgroundColor:
+                                        Theme.of(context).primaryColorDark,
+                                    showCloseIcon: true,
+                                    closeIconColor:
+                                        Theme.of(context).primaryColorLight,
+                                  ),
+                                );
+                                return;
                               }
 
                               Navigator.pop(context);
                             } else {
-                              Map info = await ShopService.editItem({
-                                "user_id": user_id.toString(),
-                                "item_id": item_id.toString(),
-                                "name": name,
-                                "price": price.toString(),
-                                "image": image,
-                              });
+                              Map info = await ShopService.editItem(
+                                body: {
+                                  "user_id": user_id.toString(),
+                                  "item_id": item_id.toString(),
+                                  "name": name,
+                                  "price": price.toString(),
+                                  "image": image,
+                                },
+                              );
 
                               if (info.containsKey("error") &&
                                   (info["error"] ==
@@ -263,6 +287,26 @@ class _ItemPageState extends State<ItemPage> {
                                 ).pushNamedAndRemoveUntil(
                                   "/login",
                                   (route) => false,
+                                );
+                                return;
+                              } else if (info.containsKey("error")) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      info["error"],
+                                      style: Theme.of(
+                                        context,
+                                      ).typography.white.bodyMedium!.apply(
+                                        color:
+                                            Theme.of(context).primaryColorLight,
+                                      ),
+                                    ),
+                                    backgroundColor:
+                                        Theme.of(context).primaryColorDark,
+                                    showCloseIcon: true,
+                                    closeIconColor:
+                                        Theme.of(context).primaryColorLight,
+                                  ),
                                 );
                                 return;
                               }

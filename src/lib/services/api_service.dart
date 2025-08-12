@@ -6,7 +6,7 @@ class ApiService {
   static const String baseUrl =
       "https://ida-app-api-afb7906d4986.herokuapp.com/ida-app";
 
-  static Future<Map> get(String endpoint, Map<String, String>? params) async {
+  static Future<Map> get(String endpoint, {Map<String, String>? params}) async {
     var response = await http.get(
       Uri.parse(baseUrl + endpoint).replace(queryParameters: params),
       headers: await headers(),
@@ -15,7 +15,7 @@ class ApiService {
     return jsonDecode(response.body);
   }
 
-  static Future<Map> post(String endpoint, Map<String, String>? body) async {
+  static Future<Map> post(String endpoint, {Map<String, String>? body}) async {
     var response = await http.post(
       Uri.parse(baseUrl + endpoint),
       headers: await headers(),

@@ -260,10 +260,9 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> getEvents() async {
-    Map info = await EventsService.getEvents({
-      "completed": "no",
-      "user": user_id.toString(),
-    });
+    Map info = await EventsService.getEvents(
+      params: {"completed": "no", "user": user_id.toString()},
+    );
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -273,6 +272,21 @@ class _MapPageState extends State<MapPage> {
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
       return;
     }
 

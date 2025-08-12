@@ -49,7 +49,7 @@ class _ForgotPageState extends State<ForgotPage> {
       submitted = true;
     });
 
-    Map info = await AuthService.sendCode({"email": email, "forgot": "yes"});
+    Map info = await AuthService.sendCode(body: {"email": email, "forgot": "yes"});
 
     setState(() {
       submitted = false;
@@ -73,7 +73,7 @@ class _ForgotPageState extends State<ForgotPage> {
       submitted = true;
     });
 
-    Map info = await AuthService.changePassword({
+    Map info = await AuthService.changePassword(body: {
       "email": email,
       "password": password,
       "code": code,
@@ -86,6 +86,7 @@ class _ForgotPageState extends State<ForgotPage> {
       });
       return false;
     }
+    
     await SecureStorage.writeMany({
       "user_id": info["user_id"].toString(),
       "last_login": DateTime.now().toString(),

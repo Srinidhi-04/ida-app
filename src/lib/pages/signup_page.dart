@@ -47,7 +47,7 @@ class _SignupPageState extends State<SignupPage> {
       submitted = true;
     });
 
-    Map info = await AuthService.signup({
+    Map info = await AuthService.signup(body: {
       "name": name,
       "email": email,
       "password": password,

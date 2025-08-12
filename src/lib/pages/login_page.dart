@@ -51,7 +51,7 @@ class _LoginPageState extends State<LoginPage> {
       submitted = true;
     });
 
-    Map info = await AuthService.login({"email": email, "password": password});
+    Map info = await AuthService.login(body: {"email": email, "password": password});
 
     if (info.containsKey("error")) {
       setState(() {

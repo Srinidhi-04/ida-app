@@ -317,10 +317,12 @@ class _DonatePageState extends State<DonatePage> {
                                       });
 
                                       Map info =
-                                          await DonationsService.stripePayment({
-                                            "user_id": user_id.toString(),
-                                            "amount": amount.toString(),
-                                          });
+                                          await DonationsService.stripePayment(
+                                            body: {
+                                              "user_id": user_id.toString(),
+                                              "amount": amount.toString(),
+                                            },
+                                          );
 
                                       if (info.containsKey("error") &&
                                           (info["error"] ==
@@ -334,6 +336,36 @@ class _DonatePageState extends State<DonatePage> {
                                         ).pushNamedAndRemoveUntil(
                                           "/login",
                                           (route) => false,
+                                        );
+                                        return;
+                                      } else if (info.containsKey("error")) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              info["error"],
+                                              style: Theme.of(context)
+                                                  .typography
+                                                  .white
+                                                  .bodyMedium!
+                                                  .apply(
+                                                    color:
+                                                        Theme.of(
+                                                          context,
+                                                        ).primaryColorLight,
+                                                  ),
+                                            ),
+                                            backgroundColor:
+                                                Theme.of(
+                                                  context,
+                                                ).primaryColorDark,
+                                            showCloseIcon: true,
+                                            closeIconColor:
+                                                Theme.of(
+                                                  context,
+                                                ).primaryColorLight,
+                                          ),
                                         );
                                         return;
                                       }
@@ -379,12 +411,14 @@ class _DonatePageState extends State<DonatePage> {
                                         });
 
                                         Map info =
-                                            await DonationsService.logDonation({
-                                              "user_id": user_id.toString(),
-                                              "name": name,
-                                              "email": email,
-                                              "amount": amount.toString(),
-                                            });
+                                            await DonationsService.logDonation(
+                                              body: {
+                                                "user_id": user_id.toString(),
+                                                "name": name,
+                                                "email": email,
+                                                "amount": amount.toString(),
+                                              },
+                                            );
 
                                         if (info.containsKey("error") &&
                                             (info["error"] ==
@@ -398,6 +432,36 @@ class _DonatePageState extends State<DonatePage> {
                                           ).pushNamedAndRemoveUntil(
                                             "/login",
                                             (route) => false,
+                                          );
+                                          return;
+                                        } else if (info.containsKey("error")) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                info["error"],
+                                                style: Theme.of(context)
+                                                    .typography
+                                                    .white
+                                                    .bodyMedium!
+                                                    .apply(
+                                                      color:
+                                                          Theme.of(
+                                                            context,
+                                                          ).primaryColorLight,
+                                                    ),
+                                              ),
+                                              backgroundColor:
+                                                  Theme.of(
+                                                    context,
+                                                  ).primaryColorDark,
+                                              showCloseIcon: true,
+                                              closeIconColor:
+                                                  Theme.of(
+                                                    context,
+                                                  ).primaryColorLight,
+                                            ),
                                           );
                                           return;
                                         }

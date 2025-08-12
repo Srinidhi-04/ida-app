@@ -21,7 +21,7 @@ class NotificationsManager {
         FirebaseMessaging.instance.subscribeToTopic("ida-app-announcements");
       }
 
-      Map info = await EventsService.getNotifications({
+      Map info = await EventsService.getNotifications(params: {
         "user_id": user_id.toString(),
       });
 
@@ -64,7 +64,7 @@ class NotificationsManager {
     String reminders,
   ) async {
     try {
-      EventsService.toggleNotification({
+      EventsService.toggleNotification(body: {
         "user_id": user_id.toString(),
         "event_id": event_id.toString(),
       });
@@ -95,7 +95,7 @@ class NotificationsManager {
     String reminders,
   ) async {
     try {
-      EventsService.toggleNotification({
+      EventsService.toggleNotification(body: {
         "user_id": user_id.toString(),
         "event_id": event_id.toString(),
       });
@@ -160,7 +160,7 @@ class NotificationsManager {
     String new_interval,
   ) async {
     try {
-      Map info = await EventsService.getNotifications({
+      Map info = await EventsService.getNotifications(params: {
         "user_id": user_id.toString(),
       });
 

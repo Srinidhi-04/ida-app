@@ -123,10 +123,12 @@ class _HelpPageState extends State<HelpPage> {
                               submitted = true;
                             });
 
-                            Map info = await MiscService.sendQuery({
-                              "user_id": user_id.toString(),
-                              "query": query,
-                            });
+                            Map info = await MiscService.sendQuery(
+                              body: {
+                                "user_id": user_id.toString(),
+                                "query": query,
+                              },
+                            );
 
                             if (info.containsKey("error") &&
                                 (info["error"] ==
@@ -140,6 +142,26 @@ class _HelpPageState extends State<HelpPage> {
                               ).pushNamedAndRemoveUntil(
                                 "/login",
                                 (route) => false,
+                              );
+                              return;
+                            } else if (info.containsKey("error")) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    info["error"],
+                                    style: Theme.of(
+                                      context,
+                                    ).typography.white.bodyMedium!.apply(
+                                      color:
+                                          Theme.of(context).primaryColorLight,
+                                    ),
+                                  ),
+                                  backgroundColor:
+                                      Theme.of(context).primaryColorDark,
+                                  showCloseIcon: true,
+                                  closeIconColor:
+                                      Theme.of(context).primaryColorLight,
+                                ),
                               );
                               return;
                             }

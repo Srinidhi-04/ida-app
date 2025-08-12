@@ -55,7 +55,9 @@ class _EventPageState extends State<EventPage> {
   bool admin_access = false;
 
   Future<void> getPermissions() async {
-    Map info = await AuthService.getPermissions({"category": "events", "user_id": user_id.toString()});
+    Map info = await AuthService.getPermissions(
+      params: {"category": "events", "user_id": user_id.toString()},
+    );
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -65,6 +67,21 @@ class _EventPageState extends State<EventPage> {
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
       return;
     }
 
@@ -224,10 +241,13 @@ class _EventPageState extends State<EventPage> {
                           ),
                           PopupMenuItem(
                             onTap: () async {
-                              Map info = await EventsService.deleteEvent({
-                                "user_id": user_id.toString(),
-                                "event_id": event_id.toString(),
-                              });
+                              Map info = await EventsService.deleteEvent(
+                                body: {
+                                  "user_id": user_id.toString(),
+                                  "event_id": event_id.toString(),
+                                },
+                              );
+
                               if (info.containsKey("error") &&
                                   info["error"] ==
                                       "Invalid authorization token") {
@@ -238,6 +258,26 @@ class _EventPageState extends State<EventPage> {
                                 ).pushNamedAndRemoveUntil(
                                   "/login",
                                   (route) => false,
+                                );
+                                return;
+                              } else if (info.containsKey("error")) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      info["error"],
+                                      style: Theme.of(
+                                        context,
+                                      ).typography.white.bodyMedium!.apply(
+                                        color:
+                                            Theme.of(context).primaryColorLight,
+                                      ),
+                                    ),
+                                    backgroundColor:
+                                        Theme.of(context).primaryColorDark,
+                                    showCloseIcon: true,
+                                    closeIconColor:
+                                        Theme.of(context).primaryColorLight,
+                                  ),
                                 );
                                 return;
                               }
@@ -459,10 +499,12 @@ class _EventPageState extends State<EventPage> {
                           rsvp = !rsvp;
                         });
 
-                        Map info = await EventsService.toggleRsvp({
-                          "user_id": user_id.toString(),
-                          "event_id": event_id.toString(),
-                        });
+                        Map info = await EventsService.toggleRsvp(
+                          body: {
+                            "user_id": user_id.toString(),
+                            "event_id": event_id.toString(),
+                          },
+                        );
 
                         if (info.containsKey("error") &&
                             (info["error"] == "Invalid authorization token" ||
@@ -473,6 +515,25 @@ class _EventPageState extends State<EventPage> {
                           await Navigator.of(
                             context,
                           ).pushNamedAndRemoveUntil("/login", (route) => false);
+                          return;
+                        } else if (info.containsKey("error")) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                info["error"],
+                                style: Theme.of(
+                                  context,
+                                ).typography.white.bodyMedium!.apply(
+                                  color: Theme.of(context).primaryColorLight,
+                                ),
+                              ),
+                              backgroundColor:
+                                  Theme.of(context).primaryColorDark,
+                              showCloseIcon: true,
+                              closeIconColor:
+                                  Theme.of(context).primaryColorLight,
+                            ),
+                          );
                           return;
                         }
                       },
@@ -507,10 +568,12 @@ class _EventPageState extends State<EventPage> {
                                 rsvp = !rsvp;
                               });
 
-                              Map info = await EventsService.toggleRsvp({
-                                "user_id": user_id.toString(),
-                                "event_id": event_id.toString(),
-                              });
+                              Map info = await EventsService.toggleRsvp(
+                                body: {
+                                  "user_id": user_id.toString(),
+                                  "event_id": event_id.toString(),
+                                },
+                              );
 
                               if (info.containsKey("error") &&
                                   info["error"] ==
@@ -522,6 +585,26 @@ class _EventPageState extends State<EventPage> {
                                 ).pushNamedAndRemoveUntil(
                                   "/login",
                                   (route) => false,
+                                );
+                                return;
+                              } else if (info.containsKey("error")) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      info["error"],
+                                      style: Theme.of(
+                                        context,
+                                      ).typography.white.bodyMedium!.apply(
+                                        color:
+                                            Theme.of(context).primaryColorLight,
+                                      ),
+                                    ),
+                                    backgroundColor:
+                                        Theme.of(context).primaryColorDark,
+                                    showCloseIcon: true,
+                                    closeIconColor:
+                                        Theme.of(context).primaryColorLight,
+                                  ),
                                 );
                                 return;
                               }

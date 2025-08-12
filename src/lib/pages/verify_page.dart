@@ -44,7 +44,7 @@ class _VerifyPageState extends State<VerifyPage> {
       submitted = true;
     });
 
-    Map info = await AuthService.verifyCode({
+    Map info = await AuthService.verifyCode(body: {
       "user_id": user_id.toString(),
       "code": code,
     });
@@ -56,6 +56,7 @@ class _VerifyPageState extends State<VerifyPage> {
       });
       return false;
     }
+
     await SecureStorage.writeMany({
       "user_id": info["user_id"].toString(),
       "last_login": DateTime.now().toString(),
@@ -214,7 +215,7 @@ class _VerifyPageState extends State<VerifyPage> {
                                 ),
                                 TextButton(
                                   onPressed: () async {
-                                    await AuthService.sendCode({
+                                    await AuthService.sendCode(body: {
                                       "email": email,
                                     });
 

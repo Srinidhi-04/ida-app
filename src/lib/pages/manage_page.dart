@@ -541,22 +541,24 @@ class _ManagePageState extends State<ManagePage> {
                             );
 
                             if (event_id == null) {
-                              Map info = await EventsService.addEvent({
-                                "user_id": user_id.toString(),
-                                "name": name,
-                                "date": final_date.toString().split(".")[0],
-                                "timezone":
-                                    final_date.timeZoneOffset.toString().split(
-                                      ".",
-                                    )[0],
-                                "location": location,
-                                "latitude": latlng[0].toString(),
-                                "longitude": latlng[1].toString(),
-                                "image": image,
-                                "body": body,
-                                "ticket": ticket,
-                                "essential": (featured ? "yes" : "no"),
-                              });
+                              Map info = await EventsService.addEvent(
+                                body: {
+                                  "user_id": user_id.toString(),
+                                  "name": name,
+                                  "date": final_date.toString().split(".")[0],
+                                  "timezone":
+                                      final_date.timeZoneOffset
+                                          .toString()
+                                          .split(".")[0],
+                                  "location": location,
+                                  "latitude": latlng[0].toString(),
+                                  "longitude": latlng[1].toString(),
+                                  "image": image,
+                                  "body": body,
+                                  "ticket": ticket,
+                                  "essential": (featured ? "yes" : "no"),
+                                },
+                              );
 
                               if (info.containsKey("error") &&
                                   (info["error"] ==
@@ -572,28 +574,50 @@ class _ManagePageState extends State<ManagePage> {
                                   (route) => false,
                                 );
                                 return;
+                              } else if (info.containsKey("error")) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      info["error"],
+                                      style: Theme.of(
+                                        context,
+                                      ).typography.white.bodyMedium!.apply(
+                                        color:
+                                            Theme.of(context).primaryColorLight,
+                                      ),
+                                    ),
+                                    backgroundColor:
+                                        Theme.of(context).primaryColorDark,
+                                    showCloseIcon: true,
+                                    closeIconColor:
+                                        Theme.of(context).primaryColorLight,
+                                  ),
+                                );
+                                return;
                               }
 
                               Navigator.pop(context);
                               return;
                             } else {
-                              Map info = await EventsService.editEvent({
-                                "user_id": user_id.toString(),
-                                "event_id": event_id.toString(),
-                                "name": name,
-                                "date": final_date.toString().split(".")[0],
-                                "timezone":
-                                    final_date.timeZoneOffset.toString().split(
-                                      ".",
-                                    )[0],
-                                "location": location,
-                                "latitude": latlng[0].toString(),
-                                "longitude": latlng[1].toString(),
-                                "image": image,
-                                "body": body,
-                                "ticket": ticket,
-                                "essential": (featured ? "yes" : "no"),
-                              });
+                              Map info = await EventsService.editEvent(
+                                body: {
+                                  "user_id": user_id.toString(),
+                                  "event_id": event_id.toString(),
+                                  "name": name,
+                                  "date": final_date.toString().split(".")[0],
+                                  "timezone":
+                                      final_date.timeZoneOffset
+                                          .toString()
+                                          .split(".")[0],
+                                  "location": location,
+                                  "latitude": latlng[0].toString(),
+                                  "longitude": latlng[1].toString(),
+                                  "image": image,
+                                  "body": body,
+                                  "ticket": ticket,
+                                  "essential": (featured ? "yes" : "no"),
+                                },
+                              );
 
                               if (info.containsKey("error") &&
                                   (info["error"] ==
@@ -607,6 +631,26 @@ class _ManagePageState extends State<ManagePage> {
                                 ).pushNamedAndRemoveUntil(
                                   "/login",
                                   (route) => false,
+                                );
+                                return;
+                              } else if (info.containsKey("error")) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      info["error"],
+                                      style: Theme.of(
+                                        context,
+                                      ).typography.white.bodyMedium!.apply(
+                                        color:
+                                            Theme.of(context).primaryColorLight,
+                                      ),
+                                    ),
+                                    backgroundColor:
+                                        Theme.of(context).primaryColorDark,
+                                    showCloseIcon: true,
+                                    closeIconColor:
+                                        Theme.of(context).primaryColorLight,
+                                  ),
                                 );
                                 return;
                               }

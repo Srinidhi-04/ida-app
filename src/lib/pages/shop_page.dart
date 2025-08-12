@@ -53,10 +53,12 @@ class _ShopPageState extends State<ShopPage> {
                   items.removeAt(index);
                 });
 
-                Map info = await ShopService.deleteItem({
-                  "user_id": user_id.toString(),
-                  "item_id": item_id.toString(),
-                });
+                Map info = await ShopService.deleteItem(
+                  body: {
+                    "user_id": user_id.toString(),
+                    "item_id": item_id.toString(),
+                  },
+                );
 
                 if (info.containsKey("error") &&
                     (info["error"] == "Invalid authorization token" ||
@@ -67,6 +69,20 @@ class _ShopPageState extends State<ShopPage> {
                   await Navigator.of(
                     context,
                   ).pushNamedAndRemoveUntil("/login", (route) => false);
+                  return;
+                } else if (info.containsKey("error")) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        info["error"],
+                        style: Theme.of(context).typography.white.bodyMedium!
+                            .apply(color: Theme.of(context).primaryColorLight),
+                      ),
+                      backgroundColor: Theme.of(context).primaryColorDark,
+                      showCloseIcon: true,
+                      closeIconColor: Theme.of(context).primaryColorLight,
+                    ),
+                  );
                   return;
                 }
 
@@ -100,10 +116,12 @@ class _ShopPageState extends State<ShopPage> {
                     items.removeAt(index);
                   });
 
-                  Map info = await ShopService.deleteItem({
-                    "user_id": user_id.toString(),
-                    "item_id": item_id.toString(),
-                  });
+                  Map info = await ShopService.deleteItem(
+                    body: {
+                      "user_id": user_id.toString(),
+                      "item_id": item_id.toString(),
+                    },
+                  );
 
                   if (info.containsKey("error") &&
                       (info["error"] == "Invalid authorization token" ||
@@ -114,6 +132,23 @@ class _ShopPageState extends State<ShopPage> {
                     await Navigator.of(
                       context,
                     ).pushNamedAndRemoveUntil("/login", (route) => false);
+                    return;
+                  } else if (info.containsKey("error")) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          info["error"],
+                          style: Theme.of(
+                            context,
+                          ).typography.white.bodyMedium!.apply(
+                            color: Theme.of(context).primaryColorLight,
+                          ),
+                        ),
+                        backgroundColor: Theme.of(context).primaryColorDark,
+                        showCloseIcon: true,
+                        closeIconColor: Theme.of(context).primaryColorLight,
+                      ),
+                    );
                     return;
                   }
 
@@ -194,11 +229,13 @@ class _ShopPageState extends State<ShopPage> {
                                           quantity[item_id] = 1;
                                         });
 
-                                        Map info = await ShopService.editCart({
-                                          "user_id": user_id.toString(),
-                                          "item_id": item_id.toString(),
-                                          "quantity": "1",
-                                        });
+                                        Map info = await ShopService.editCart(
+                                          body: {
+                                            "user_id": user_id.toString(),
+                                            "item_id": item_id.toString(),
+                                            "quantity": "1",
+                                          },
+                                        );
 
                                         if (info.containsKey("error") &&
                                             (info["error"] ==
@@ -212,6 +249,36 @@ class _ShopPageState extends State<ShopPage> {
                                           ).pushNamedAndRemoveUntil(
                                             "/login",
                                             (route) => false,
+                                          );
+                                          return;
+                                        } else if (info.containsKey("error")) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                info["error"],
+                                                style: Theme.of(context)
+                                                    .typography
+                                                    .white
+                                                    .bodyMedium!
+                                                    .apply(
+                                                      color:
+                                                          Theme.of(
+                                                            context,
+                                                          ).primaryColorLight,
+                                                    ),
+                                              ),
+                                              backgroundColor:
+                                                  Theme.of(
+                                                    context,
+                                                  ).primaryColorDark,
+                                              showCloseIcon: true,
+                                              closeIconColor:
+                                                  Theme.of(
+                                                    context,
+                                                  ).primaryColorLight,
+                                            ),
                                           );
                                           return;
                                         }
@@ -270,20 +337,20 @@ class _ShopPageState extends State<ShopPage> {
                                                   quantity.remove(item_id);
                                               });
 
-                                              Map info =
-                                                  await ShopService.editCart({
-                                                    "user_id":
-                                                        user_id.toString(),
-                                                    "item_id":
-                                                        item_id.toString(),
-                                                    "quantity":
-                                                        ((quantity.containsKey(
-                                                              item_id,
-                                                            ))
-                                                            ? quantity[item_id]
-                                                                .toString()
-                                                            : "0"),
-                                                  });
+                                              Map
+                                              info = await ShopService.editCart(
+                                                body: {
+                                                  "user_id": user_id.toString(),
+                                                  "item_id": item_id.toString(),
+                                                  "quantity":
+                                                      ((quantity.containsKey(
+                                                            item_id,
+                                                          ))
+                                                          ? quantity[item_id]
+                                                              .toString()
+                                                          : "0"),
+                                                },
+                                              );
 
                                               if (info.containsKey("error") &&
                                                   (info["error"] ==
@@ -297,6 +364,38 @@ class _ShopPageState extends State<ShopPage> {
                                                 ).pushNamedAndRemoveUntil(
                                                   "/login",
                                                   (route) => false,
+                                                );
+                                                return;
+                                              } else if (info.containsKey(
+                                                "error",
+                                              )) {
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      info["error"],
+                                                      style: Theme.of(context)
+                                                          .typography
+                                                          .white
+                                                          .bodyMedium!
+                                                          .apply(
+                                                            color:
+                                                                Theme.of(
+                                                                  context,
+                                                                ).primaryColorLight,
+                                                          ),
+                                                    ),
+                                                    backgroundColor:
+                                                        Theme.of(
+                                                          context,
+                                                        ).primaryColorDark,
+                                                    showCloseIcon: true,
+                                                    closeIconColor:
+                                                        Theme.of(
+                                                          context,
+                                                        ).primaryColorLight,
+                                                  ),
                                                 );
                                                 return;
                                               }
@@ -321,16 +420,16 @@ class _ShopPageState extends State<ShopPage> {
                                                     quantity[item_id]! + 1;
                                               });
 
-                                              Map info =
-                                                  await ShopService.editCart({
-                                                    "user_id":
-                                                        user_id.toString(),
-                                                    "item_id":
-                                                        item_id.toString(),
-                                                    "quantity":
-                                                        quantity[item_id]
-                                                            .toString(),
-                                                  });
+                                              Map
+                                              info = await ShopService.editCart(
+                                                body: {
+                                                  "user_id": user_id.toString(),
+                                                  "item_id": item_id.toString(),
+                                                  "quantity":
+                                                      quantity[item_id]
+                                                          .toString(),
+                                                },
+                                              );
 
                                               if (info.containsKey("error") &&
                                                   (info["error"] ==
@@ -344,6 +443,38 @@ class _ShopPageState extends State<ShopPage> {
                                                 ).pushNamedAndRemoveUntil(
                                                   "/login",
                                                   (route) => false,
+                                                );
+                                                return;
+                                              } else if (info.containsKey(
+                                                "error",
+                                              )) {
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
+                                                  SnackBar(
+                                                    content: Text(
+                                                      info["error"],
+                                                      style: Theme.of(context)
+                                                          .typography
+                                                          .white
+                                                          .bodyMedium!
+                                                          .apply(
+                                                            color:
+                                                                Theme.of(
+                                                                  context,
+                                                                ).primaryColorLight,
+                                                          ),
+                                                    ),
+                                                    backgroundColor:
+                                                        Theme.of(
+                                                          context,
+                                                        ).primaryColorDark,
+                                                    showCloseIcon: true,
+                                                    closeIconColor:
+                                                        Theme.of(
+                                                          context,
+                                                        ).primaryColorLight,
+                                                  ),
                                                 );
                                                 return;
                                               }
@@ -400,7 +531,9 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   Future<void> getItems() async {
-    Map info = await ShopService.getItems({"user_id": user_id.toString()});
+    Map info = await ShopService.getItems(
+      params: {"user_id": user_id.toString()},
+    );
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -410,6 +543,21 @@ class _ShopPageState extends State<ShopPage> {
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
       return;
     }
 
@@ -422,7 +570,9 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   Future<void> getCart() async {
-    Map info = await ShopService.getCart({"user_id": user_id.toString()});
+    Map info = await ShopService.getCart(
+      params: {"user_id": user_id.toString()},
+    );
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -432,6 +582,21 @@ class _ShopPageState extends State<ShopPage> {
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
       return;
     }
 
@@ -449,10 +614,9 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   Future<void> getPermissions() async {
-    Map info = await AuthService.getPermissions({
-      "category": "shop",
-      "user_id": user_id.toString(),
-    });
+    Map info = await AuthService.getPermissions(
+      params: {"category": "shop", "user_id": user_id.toString()},
+    );
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -462,6 +626,21 @@ class _ShopPageState extends State<ShopPage> {
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
       return;
     }
 

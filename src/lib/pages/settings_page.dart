@@ -258,11 +258,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                 "avatar": selected.toString(),
                               });
 
-                              Map info = await SettingsService.editProfile({
-                                "user_id": user_id.toString(),
-                                "name": name,
-                                "avatar": selected.toString(),
-                              });
+                              Map info = await SettingsService.editProfile(
+                                body: {
+                                  "user_id": user_id.toString(),
+                                  "name": name,
+                                  "avatar": selected.toString(),
+                                },
+                              );
 
                               if (info.containsKey("error") &&
                                   (info["error"] ==
@@ -276,6 +278,26 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ).pushNamedAndRemoveUntil(
                                   "/login",
                                   (route) => false,
+                                );
+                                return;
+                              } else if (info.containsKey("error")) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      info["error"],
+                                      style: Theme.of(
+                                        context,
+                                      ).typography.white.bodyMedium!.apply(
+                                        color:
+                                            Theme.of(context).primaryColorLight,
+                                      ),
+                                    ),
+                                    backgroundColor:
+                                        Theme.of(context).primaryColorDark,
+                                    showCloseIcon: true,
+                                    closeIconColor:
+                                        Theme.of(context).primaryColorLight,
+                                  ),
                                 );
                                 return;
                               }
@@ -356,7 +378,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                   submitted = true;
                                 });
 
-                                await SettingsService.deleteAccount({"user_id": user_id.toString()});
+                                await SettingsService.deleteAccount(body: {
+                                  "user_id": user_id.toString(),
+                                });
 
                                 await NotificationsManager.unsubscribeAllNotifications();
                                 await SecureStorage.delete();

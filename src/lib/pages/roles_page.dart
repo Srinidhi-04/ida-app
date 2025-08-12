@@ -30,7 +30,9 @@ class _RolesPageState extends State<RolesPage> {
   bool submitted = false;
 
   Future<void> getRoles() async {
-    Map info = await SettingsService.getRoles({"user_id": user_id.toString()});
+    Map info = await SettingsService.getRoles(
+      params: {"user_id": user_id.toString()},
+    );
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -40,6 +42,21 @@ class _RolesPageState extends State<RolesPage> {
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
       return;
     }
 
@@ -425,11 +442,13 @@ class _RolesPageState extends State<RolesPage> {
                                   submitted = true;
                                 });
 
-                                Map info = await SettingsService.editRole({
-                                  "user_id": user_id.toString(),
-                                  "email": controller.text,
-                                  "role": role,
-                                });
+                                Map info = await SettingsService.editRole(
+                                  body: {
+                                    "user_id": user_id.toString(),
+                                    "email": controller.text,
+                                    "role": role,
+                                  },
+                                );
 
                                 if (info.containsKey("error") &&
                                     (info["error"] ==
@@ -443,6 +462,28 @@ class _RolesPageState extends State<RolesPage> {
                                   ).pushNamedAndRemoveUntil(
                                     "/login",
                                     (route) => false,
+                                  );
+                                  return;
+                                } else if (info.containsKey("error")) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        info["error"],
+                                        style: Theme.of(
+                                          context,
+                                        ).typography.white.bodyMedium!.apply(
+                                          color:
+                                              Theme.of(
+                                                context,
+                                              ).primaryColorLight,
+                                        ),
+                                      ),
+                                      backgroundColor:
+                                          Theme.of(context).primaryColorDark,
+                                      showCloseIcon: true,
+                                      closeIconColor:
+                                          Theme.of(context).primaryColorLight,
+                                    ),
                                   );
                                   return;
                                 }

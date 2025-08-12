@@ -235,10 +235,9 @@ class _HomePageState extends State<HomePage> {
       if (loadingEvents == null) loadingEvents = true;
     });
 
-    Map info = await EventsService.getEvents({
-      "completed": "no",
-      "user_id": user_id.toString(),
-    });
+    Map info = await EventsService.getEvents(
+      params: {"completed": "no", "user_id": user_id.toString()},
+    );
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -248,6 +247,21 @@ class _HomePageState extends State<HomePage> {
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
       return;
     }
 
@@ -278,7 +292,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getCart() async {
-    Map info = await ShopService.getCart({"user_id": user_id.toString()});
+    Map info = await ShopService.getCart(
+      params: {"user_id": user_id.toString()},
+    );
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -288,6 +304,21 @@ class _HomePageState extends State<HomePage> {
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
       return;
     }
 
@@ -304,10 +335,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getPermissions() async {
-    Map info = await AuthService.getPermissions({
-      "category": "announcements",
-      "user_id": user_id.toString(),
-    });
+    Map info = await AuthService.getPermissions(
+      params: {"category": "announcements", "user_id": user_id.toString()},
+    );
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -317,6 +347,21 @@ class _HomePageState extends State<HomePage> {
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
       return;
     }
 
@@ -330,9 +375,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getAnnouncements() async {
-    Map info = await AnnouncementsService.getAnnouncements({
-      "user_id": user_id.toString(),
-    });
+    Map info = await AnnouncementsService.getAnnouncements(
+      params: {"user_id": user_id.toString()},
+    );
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -342,6 +387,21 @@ class _HomePageState extends State<HomePage> {
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
       return;
     }
 
@@ -442,10 +502,38 @@ class _HomePageState extends State<HomePage> {
           );
         },
       ).then((_) async {
-        await AnnouncementsService.updateAnnouncement({
-          "user_id": user_id.toString(),
-          "last_announcement": last_announcement.toString(),
-        });
+        Map info = await AnnouncementsService.updateAnnouncement(
+          body: {
+            "user_id": user_id.toString(),
+            "last_announcement": last_announcement.toString(),
+          },
+        );
+
+        if (info.containsKey("error") &&
+            (info["error"] == "Invalid authorization token" ||
+                info["error"] == "A user with that user ID does not exist")) {
+          await NotificationsManager.unsubscribeAllNotifications();
+          await SecureStorage.delete();
+          await Navigator.of(
+            context,
+          ).pushNamedAndRemoveUntil("/login", (route) => false);
+          return;
+        } else if (info.containsKey("error")) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                info["error"],
+                style: Theme.of(context).typography.white.bodyMedium!.apply(
+                  color: Theme.of(context).primaryColorLight,
+                ),
+              ),
+              backgroundColor: Theme.of(context).primaryColorDark,
+              showCloseIcon: true,
+              closeIconColor: Theme.of(context).primaryColorLight,
+            ),
+          );
+          return;
+        }
       });
     }
   }

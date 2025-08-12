@@ -240,7 +240,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getEvents() async {
-    Map info = await EventsService.getRsvp({"user_id": user_id.toString()});
+    Map info = await EventsService.getRsvp(
+      params: {"user_id": user_id.toString()},
+    );
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -250,6 +252,21 @@ class _ProfilePageState extends State<ProfilePage> {
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
       return;
     }
 
@@ -280,10 +297,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getPermissions() async {
-    Map info = await AuthService.getPermissions({
-      "category": "roles",
-      "user_id": user_id.toString(),
-    });
+    Map info = await AuthService.getPermissions(
+      params: {"category": "roles", "user_id": user_id.toString()},
+    );
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -293,6 +309,21 @@ class _ProfilePageState extends State<ProfilePage> {
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
       return;
     }
 

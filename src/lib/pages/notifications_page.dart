@@ -68,9 +68,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   Future<void> getSettings() async {
-    Map info = await SettingsService.getSettings({
-      "user_id": user_id.toString(),
-    });
+    Map info = await SettingsService.getSettings(
+      params: {"user_id": user_id.toString()},
+    );
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -80,6 +80,21 @@ class _NotificationsPageState extends State<NotificationsPage> {
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
       return;
     }
 
@@ -214,16 +229,18 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               changed = false;
                             });
 
-                            Map info = await SettingsService.changeSettings({
-                              "user_id": user_id.toString(),
-                              "announcements":
-                                  (notifs["announcements"]) ? "yes" : "no",
-                              "updates": (notifs["updates"]) ? "yes" : "no",
-                              "merch": (notifs["merch"]) ? "yes" : "no",
-                              "status": (notifs["status"]) ? "yes" : "no",
-                              "mailing": (notifs["mailing"]) ? "yes" : "no",
-                              "reminders": alert,
-                            });
+                            Map info = await SettingsService.changeSettings(
+                              body: {
+                                "user_id": user_id.toString(),
+                                "announcements":
+                                    (notifs["announcements"]) ? "yes" : "no",
+                                "updates": (notifs["updates"]) ? "yes" : "no",
+                                "merch": (notifs["merch"]) ? "yes" : "no",
+                                "status": (notifs["status"]) ? "yes" : "no",
+                                "mailing": (notifs["mailing"]) ? "yes" : "no",
+                                "reminders": alert,
+                              },
+                            );
 
                             if (info.containsKey("error") &&
                                 (info["error"] ==
@@ -237,6 +254,26 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               ).pushNamedAndRemoveUntil(
                                 "/login",
                                 (route) => false,
+                              );
+                              return;
+                            } else if (info.containsKey("error")) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    info["error"],
+                                    style: Theme.of(
+                                      context,
+                                    ).typography.white.bodyMedium!.apply(
+                                      color:
+                                          Theme.of(context).primaryColorLight,
+                                    ),
+                                  ),
+                                  backgroundColor:
+                                      Theme.of(context).primaryColorDark,
+                                  showCloseIcon: true,
+                                  closeIconColor:
+                                      Theme.of(context).primaryColorLight,
+                                ),
                               );
                               return;
                             }

@@ -190,19 +190,22 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                             late Map info;
                             if (!banner) {
                               info =
-                                  await AnnouncementsService.sendAnnouncement({
-                                    "user_id": user_id.toString(),
-                                    "title": title,
-                                    "body": body,
-                                    "everyone": (everyone) ? "yes" : "no",
-                                  });
+                                  await AnnouncementsService.sendAnnouncement(
+                                    body: {
+                                      "user_id": user_id.toString(),
+                                      "title": title,
+                                      "body": body,
+                                      "everyone": (everyone) ? "yes" : "no",
+                                    },
+                                  );
                             } else {
-                              info =
-                                  await AnnouncementsService.addAnnouncement({
-                                    "user_id": user_id.toString(),
-                                    "title": title,
-                                    "body": body,
-                                  });
+                              info = await AnnouncementsService.addAnnouncement(
+                                body: {
+                                  "user_id": user_id.toString(),
+                                  "title": title,
+                                  "body": body,
+                                },
+                              );
                             }
 
                             if (info.containsKey("error") &&
@@ -217,6 +220,26 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                               ).pushNamedAndRemoveUntil(
                                 "/login",
                                 (route) => false,
+                              );
+                              return;
+                            } else if (info.containsKey("error")) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    info["error"],
+                                    style: Theme.of(
+                                      context,
+                                    ).typography.white.bodyMedium!.apply(
+                                      color:
+                                          Theme.of(context).primaryColorLight,
+                                    ),
+                                  ),
+                                  backgroundColor:
+                                      Theme.of(context).primaryColorDark,
+                                  showCloseIcon: true,
+                                  closeIconColor:
+                                      Theme.of(context).primaryColorLight,
+                                ),
                               );
                               return;
                             }

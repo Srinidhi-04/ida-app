@@ -37,7 +37,7 @@ class _SplashPageState extends State<SplashPage> {
   bool update = false;
 
   Future<void> checkUpdate() async {
-    Map info = await MiscService.checkUpdate({
+    Map info = await MiscService.checkUpdate(params: {
       "version": app_version.toString(),
     });
 
