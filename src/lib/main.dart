@@ -115,8 +115,9 @@ void main() async {
         await FirebaseMessaging.instance.subscribeToTopic("ida-app-default");
       }
 
+      // Stripe.publishableKey = "pk_test_51RnYlzQkArntKpGlapTuIf51Fvsi1CittiW7jyvqGN4mKEg9z5baV4kWtOKWHWiW14TzzRqxbSXHZQz01xRJeK8k00gJ2IaMpr";
       Stripe.publishableKey =
-          "pk_test_51RnYlzQkArntKpGlapTuIf51Fvsi1CittiW7jyvqGN4mKEg9z5baV4kWtOKWHWiW14TzzRqxbSXHZQz01xRJeK8k00gJ2IaMpr";
+          "pk_live_51RnYlmH4Cdv9foKx4W0Qq3mbHLG5V5RAPgkoNj36dlvj5YzLErdZBEnWNiS75sjY1UO127RO4xKRfIuaKYFvAuuf00mjmkL60F";
       Stripe.merchantIdentifier = "merchant.ida.src";
       Stripe.instance.applySettings();
 
