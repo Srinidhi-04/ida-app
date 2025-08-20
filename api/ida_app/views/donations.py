@@ -3,6 +3,12 @@ from django.http import HttpRequest, JsonResponse
 from ida_app.tasks import *
 from ida_app.models import *
 from ida_app.middleware import *
+import os
+# from dotenv import load_dotenv
+
+# load_dotenv()
+
+STRIPE_PUBLISH = os.getenv("STRIPE_PUBLISH_TEST")
 
 @request_type("POST")
 def stripe_payment(request: HttpRequest):
@@ -20,7 +26,7 @@ def stripe_payment(request: HttpRequest):
         payment_method_types = ["card"]
     )
 
-    return JsonResponse({"message": "Stripe payment sheet successfully created", "payment_intent": payment_intent.client_secret, "publishable_key": "pk_test_51RnYlzQkArntKpGlapTuIf51Fvsi1CittiW7jyvqGN4mKEg9z5baV4kWtOKWHWiW14TzzRqxbSXHZQz01xRJeK8k00gJ2IaMpr"})
+    return JsonResponse({"message": "Stripe payment sheet successfully created", "payment_intent": payment_intent.client_secret, "publishable_key": STRIPE_PUBLISH})
 
 @request_type("POST")
 def log_donation(request: HttpRequest):
