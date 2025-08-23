@@ -8,7 +8,7 @@ import os
 
 # load_dotenv()
 
-STRIPE_PUBLISH = os.getenv("STRIPE_PUBLISH_TEST")
+STRIPE_PUBLISH = os.getenv("STRIPE_PUBLISH_LIVE")
 
 @request_type("POST")
 def stripe_payment(request: HttpRequest):
