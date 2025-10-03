@@ -327,12 +327,22 @@ class _OrderPageState extends State<OrderPage> {
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(bottom: 10.0),
+                      padding: const EdgeInsets.fromLTRB(0, 5, 0, 15),
                       child: Center(
-                        child: QrImageView(
-                          data:
-                              "{order_id: ${order_id}, user_id: ${user_id}, timestamp: ${qr_time.millisecondsSinceEpoch}}",
-                          size: MediaQuery.of(context).size.width * 0.8,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(50),
+                            border: Border.all(
+                              color: Theme.of(context).primaryColorLight,
+                            ),
+                          ),
+                          child: QrImageView(
+                            data:
+                                "{order_id: ${order_id}, user_id: ${user_id}, timestamp: ${qr_time.millisecondsSinceEpoch}}",
+                            size: MediaQuery.of(context).size.width * 0.6,
+                            padding: EdgeInsets.all(20),
+                            embeddedImage: AssetImage("assets/icon-ios.png"),
+                          ),
                         ),
                       ),
                     ),
