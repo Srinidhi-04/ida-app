@@ -11,7 +11,7 @@ import os
 
 # load_dotenv()
 
-STRIPE_PUBLISH = os.getenv("STRIPE_PUBLISH_TEST")
+STRIPE_PUBLISH = os.getenv("STRIPE_PUBLISH_LIVE")
 
 def create_intent(amount: float):
     amount = int(amount * 100)
@@ -24,7 +24,7 @@ def create_intent(amount: float):
         payment_method_types = ["card"]
     )
 
-    return {"message": "Stripe payment sheet successfully created", "payment_intent": payment_intent.client_secret, "publishable_key": STRIPE_PUBLISH}
+    return {"message": "Stripe payment sheet successfully created", "payment_intent": payment_intent.client_secret, "payment_id": payment_intent.id, "publishable_key": STRIPE_PUBLISH}
 
 @request_type("POST")
 def stripe_payment(request: HttpRequest):
@@ -107,18 +107,21 @@ def cancel_order(request: HttpRequest):
 
 @request_type("POST")
 def log_order(request: HttpRequest):
-    check = requires_fields(json.loads(request.body), {"value": "float", "cart": "list"})
+    body = json.loads(request.body)
+
+    check = requires_fields(body, {"value": "float", "payment_intent": "str", "cart": "list"})
     if check:
         return JsonResponse(check, status = 400)
     
     user: UserCredentials = request.user
-    value = json.loads(request.body).get("value")
-    cart = json.loads(request.body).get("cart")
+    value = body.get("value")
+    cart = body.get("cart")
+    payment_intent = body.get("payment_intent")
 
     try:
         with transaction.atomic():
             try:
-                order = UserOrders(user = user, value = value)
+                order = UserOrders(user = user, value = value, payment_intent = payment_intent)
                 order.save()
             except:
                 raise Exception("An unknown error occurred with the database")
@@ -207,12 +210,16 @@ def change_status(request: HttpRequest):
     
     order.status = status
     order.save()
+
+    if status == "Cancelled":
+        refund = stripe.Refund.create(payment_intent = order.payment_intent)
+        return JsonResponse({"message": "Order cancelled and refunded", "refund_id": refund.id})
     
     return JsonResponse({"message": "Order status changed successfully"})
 
 @request_type("POST")
 def log_donation(request: HttpRequest):
-    check = requires_fields(request.POST, {"name": "str", "email": "str", "amount": "float"})
+    check = requires_fields(request.POST, {"name": "str", "email": "str", "amount": "float", "payment_intent": "str"})
     if check:
         return JsonResponse(check, status = 400)
 
@@ -220,9 +227,10 @@ def log_donation(request: HttpRequest):
     name = request.POST.get("name")
     email = request.POST.get("email")
     amount = float(request.POST.get("amount"))
+    payment_intent = request.POST.get("payment_intent")
 
     try:
-        receipt: DonationReceipts = DonationReceipts(user = user, name = name, email = email, amount = amount)
+        receipt: DonationReceipts = DonationReceipts(user = user, name = name, email = email, amount = amount, payment_intent = payment_intent)
         receipt.save()
 
         send_donation(name, email, amount)

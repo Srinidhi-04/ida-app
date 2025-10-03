@@ -960,6 +960,8 @@ class _ShopPageState extends State<ShopPage> {
                         }),
                       );
 
+                      String payment_id = info["payment_id"];
+
                       if (info.containsKey("error") &&
                           (info["error"] == "Invalid authorization token" ||
                               info["error"] ==
@@ -1076,6 +1078,7 @@ class _ShopPageState extends State<ShopPage> {
                             "user_id": user_id,
                             "value": cart_total,
                             "cart": order_list,
+                            "payment_intent": payment_id
                           }),
                         );
 

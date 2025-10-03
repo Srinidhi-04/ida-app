@@ -370,6 +370,8 @@ class _DonatePageState extends State<DonatePage> {
                                         return;
                                       }
 
+                                      String payment_id = info["payment_id"];
+
                                       await Stripe.instance.initPaymentSheet(
                                         paymentSheetParameters:
                                             SetupPaymentSheetParameters(
@@ -417,6 +419,7 @@ class _DonatePageState extends State<DonatePage> {
                                                 "name": name,
                                                 "email": email,
                                                 "amount": amount.toString(),
+                                                "payment_intent": payment_id
                                               },
                                             );
 

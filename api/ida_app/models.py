@@ -135,6 +135,7 @@ class DonationReceipts(models.Model):
     name = models.TextField(unique = False, null = False)
     email = models.TextField(unique = False, null = False)
     amount = models.FloatField(unique = False, null = False)
+    payment_intent = models.TextField(unique = True, null = False)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
@@ -152,6 +153,7 @@ class UserOrders(models.Model):
     user = models.ForeignKey(UserCredentials, related_name = "user_orders", on_delete = models.CASCADE, null = False)
     value = models.FloatField(unique = False, null = False)
     status = models.TextField(choices = [("Pending", "Pending"), ("Delivered", "Delivered"), ("Cancelled", "Cancelled")], default = "Pending", null = False)
+    payment_intent = models.TextField(unique = True, null = False)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
