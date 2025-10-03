@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
-import 'package:src/services/donations_service.dart';
+import 'package:src/services/payments_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/navigation.dart';
@@ -317,7 +317,7 @@ class _DonatePageState extends State<DonatePage> {
                                       });
 
                                       Map info =
-                                          await DonationsService.stripePayment(
+                                          await PaymentsService.stripePayment(
                                             body: {
                                               "user_id": user_id.toString(),
                                               "amount": amount.toString(),
@@ -388,7 +388,7 @@ class _DonatePageState extends State<DonatePage> {
                                                   ),
                                               googlePay:
                                                   const PaymentSheetGooglePay(
-                                                    testEnv: true,
+                                                    testEnv: false,
                                                     currencyCode: "USD",
                                                     merchantCountryCode: "US",
                                                     buttonType:
@@ -411,7 +411,7 @@ class _DonatePageState extends State<DonatePage> {
                                         });
 
                                         Map info =
-                                            await DonationsService.logDonation(
+                                            await PaymentsService.logDonation(
                                               body: {
                                                 "user_id": user_id.toString(),
                                                 "name": name,

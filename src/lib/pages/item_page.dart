@@ -18,8 +18,9 @@ class _ItemPageState extends State<ItemPage> {
 
   String name = "";
   double? price;
+  int? inventory;
   String image = "";
-  List<String?> errors = [null, null];
+  List<String?> errors = [null, null, null];
   bool initialized = false;
 
   bool submitted = false;
@@ -27,6 +28,7 @@ class _ItemPageState extends State<ItemPage> {
   TextEditingController name_controller = TextEditingController();
   TextEditingController price_controller = TextEditingController();
   TextEditingController image_controller = TextEditingController();
+  TextEditingController inventory_controller = TextEditingController();
 
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
@@ -70,6 +72,9 @@ class _ItemPageState extends State<ItemPage> {
 
           price = args["price"];
           price_controller.text = price.toString();
+
+          inventory = args["inventory"];
+          inventory_controller.text = inventory.toString();
 
           image = args["image"];
           image_controller.text = image;
@@ -175,6 +180,42 @@ class _ItemPageState extends State<ItemPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: TextFormField(
+                        keyboardType: TextInputType.number,
+                        controller: inventory_controller,
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(
+                            Icons.inventory_2_outlined,
+                            color: Theme.of(context).primaryColor,
+                          ),
+                          hintText: "Inventory",
+                          errorText: errors[2],
+                        ),
+                        cursorColor: Theme.of(context).primaryColor,
+                        onChanged:
+                            (value) => setState(() {
+                              try {
+                                if (value.trim() != "") {
+                                  inventory = int.parse(value.trim());
+                                  if (inventory! < 0) {
+                                    errors[2] =
+                                        "Inventory must not be negative";
+                                  } else {
+                                    errors[2] = null;
+                                  }
+                                } else {
+                                  inventory = null;
+                                  errors[2] = null;
+                                }
+                              } catch (e) {
+                                errors[2] = "Inventory must be an int";
+                              }
+                            }),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: TextFormField(
                         keyboardType: TextInputType.webSearch,
                         controller: image_controller,
                         textAlignVertical: TextAlignVertical.center,
@@ -196,7 +237,7 @@ class _ItemPageState extends State<ItemPage> {
                       padding: const EdgeInsets.only(top: 10.0),
                       child: TextButton(
                         onPressed: () async {
-                          if (errors[1] != null) {
+                          if (errors[1] != null || errors[2] != null) {
                             return;
                           }
 
@@ -208,11 +249,16 @@ class _ItemPageState extends State<ItemPage> {
                             errors[0] = null;
 
                           if (price == null)
-                            errors[1] = "Latitude is a required field";
+                            errors[1] = "Price is a required field";
                           else
                             errors[1] = null;
 
-                          if (errors[0] == null && errors[1] == null) {
+                          if (inventory == null)
+                            errors[2] = "Inventory is a required field";
+                          else
+                            errors[2] = null;
+
+                          if (errors[0] == null && errors[1] == null && errors[2] == null) {
                             setState(() {
                               submitted = true;
                             });
@@ -224,6 +270,7 @@ class _ItemPageState extends State<ItemPage> {
                                   "name": name,
                                   "price": price.toString(),
                                   "image": image,
+                                  "inventory": inventory.toString()
                                 },
                               );
 
@@ -272,6 +319,7 @@ class _ItemPageState extends State<ItemPage> {
                                   "name": name,
                                   "price": price.toString(),
                                   "image": image,
+                                  "inventory": inventory.toString()
                                 },
                               );
 

@@ -14,7 +14,7 @@ def index(request: HttpRequest):
 def check_update(request: HttpRequest):    
     check = requires_fields(request.GET, {"version": "float"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     version = float(request.GET.get("version"))
     
@@ -30,7 +30,7 @@ def check_update(request: HttpRequest):
 def send_query(request: HttpRequest):
     check = requires_fields(request.POST, {"query": "str"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     user: UserCredentials = request.user
 

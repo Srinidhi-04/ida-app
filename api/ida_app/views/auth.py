@@ -13,7 +13,7 @@ from ida_app.middleware import *
 def signup(request: HttpRequest):
     check = requires_fields(request.POST, {"email": "str", "name": "str", "password": "str"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     email = request.POST.get("email")
     name = request.POST.get("name")
@@ -36,7 +36,7 @@ def signup(request: HttpRequest):
 def verify_code(request: HttpRequest):
     check = requires_fields(request.POST, {"user_id": "int", "code": "int"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     user_id = int(request.POST.get("user_id"))
     code = int(request.POST.get("code"))
@@ -68,7 +68,7 @@ def verify_code(request: HttpRequest):
 def send_code(request: HttpRequest):
     check = requires_fields(request.POST, {"email": "str"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     email = request.POST.get("email")
     forgot = request.POST.get("forgot") == "yes"
@@ -101,7 +101,7 @@ def send_code(request: HttpRequest):
 def change_password(request: HttpRequest):
     check = requires_fields(request.POST, {"email": "str", "password": "str", "code": "int"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     email = request.POST.get("email")
     password = request.POST.get("password")
@@ -136,7 +136,7 @@ def change_password(request: HttpRequest):
 def login(request: HttpRequest):
     check = requires_fields(request.POST, {"email": "str", "password": "str"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     email = request.POST.get("email")
     password = request.POST.get("password")
@@ -176,7 +176,7 @@ def login(request: HttpRequest):
 def get_permissions(request: HttpRequest):
     check = requires_fields(request.GET, {"category": "str"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     user: UserCredentials = request.user
 

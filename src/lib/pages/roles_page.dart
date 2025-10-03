@@ -485,6 +485,9 @@ class _RolesPageState extends State<RolesPage> {
                                           Theme.of(context).primaryColorLight,
                                     ),
                                   );
+                                  setState(() {
+                                    submitted = false;
+                                  });
                                   return;
                                 }
 

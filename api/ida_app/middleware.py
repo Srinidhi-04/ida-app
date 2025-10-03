@@ -1,5 +1,6 @@
 import datetime
 from hashlib import sha256
+import json
 from django.http import HttpRequest, JsonResponse, QueryDict
 from ida_app.models import UserCredentials, UserTokens
 
@@ -7,19 +8,37 @@ def requires_fields(body: QueryDict, fields: dict):
     for field in fields:
         value = body.get(field)
         if not value:
-            return JsonResponse({"error": f"'{field}' field is required"}, status = 400)
+            return {"error": f"'{field}' field is required"}
         
         if fields[field] == "int":
             try:
                 int(value)
             except:
-                return JsonResponse({"error": f"'{field}' field is required as an int"}, status = 400)
+                return {"error": f"'{field}' field is required as an int"}
         
         if fields[field] == "float":
             try:
                 float(value)
             except:
-                return JsonResponse({"error": f"'{field}' field is required as a float"}, status = 400)
+                return {"error": f"'{field}' field is required as a float"}
+        
+        if fields[field] == "list":
+            try:
+                value = json.loads(value)
+                if not isinstance(value, list):
+                    raise Exception(f"'{field}' field is required as a {fields[field]}")
+            except:
+                if not isinstance(value, list):
+                    return {"error": f"'{field}' field is required as a {fields[field]}"}
+                
+        if fields[field] == "dict":
+            try:
+                value = json.loads(value)
+                if not isinstance(value, dict):
+                    raise Exception(f"'{field}' field is required as a {fields[field]}")
+            except:
+                if not isinstance(value, dict):
+                    return {"error": f"'{field}' field is required as a {fields[field]}"}
 
 def auth_exempt(view):
     view.auth_exempt = True
@@ -60,7 +79,11 @@ class AuthMiddleware:
             if request.method == "GET":
                 user_id = int(request.GET.get("user_id"))
             else:
-                user_id = int(request.POST.get("user_id"))
+                user_id = request.POST.get("user_id")
+                if user_id:
+                    user_id = int(user_id)
+                else:
+                    user_id = int(json.loads(request.body).get("user_id"))
         except:
             return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
 
