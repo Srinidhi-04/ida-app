@@ -620,6 +620,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             endIndent: 20,
                           ),
                           profileButton("Profile Settings", "/settings"),
+                          Divider(
+                            color: Theme.of(context).primaryColor,
+                            indent: 20,
+                            endIndent: 20,
+                          ),
+                          profileButton("My Transactions", "/transactions"),
                           (admin_roles.contains(role) || admin_access)
                               ? Divider(
                                 color: Theme.of(context).primaryColor,

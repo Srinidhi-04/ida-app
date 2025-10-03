@@ -19,6 +19,7 @@ class _OrderPageState extends State<OrderPage> {
   bool initialized = false;
   bool loaded = false;
   bool ordered = false;
+  bool reload = false;
 
   late int order_id;
   late DateTime date;
@@ -163,8 +164,6 @@ class _OrderPageState extends State<OrderPage> {
       return;
     }
 
-    print(info);
-
     setState(() {
       order_id = info["data"]["order_id"];
       status = info["data"]["status"];
@@ -195,7 +194,7 @@ class _OrderPageState extends State<OrderPage> {
     setState(() {
       user_id = int.parse(info["user_id"]!);
     });
-    if (!ordered) await getOrder();
+    if (!ordered || reload) await getOrder();
     setState(() {
       loaded = true;
     });
@@ -260,7 +259,7 @@ class _OrderPageState extends State<OrderPage> {
       body: RefreshIndicator(
         onRefresh: () async {
           setState(() {
-            ordered = false;
+            reload = true;
           });
           await checkLogin();
         },
@@ -341,7 +340,6 @@ class _OrderPageState extends State<OrderPage> {
                                 "{order_id: ${order_id}, user_id: ${user_id}, timestamp: ${qr_time.millisecondsSinceEpoch}}",
                             size: MediaQuery.of(context).size.width * 0.6,
                             padding: EdgeInsets.all(20),
-                            embeddedImage: AssetImage("assets/icon-ios.png"),
                           ),
                         ),
                       ),
@@ -367,7 +365,7 @@ class _OrderPageState extends State<OrderPage> {
           ),
         ),
       ),
-      bottomNavigationBar: Navigation(selected: 4),
+      bottomNavigationBar: Navigation(selected: (ordered) ? 3 : 4),
     );
   }
 }

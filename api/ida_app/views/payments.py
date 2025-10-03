@@ -161,7 +161,7 @@ def get_orders(request: HttpRequest):
 
     user = request.user
     
-    return JsonResponse({"data": list(user.user_orders.values("order_id", "value", "status", "created_at"))})
+    return JsonResponse({"data": list(user.user_orders.values("order_id", "value", "status", "created_at").order_by("created_at"))})
 
 @request_type("GET")
 def get_order(request: HttpRequest):
@@ -239,4 +239,4 @@ def get_donations(request: HttpRequest):
 
     user = request.user
     
-    return JsonResponse({"data": list(user.user_donations.values("name", "email", "amount", "created_at"))})
+    return JsonResponse({"data": list(user.user_donations.values("record_id", "name", "email", "amount", "created_at").order_by("created_at"))})

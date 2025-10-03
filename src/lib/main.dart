@@ -21,7 +21,7 @@ import 'package:src/pages/home_page.dart';
 import 'package:src/pages/login_page.dart';
 import 'package:src/pages/map_page.dart';
 import 'package:src/pages/order_page.dart';
-import 'package:src/pages/orders_page.dart';
+import 'package:src/pages/transactions_page.dart';
 import 'package:src/pages/roles_page.dart';
 import 'package:src/pages/settings_page.dart';
 import 'package:src/pages/profile_page.dart';
@@ -150,7 +150,7 @@ void main() async {
             "/announcement": (context) => AnnouncementPage(),
             "/roles": (context) => RolesPage(),
             "/help": (context) => HelpPage(),
-            "/orders": (context) => OrdersPage(),
+            "/transactions": (context) => TransactionsPage(),
             "/order": (context) => OrderPage(),
           },
           theme: ThemeData(
