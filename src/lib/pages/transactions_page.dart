@@ -108,7 +108,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                         Padding(
                           padding: const EdgeInsets.only(top: 5.0),
                           child: Text(
-                            "Total Amount: ${amount}",
+                            "Total Amount: \$${amount}",
                             style: Theme.of(
                               context,
                             ).typography.white.labelMedium!.apply(
@@ -135,8 +135,16 @@ class _TransactionsPageState extends State<TransactionsPage> {
                   children: [
                     Text(
                       "${status}",
-                      style: Theme.of(context).typography.white.labelLarge!
-                          .apply(color: Theme.of(context).primaryColorDark),
+                      style: Theme.of(
+                        context,
+                      ).typography.white.labelLarge!.apply(
+                        color:
+                            (status == "Pending")
+                                ? Theme.of(context).primaryColorDark
+                                : (status == "Delivered")
+                                ? Colors.lightGreen
+                                : Colors.red,
+                      ),
                     ),
                     TextButton(
                       onPressed: () {
@@ -145,11 +153,13 @@ class _TransactionsPageState extends State<TransactionsPage> {
                             context,
                             "/order",
                             arguments: {
+                              "user_id": user_id,
                               "order_id": uid,
                               "date": date,
                               "status": status,
+                              "amount": amount,
                             },
-                          );
+                          ).then((_) => checkLogin());
                         } else {
                           showDialog(
                             context: context,
@@ -159,8 +169,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
-                                  actionsAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  actionsAlignment: MainAxisAlignment.end,
                                   title: Text(
                                     "Receipt",
                                     style:
@@ -169,6 +178,9 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                         ).typography.black.headlineMedium,
                                   ),
                                   content: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text.rich(
                                         TextSpan(
@@ -474,7 +486,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                       true,
                                       e["order_id"],
                                       e["value"],
-                                      DateTime.parse(e["created_at"]),
+                                      DateTime.parse(e["created_at"]).toLocal(),
                                       e["status"],
                                     ),
                                   )
@@ -500,8 +512,10 @@ class _TransactionsPageState extends State<TransactionsPage> {
                                   false,
                                   e["record_id"],
                                   e["amount"],
-                                  DateTime.parse(e["created_at"]),
+                                  DateTime.parse(e["created_at"]).toLocal(),
                                   "",
+                                  e["name"],
+                                  e["email"],
                                 ),
                               )
                               .toList(),

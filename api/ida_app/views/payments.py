@@ -185,21 +185,21 @@ def get_order(request: HttpRequest):
     except:
         return JsonResponse({"error": "Invalid order ID and user ID combination"}, status = 400)
     
-    return JsonResponse({"data": {"order_id": order.order_id, "status": order.status, "amount": order.value, "items": list(order.order_items.annotate(name = F("item__name"), price = F("item__price"), image = F("item__image")).values("name", "price", "image", "quantity", "subtotal"))}})
+    return JsonResponse({"data": {"order_id": order.order_id, "status": order.status, "amount": order.value, "date": order.created_at, "items": list(order.order_items.annotate(name = F("item__name"), price = F("item__price"), image = F("item__image")).values("name", "price", "image", "quantity", "subtotal"))}})
 
 @requires_roles(["admin"])
 @request_type("POST")
 def change_status(request: HttpRequest):
-    check = requires_fields(request.POST, {"user_id": "int", "order_id": "int", "status": "str"})
+    check = requires_fields(request.POST, {"order_user": "int", "order_id": "int", "status": "str"})
     if check:
         return JsonResponse(check, status = 400)
 
-    user_id = int(request.POST.get("user_id"))
+    order_user = int(request.POST.get("order_user"))
     order_id = int(request.POST.get("order_id"))
     status = request.POST.get("status")
 
     try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+        user: UserCredentials = UserCredentials.objects.get(user_id = order_user)
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
     

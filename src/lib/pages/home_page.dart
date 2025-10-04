@@ -455,7 +455,7 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(bottom: 10),
-                              child: Text(
+                              child: SelectableText(
                                 data[index]["title"],
                                 style: Theme.of(context)
                                     .typography
@@ -464,7 +464,7 @@ class _HomePageState extends State<HomePage> {
                                     .apply(fontWeightDelta: 3),
                               ),
                             ),
-                            Text(
+                            SelectableText(
                               data[index]["body"],
                               style: Theme.of(context)
                                   .typography

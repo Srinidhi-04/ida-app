@@ -21,6 +21,7 @@ import 'package:src/pages/home_page.dart';
 import 'package:src/pages/login_page.dart';
 import 'package:src/pages/map_page.dart';
 import 'package:src/pages/order_page.dart';
+import 'package:src/pages/scan_page.dart';
 import 'package:src/pages/transactions_page.dart';
 import 'package:src/pages/roles_page.dart';
 import 'package:src/pages/settings_page.dart';
@@ -117,7 +118,8 @@ void main() async {
         await FirebaseMessaging.instance.subscribeToTopic("ida-app-default");
       }
 
-      // Stripe.publishableKey = "pk_test_51RnYlzQkArntKpGlapTuIf51Fvsi1CittiW7jyvqGN4mKEg9z5baV4kWtOKWHWiW14TzzRqxbSXHZQz01xRJeK8k00gJ2IaMpr";
+      // Stripe.publishableKey =
+      //     "pk_test_51RnYlzQkArntKpGlapTuIf51Fvsi1CittiW7jyvqGN4mKEg9z5baV4kWtOKWHWiW14TzzRqxbSXHZQz01xRJeK8k00gJ2IaMpr";
       Stripe.publishableKey =
           "pk_live_51RnYlmH4Cdv9foKx4W0Qq3mbHLG5V5RAPgkoNj36dlvj5YzLErdZBEnWNiS75sjY1UO127RO4xKRfIuaKYFvAuuf00mjmkL60F";
       Stripe.merchantIdentifier = "merchant.ida.src";
@@ -152,6 +154,7 @@ void main() async {
             "/help": (context) => HelpPage(),
             "/transactions": (context) => TransactionsPage(),
             "/order": (context) => OrderPage(),
+            "/scan": (context) => ScanPage()
           },
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(

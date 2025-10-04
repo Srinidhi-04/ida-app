@@ -112,6 +112,11 @@ class _BoardPageState extends State<BoardPage> {
       "position": "Finance",
       "image": "assets/board/ashish.jpg",
     },
+    {
+      "name": "Christian Schiavone",
+      "position": "Communications",
+      "image": "assets/board/christian.png",
+    },
   ];
 
   Widget memberCard(int index, String name, String position, String image) {

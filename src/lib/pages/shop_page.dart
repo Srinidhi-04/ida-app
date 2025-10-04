@@ -463,81 +463,83 @@ class _ShopPageState extends State<ShopPage> {
                                                     padding: EdgeInsets.zero,
                                                     visualDensity:
                                                         VisualDensity.compact,
-                                                    onPressed: (quantity[item_id]! >= inventory) ? null : () async {
-                                                      setState(() {
-                                                        quantity[item_id] =
-                                                            quantity[item_id]! +
-                                                            1;
-                                                      });
+                                                    onPressed:
+                                                        (quantity[item_id]! >=
+                                                                inventory)
+                                                            ? null
+                                                            : () async {
+                                                              setState(() {
+                                                                quantity[item_id] =
+                                                                    quantity[item_id]! +
+                                                                    1;
+                                                              });
 
-                                                      Map
-                                                      info = await ShopService.editCart(
-                                                        body: {
-                                                          "user_id":
-                                                              user_id
-                                                                  .toString(),
-                                                          "item_id":
-                                                              item_id
-                                                                  .toString(),
-                                                          "quantity":
-                                                              quantity[item_id]
-                                                                  .toString(),
-                                                        },
-                                                      );
+                                                              Map
+                                                              info = await ShopService.editCart(
+                                                                body: {
+                                                                  "user_id":
+                                                                      user_id
+                                                                          .toString(),
+                                                                  "item_id":
+                                                                      item_id
+                                                                          .toString(),
+                                                                  "quantity":
+                                                                      quantity[item_id]
+                                                                          .toString(),
+                                                                },
+                                                              );
 
-                                                      if (info.containsKey(
-                                                            "error",
-                                                          ) &&
-                                                          (info["error"] ==
-                                                                  "Invalid authorization token" ||
-                                                              info["error"] ==
-                                                                  "A user with that user ID does not exist")) {
-                                                        await NotificationsManager.unsubscribeAllNotifications();
-                                                        await SecureStorage.delete();
-                                                        await Navigator.of(
-                                                          context,
-                                                        ).pushNamedAndRemoveUntil(
-                                                          "/login",
-                                                          (route) => false,
-                                                        );
-                                                        return;
-                                                      } else if (info
-                                                          .containsKey(
-                                                            "error",
-                                                          )) {
-                                                        ScaffoldMessenger.of(
-                                                          context,
-                                                        ).showSnackBar(
-                                                          SnackBar(
-                                                            content: Text(
-                                                              info["error"],
-                                                              style: Theme.of(
-                                                                    context,
-                                                                  )
-                                                                  .typography
-                                                                  .white
-                                                                  .bodyMedium!
-                                                                  .apply(
-                                                                    color:
+                                                              if (info.containsKey(
+                                                                    "error",
+                                                                  ) &&
+                                                                  (info["error"] ==
+                                                                          "Invalid authorization token" ||
+                                                                      info["error"] ==
+                                                                          "A user with that user ID does not exist")) {
+                                                                await NotificationsManager.unsubscribeAllNotifications();
+                                                                await SecureStorage.delete();
+                                                                await Navigator.of(
+                                                                  context,
+                                                                ).pushNamedAndRemoveUntil(
+                                                                  "/login",
+                                                                  (route) =>
+                                                                      false,
+                                                                );
+                                                                return;
+                                                              } else if (info
+                                                                  .containsKey(
+                                                                    "error",
+                                                                  )) {
+                                                                ScaffoldMessenger.of(
+                                                                  context,
+                                                                ).showSnackBar(
+                                                                  SnackBar(
+                                                                    content: Text(
+                                                                      info["error"],
+                                                                      style: Theme.of(
+                                                                        context,
+                                                                      ).typography.white.bodyMedium!.apply(
+                                                                        color:
+                                                                            Theme.of(
+                                                                              context,
+                                                                            ).primaryColorLight,
+                                                                      ),
+                                                                    ),
+                                                                    backgroundColor:
+                                                                        Theme.of(
+                                                                          context,
+                                                                        ).primaryColorDark,
+                                                                    showCloseIcon:
+                                                                        true,
+                                                                    closeIconColor:
                                                                         Theme.of(
                                                                           context,
                                                                         ).primaryColorLight,
                                                                   ),
-                                                            ),
-                                                            backgroundColor:
-                                                                Theme.of(
-                                                                  context,
-                                                                ).primaryColorDark,
-                                                            showCloseIcon: true,
-                                                            closeIconColor:
-                                                                Theme.of(
-                                                                  context,
-                                                                ).primaryColorLight,
-                                                          ),
-                                                        );
-                                                        return;
-                                                      }
-                                                    },
+                                                                );
+                                                                return;
+                                                              }
+                                                            },
                                                     icon: Icon(
                                                       Icons.add,
                                                       size: 15,
@@ -960,8 +962,6 @@ class _ShopPageState extends State<ShopPage> {
                         }),
                       );
 
-                      String payment_id = info["payment_id"];
-
                       if (info.containsKey("error") &&
                           (info["error"] == "Invalid authorization token" ||
                               info["error"] ==
@@ -983,8 +983,7 @@ class _ShopPageState extends State<ShopPage> {
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
-                                actionsAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                actionsAlignment: MainAxisAlignment.end,
                                 title: Text(
                                   "Caution",
                                   style:
@@ -1043,6 +1042,8 @@ class _ShopPageState extends State<ShopPage> {
                         return;
                       }
 
+                      String payment_id = info["payment_id"];
+
                       await Stripe.instance.initPaymentSheet(
                         paymentSheetParameters: SetupPaymentSheetParameters(
                           customFlow: false,
@@ -1078,7 +1079,7 @@ class _ShopPageState extends State<ShopPage> {
                             "user_id": user_id,
                             "value": cart_total,
                             "cart": order_list,
-                            "payment_intent": payment_id
+                            "payment_intent": payment_id,
                           }),
                         );
 
@@ -1124,11 +1125,12 @@ class _ShopPageState extends State<ShopPage> {
                         Navigator.of(context).popAndPushNamed(
                           "/order",
                           arguments: {
+                            "user_id": user_id,
                             "order_id": info["order_id"],
                             "date": DateTime.parse(info["date"]).toLocal(),
                             "receipt": info["receipt"],
                             "status": info["status"],
-                            "amount": info["amount"]
+                            "amount": info["amount"],
                           },
                         );
                         return;
