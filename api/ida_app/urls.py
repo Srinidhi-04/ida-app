@@ -50,4 +50,5 @@ urlpatterns = [
     path("change-status", change_status),
     path("start-order", start_order),
     path("cancel-order", cancel_order),
+    path("get-banner", get_banner),
 ]
