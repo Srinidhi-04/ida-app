@@ -1,4 +1,5 @@
 from django.http import HttpRequest, JsonResponse
+from django.db import transaction
 from django.db.models import F
 from django.db.models.functions import Least
 from ida_app.models import *
@@ -42,19 +43,60 @@ def edit_item(request: HttpRequest):
         image = "https://i.imgur.com/Mw85Kfp.png"
 
     try:
-        item = ShopItems.objects.get(item_id = item_id)
-    except:
-        return JsonResponse({"error": "An item with that item ID does not exist"}, status = 400)
+        with transaction.atomic():
+            try:
+                item = ShopItems.objects.select_for_update().get(item_id = item_id)
+            except:
+                raise Exception("An item with that item ID does not exist")
 
-    item.name = name
-    item.price = price
-    item.image = image
-    item.inventory = inventory
-    item.save()
+            item.name = name
+            item.price = price
+            item.image = image
+            item.inventory = inventory
+            item.save()
 
-    item.item_carts.update(quantity = Least(F("quantity"), inventory))
+            item.item_carts.update(quantity = Least(F("quantity"), inventory))
+    
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status = 400)
 
     return JsonResponse({"message": "Item successfully edited", "item_id": item.item_id})
+
+@requires_roles(["admin"])
+@request_type("POST")
+def reduce_inventory(request: HttpRequest):
+    check = requires_fields(request.POST, {"item_id": "int", "quantity": "int"})
+    if check:
+        return JsonResponse(check, status = 400)
+    
+    item_id = int(request.POST.get("item_id"))
+    quantity = int(request.POST.get("quantity"))
+    if quantity < 0:
+        return JsonResponse({"error": "Quantity cannot be negative"}, status = 400)
+    
+    try:
+        with transaction.atomic():
+            try:
+                item = ShopItems.objects.select_for_update().get(item_id = item_id)
+            except:
+                raise Exception("An item with that item ID does not exist")
+            
+            if item.inventory < quantity:
+                ex = Exception("Not enough items in inventory to reduce")
+                ex.inventory = item.inventory
+                raise ex
+            
+            item.inventory -= quantity
+            item.save()
+                
+    except Exception as e:
+        err = {"error": str(e)}
+        if hasattr(e, "inventory"):
+            err["inventory"] = e.inventory
+
+        return JsonResponse(err, status = 400)
+    
+    return JsonResponse({"message": "Inventory reduced successfully", "inventory": item.inventory})
 
 @request_type("GET")
 def get_items(request: HttpRequest):

@@ -19,8 +19,9 @@ class _ItemPageState extends State<ItemPage> {
   String name = "";
   double? price;
   int? inventory;
+  int? reduce;
   String image = "";
-  List<String?> errors = [null, null, null];
+  List<String?> errors = [null, null, null, null];
   bool initialized = false;
 
   bool submitted = false;
@@ -29,6 +30,7 @@ class _ItemPageState extends State<ItemPage> {
   TextEditingController price_controller = TextEditingController();
   TextEditingController image_controller = TextEditingController();
   TextEditingController inventory_controller = TextEditingController();
+  TextEditingController reduce_controller = TextEditingController();
 
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
@@ -213,6 +215,173 @@ class _ItemPageState extends State<ItemPage> {
                             }),
                       ),
                     ),
+                    (item_id != null)
+                        ? Padding(
+                          padding: const EdgeInsets.only(bottom: 20.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  keyboardType: TextInputType.number,
+                                  controller: reduce_controller,
+                                  textAlignVertical: TextAlignVertical.center,
+                                  decoration: InputDecoration(
+                                    prefixIcon: Icon(
+                                      Icons.keyboard_double_arrow_down_outlined,
+                                      color: Theme.of(context).primaryColor,
+                                    ),
+                                    hintText: "Reduce Inventory",
+                                    errorText: errors[3],
+                                  ),
+                                  cursorColor: Theme.of(context).primaryColor,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      try {
+                                        if (value.trim() != "") {
+                                          reduce = int.parse(value.trim());
+                                          if (reduce! < 0) {
+                                            errors[3] =
+                                                "Cannot reduce a negative number";
+                                          } else if (reduce! > inventory!) {
+                                            errors[3] =
+                                                "Cannot have a negative inventory";
+                                          } else {
+                                            errors[3] = null;
+                                          }
+                                        } else {
+                                          reduce = null;
+                                          errors[3] = null;
+                                        }
+                                      } catch (e) {
+                                        errors[3] = "Reduction must be an int";
+                                      }
+                                    });
+                                  },
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.fromLTRB(10, 5, 0, 0),
+                                child: TextButton(
+                                  onPressed: () async {
+                                    if (errors[3] != null) {
+                                      return;
+                                    }
+
+                                    FocusScope.of(context).unfocus();
+
+                                    if (reduce == null)
+                                      errors[3] = "Enter a number to reduce";
+                                    else
+                                      errors[3] = null;
+
+                                    if (errors[3] == null) {
+                                      setState(() {
+                                        submitted = true;
+                                      });
+
+                                      Map info =
+                                          await ShopService.reduceInventory(
+                                            body: {
+                                              "user_id": user_id.toString(),
+                                              "item_id": item_id.toString(),
+                                              "quantity": reduce.toString(),
+                                            },
+                                          );
+
+                                      if (info.containsKey("error") &&
+                                          (info["error"] ==
+                                                  "Invalid authorization token" ||
+                                              info["error"] ==
+                                                  "A user with that user ID does not exist")) {
+                                        await NotificationsManager.unsubscribeAllNotifications();
+                                        await SecureStorage.delete();
+                                        await Navigator.of(
+                                          context,
+                                        ).pushNamedAndRemoveUntil(
+                                          "/login",
+                                          (route) => false,
+                                        );
+                                        return;
+                                      } else if (info.containsKey("error") &&
+                                          (info["error"] ==
+                                              "Not enough items in inventory to reduce")) {
+                                        setState(() {
+                                          inventory_controller.text =
+                                              info["inventory"].toString();
+                                          errors[3] = info["error"];
+                                          submitted = false;
+                                        });
+                                        return;
+                                      } else if (info.containsKey("error")) {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              info["error"],
+                                              style: Theme.of(context)
+                                                  .typography
+                                                  .white
+                                                  .bodyMedium!
+                                                  .apply(
+                                                    color:
+                                                        Theme.of(
+                                                          context,
+                                                        ).primaryColorLight,
+                                                  ),
+                                            ),
+                                            backgroundColor:
+                                                Theme.of(
+                                                  context,
+                                                ).primaryColorDark,
+                                            showCloseIcon: true,
+                                            closeIconColor:
+                                                Theme.of(
+                                                  context,
+                                                ).primaryColorLight,
+                                          ),
+                                        );
+                                        return;
+                                      }
+
+                                      setState(() {
+                                        reduce_controller.text = "";
+                                        inventory_controller.text =
+                                            info["inventory"].toString();
+                                      });
+                                    }
+
+                                    setState(() {
+                                      errors = errors;
+                                      submitted = false;
+                                    });
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(5.0),
+                                    child: Text(
+                                      "Reduce",
+                                      style: Theme.of(context)
+                                          .typography
+                                          .white
+                                          .labelLarge!
+                                          .apply(fontWeightDelta: 3),
+                                    ),
+                                  ),
+                                  style: ButtonStyle(
+                                    backgroundColor: WidgetStatePropertyAll(
+                                      Theme.of(context).primaryColorLight,
+                                    ),
+                                    foregroundColor: WidgetStatePropertyAll(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                        : SizedBox.shrink(),
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: TextFormField(
@@ -258,7 +427,9 @@ class _ItemPageState extends State<ItemPage> {
                           else
                             errors[2] = null;
 
-                          if (errors[0] == null && errors[1] == null && errors[2] == null) {
+                          if (errors[0] == null &&
+                              errors[1] == null &&
+                              errors[2] == null) {
                             setState(() {
                               submitted = true;
                             });
@@ -270,7 +441,7 @@ class _ItemPageState extends State<ItemPage> {
                                   "name": name,
                                   "price": price.toString(),
                                   "image": image,
-                                  "inventory": inventory.toString()
+                                  "inventory": inventory.toString(),
                                 },
                               );
 
@@ -319,7 +490,7 @@ class _ItemPageState extends State<ItemPage> {
                                   "name": name,
                                   "price": price.toString(),
                                   "image": image,
-                                  "inventory": inventory.toString()
+                                  "inventory": inventory.toString(),
                                 },
                               );
 
