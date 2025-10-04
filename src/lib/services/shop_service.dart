@@ -8,6 +8,10 @@ class ShopService {
   static Future<Map> editItem({Map<String, String>? body}) async {
     return await ApiService.post("/edit-item", body: body);
   }
+  
+  static Future<Map> reduceInventory({Map<String, String>? body}) async {
+    return await ApiService.post("/reduce-inventory", body: body);
+  }
 
   static Future<Map> deleteItem({Map<String, String>? body}) async {
     return await ApiService.post("/delete-item", body: body);
