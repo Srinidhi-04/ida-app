@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_stripe/flutter_stripe.dart' hide Card;
@@ -12,6 +13,7 @@ import 'package:src/services/shop_service.dart';
 import 'package:src/widgets/cart_button.dart';
 import 'package:src/widgets/navigation.dart';
 import 'package:src/widgets/submit_overlay.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ShopPage extends StatefulWidget {
   const ShopPage({super.key});
@@ -752,6 +754,43 @@ class _ShopPageState extends State<ShopPage> {
     });
   }
 
+  Future<void> getBanner() async {
+    Map info = await ShopService.getBanner(
+      params: {"user_id": user_id.toString()},
+    );
+
+    if (info.containsKey("error") &&
+        (info["error"] == "Invalid authorization token" ||
+            info["error"] == "A user with that user ID does not exist")) {
+      await NotificationsManager.unsubscribeAllNotifications();
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      banner = info["message"];
+      loaded[3] = true;
+    });
+  }
+
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
     if (info["last_login"] != null) {
@@ -774,7 +813,7 @@ class _ShopPageState extends State<ShopPage> {
       user_id = int.parse(info["user_id"]!);
       role = info["role"]!;
     });
-    await Future.wait([getItems(), getCart(), getPermissions()]);
+    await Future.wait([getItems(), getCart(), getPermissions(), getBanner()]);
   }
 
   @override
@@ -864,6 +903,82 @@ class _ShopPageState extends State<ShopPage> {
                           padding: const EdgeInsets.only(top: 10.0),
                           child: Column(
                             children: [
+                              (!cart && banner.isNotEmpty)
+                                  ? Padding(
+                                    padding: const EdgeInsets.only(
+                                      bottom: 10.0,
+                                    ),
+                                    child: Container(
+                                      color:
+                                          Theme.of(context).primaryColorLight,
+                                      width: MediaQuery.of(context).size.width,
+                                      height: 125,
+                                      child: Center(
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Text.rich(
+                                            TextSpan(
+                                              children:
+                                                  banner
+                                                      .split(" ")
+                                                      .map(
+                                                        (e) =>
+                                                            (e.startsWith(
+                                                                      "https://",
+                                                                    ) ||
+                                                                    e.startsWith(
+                                                                      "www.",
+                                                                    ))
+                                                                ? TextSpan(
+                                                                  text: e + " ",
+                                                                  style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        Theme.of(
+                                                                          context,
+                                                                        ).primaryColorDark,
+                                                                    decoration:
+                                                                        TextDecoration
+                                                                            .underline,
+                                                                  ),
+                                                                  recognizer:
+                                                                      TapGestureRecognizer()
+                                                                        ..onTap = () {
+                                                                          launchUrl(
+                                                                            Uri.parse(
+                                                                              e,
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                )
+                                                                : TextSpan(
+                                                                  text: e + " ",
+                                                                  style: TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color:
+                                                                        Theme.of(
+                                                                          context,
+                                                                        ).primaryColorDark,
+                                                                  ),
+                                                                ),
+                                                      )
+                                                      .toList(),
+                                            ),
+                                            style: Theme.of(context)
+                                                .typography
+                                                .black
+                                                .labelMedium!
+                                                .apply(fontSizeDelta: 2),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  : SizedBox.shrink(),
                               Padding(
                                 padding: const EdgeInsets.fromLTRB(0, 0, 20, 5),
                                 child: Align(

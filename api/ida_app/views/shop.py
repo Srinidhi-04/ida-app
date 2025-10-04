@@ -135,3 +135,7 @@ def get_cart(request: HttpRequest):
             cart_data.append({"item_id": x.item.item_id, "quantity": x.quantity})
 
     return JsonResponse({"data": cart_data})
+
+@request_type("GET")
+def get_banner(request: HttpRequest):
+    return JsonResponse({"message": "Order your Dads Weekend apparel now! Purchase your merch here: https://pogo.undergroundshirts.com/collections/illini-dads-weekend-2025"})
