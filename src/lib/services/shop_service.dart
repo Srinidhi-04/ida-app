@@ -24,4 +24,8 @@ class ShopService {
   static Future<Map> getCart({Map<String, String>? params}) async {
     return await ApiService.get("/get-cart", params: params);
   }
+
+  static Future<Map> getBanner({Map<String, String>? params}) async {
+    return await ApiService.get("/get-banner", params: params);
+  }
 }
