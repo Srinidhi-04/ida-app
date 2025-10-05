@@ -19,7 +19,7 @@ class _ScanPageState extends State<ScanPage> {
   late int user_id;
   late String role;
 
-  List<String> admin_roles = ["admin"];
+  List<String> admin_roles = ["admin", "merch"];
   bool admin_access = false;
 
   bool loaded = false;

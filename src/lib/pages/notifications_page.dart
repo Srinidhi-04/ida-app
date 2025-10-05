@@ -198,7 +198,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       ),
                       DropdownButton(
                         value: alert,
-                        icon: const Icon(Icons.swap_vert),
+                        icon: const Icon(Icons.swap_vert_outlined),
                         elevation: 16,
                         style: Theme.of(context).typography.black.labelMedium,
                         dropdownColor: Colors.white,

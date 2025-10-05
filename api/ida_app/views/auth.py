@@ -183,11 +183,11 @@ def get_permissions(request: HttpRequest):
     category = request.GET.get("category")
 
     if category == "announcements":
-        roles = ["admin"]
+        roles = ["admin", "comms"]
     elif category == "events":
-        roles = ["admin"]
+        roles = ["admin", "events"]
     elif category == "shop":
-        roles = ["admin"]
+        roles = ["admin", "merch"]
     elif category == "roles":
         roles = ["admin"]
 

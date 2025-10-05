@@ -64,15 +64,13 @@ def edit_item(request: HttpRequest):
 
 @requires_roles(["admin"])
 @request_type("POST")
-def reduce_inventory(request: HttpRequest):
+def change_inventory(request: HttpRequest):
     check = requires_fields(request.POST, {"item_id": "int", "quantity": "int"})
     if check:
         return JsonResponse(check, status = 400)
     
     item_id = int(request.POST.get("item_id"))
     quantity = int(request.POST.get("quantity"))
-    if quantity < 0:
-        return JsonResponse({"error": "Quantity cannot be negative"}, status = 400)
     
     try:
         with transaction.atomic():
@@ -81,12 +79,12 @@ def reduce_inventory(request: HttpRequest):
             except:
                 raise Exception("An item with that item ID does not exist")
             
-            if item.inventory < quantity:
+            if item.inventory + quantity < 0:
                 ex = Exception("Not enough items in inventory to reduce")
                 ex.inventory = item.inventory
                 raise ex
             
-            item.inventory -= quantity
+            item.inventory += quantity
             item.save()
                 
     except Exception as e:
@@ -96,7 +94,7 @@ def reduce_inventory(request: HttpRequest):
 
         return JsonResponse(err, status = 400)
     
-    return JsonResponse({"message": "Inventory reduced successfully", "inventory": item.inventory})
+    return JsonResponse({"message": "Inventory changed successfully", "inventory": item.inventory})
 
 @request_type("GET")
 def get_items(request: HttpRequest):

@@ -34,7 +34,7 @@ class _ShopPageState extends State<ShopPage> {
 
   List<bool> loaded = [false, false, false, false];
 
-  List<String> admin_roles = ["admin"];
+  List<String> admin_roles = ["admin", "merch"];
   bool admin_access = false;
 
   bool submitted = false;

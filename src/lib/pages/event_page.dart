@@ -51,7 +51,7 @@ class _EventPageState extends State<EventPage> {
     "Dec",
   ];
 
-  List<String> admin_roles = ["admin"];
+  List<String> admin_roles = ["admin", "events"];
   bool admin_access = false;
 
   Future<void> getPermissions() async {

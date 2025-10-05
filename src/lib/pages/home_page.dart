@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
 
   PageController dialog_controller = PageController();
 
-  List<String> admin_roles = ["admin"];
+  List<String> admin_roles = ["admin", "comms"];
   bool admin_access = false;
 
   Widget mainButton(Color color, String text, String path, bool external) {

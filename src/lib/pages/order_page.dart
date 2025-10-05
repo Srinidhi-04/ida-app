@@ -36,7 +36,7 @@ class _OrderPageState extends State<OrderPage> {
 
   late DateTime qr_time;
 
-  List<String> admin_roles = ["admin"];
+  List<String> admin_roles = ["admin", "merch"];
   bool admin_access = false;
 
   Widget orderItem(String name, double price, int quantity, String image) {

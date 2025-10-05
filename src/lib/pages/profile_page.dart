@@ -46,7 +46,7 @@ class _ProfilePageState extends State<ProfilePage> {
   ];
   List<String> days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-  List<String> shop_roles = ["admin"];
+  List<String> shop_roles = ["admin", "merch"];
   bool shop_access = false;
   List<String> roles_roles = ["admin"];
   bool roles_access = false;

@@ -19,7 +19,7 @@ class _ItemPageState extends State<ItemPage> {
   String name = "";
   double? price;
   int? inventory;
-  int? reduce;
+  int? change;
   String image = "";
   List<String?> errors = [null, null, null, null];
   bool initialized = false;
@@ -30,7 +30,7 @@ class _ItemPageState extends State<ItemPage> {
   TextEditingController price_controller = TextEditingController();
   TextEditingController image_controller = TextEditingController();
   TextEditingController inventory_controller = TextEditingController();
-  TextEditingController reduce_controller = TextEditingController();
+  TextEditingController change_controller = TextEditingController();
 
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
@@ -223,15 +223,18 @@ class _ItemPageState extends State<ItemPage> {
                             children: [
                               Expanded(
                                 child: TextFormField(
-                                  keyboardType: TextInputType.number,
-                                  controller: reduce_controller,
+                                  keyboardType: TextInputType.numberWithOptions(
+                                    signed: true,
+                                    decimal: false
+                                  ),
+                                  controller: change_controller,
                                   textAlignVertical: TextAlignVertical.center,
                                   decoration: InputDecoration(
                                     prefixIcon: Icon(
-                                      Icons.keyboard_double_arrow_down_outlined,
+                                      Icons.unfold_more_outlined,
                                       color: Theme.of(context).primaryColor,
                                     ),
-                                    hintText: "Reduce Inventory",
+                                    hintText: "Change Inventory",
                                     errorText: errors[3],
                                   ),
                                   cursorColor: Theme.of(context).primaryColor,
@@ -239,22 +242,19 @@ class _ItemPageState extends State<ItemPage> {
                                     setState(() {
                                       try {
                                         if (value.trim() != "") {
-                                          reduce = int.parse(value.trim());
-                                          if (reduce! < 0) {
-                                            errors[3] =
-                                                "Cannot reduce a negative number";
-                                          } else if (reduce! > inventory!) {
+                                          change = int.parse(value.trim());
+                                          if (inventory! + change! < 0) {
                                             errors[3] =
                                                 "Cannot have a negative inventory";
                                           } else {
                                             errors[3] = null;
                                           }
                                         } else {
-                                          reduce = null;
+                                          change = null;
                                           errors[3] = null;
                                         }
                                       } catch (e) {
-                                        errors[3] = "Reduction must be an int";
+                                        errors[3] = "Change must be an int";
                                       }
                                     });
                                   },
@@ -270,8 +270,8 @@ class _ItemPageState extends State<ItemPage> {
 
                                     FocusScope.of(context).unfocus();
 
-                                    if (reduce == null)
-                                      errors[3] = "Enter a number to reduce";
+                                    if (change == null)
+                                      errors[3] = "Enter a number to change";
                                     else
                                       errors[3] = null;
 
@@ -281,11 +281,11 @@ class _ItemPageState extends State<ItemPage> {
                                       });
 
                                       Map info =
-                                          await ShopService.reduceInventory(
+                                          await ShopService.changeInventory(
                                             body: {
                                               "user_id": user_id.toString(),
                                               "item_id": item_id.toString(),
-                                              "quantity": reduce.toString(),
+                                              "quantity": change.toString(),
                                             },
                                           );
 
@@ -346,7 +346,7 @@ class _ItemPageState extends State<ItemPage> {
                                       }
 
                                       setState(() {
-                                        reduce_controller.text = "";
+                                        change_controller.text = "";
                                         inventory_controller.text =
                                             info["inventory"].toString();
                                       });
@@ -360,7 +360,7 @@ class _ItemPageState extends State<ItemPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(5.0),
                                     child: Text(
-                                      "Reduce",
+                                      "Change",
                                       style: Theme.of(context)
                                           .typography
                                           .white

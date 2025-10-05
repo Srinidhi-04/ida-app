@@ -29,7 +29,7 @@ urlpatterns = [
     path("edit-profile", edit_profile),
     path("add-item", add_item),
     path("edit-item", edit_item),
-    path("reduce-inventory", reduce_inventory),
+    path("change-inventory", change_inventory),
     path("get-items", get_items),
     path("delete-item", delete_item),
     path("edit-cart", edit_cart),

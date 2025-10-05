@@ -44,7 +44,7 @@ class _EventsPageState extends State<EventsPage> {
   bool searching = false;
   String search = "";
 
-  List<String> admin_roles = ["admin"];
+  List<String> admin_roles = ["admin", "events"];
   bool admin_access = false;
 
   Widget switchOption(int index, String text) {
