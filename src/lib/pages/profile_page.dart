@@ -46,8 +46,10 @@ class _ProfilePageState extends State<ProfilePage> {
   ];
   List<String> days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
-  List<String> admin_roles = ["admin"];
-  bool admin_access = false;
+  List<String> shop_roles = ["admin"];
+  bool shop_access = false;
+  List<String> roles_roles = ["admin"];
+  bool roles_access = false;
 
   Widget profileButton(String name, String route) {
     return Container(
@@ -297,24 +299,49 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getPermissions() async {
-    Map info = await AuthService.getPermissions(
-      params: {"category": "roles", "user_id": user_id.toString()},
-    );
+    List<Map> info = await Future.wait([
+      AuthService.getPermissions(
+        params: {"category": "roles", "user_id": user_id.toString()},
+      ),
+      AuthService.getPermissions(
+        params: {"category": "shop", "user_id": user_id.toString()},
+      ),
+    ]);
 
-    if (info.containsKey("error") &&
-        (info["error"] == "Invalid authorization token" ||
-            info["error"] == "A user with that user ID does not exist")) {
+    if ((info[0].containsKey("error") &&
+            (info[0]["error"] == "Invalid authorization token" ||
+                info[0]["error"] ==
+                    "A user with that user ID does not exist")) ||
+        (info[1].containsKey("error") &&
+            (info[0]["error"] == "Invalid authorization token" ||
+                info[0]["error"] ==
+                    "A user with that user ID does not exist"))) {
       await NotificationsManager.unsubscribeAllNotifications();
       await SecureStorage.delete();
       await Navigator.of(
         context,
       ).pushNamedAndRemoveUntil("/login", (route) => false);
       return;
-    } else if (info.containsKey("error")) {
+    } else if (info[0].containsKey("error")) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            info["error"],
+            info[0]["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
+      return;
+    } else if (info[1].containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info[1]["error"],
             style: Theme.of(context).typography.white.bodyMedium!.apply(
               color: Theme.of(context).primaryColorLight,
             ),
@@ -327,12 +354,16 @@ class _ProfilePageState extends State<ProfilePage> {
       return;
     }
 
-    await SecureStorage.writeOne("role", info["data"]["role"]);
+    await SecureStorage.writeOne("role", info[0]["data"]["role"]);
 
     setState(() {
-      admin_roles = info["data"]["roles"].cast<String>();
-      admin_access = info["data"]["access"];
-      role = info["data"]["role"];
+      roles_roles = info[0]["data"]["roles"].cast<String>();
+      roles_access = info[0]["data"]["access"];
+
+      shop_roles = info[1]["data"]["roles"].cast<String>();
+      shop_access = info[1]["data"]["access"];
+
+      role = info[0]["data"]["role"];
       loaded[1] = true;
     });
   }
@@ -620,14 +651,30 @@ class _ProfilePageState extends State<ProfilePage> {
                             endIndent: 20,
                           ),
                           profileButton("Profile Settings", "/settings"),
-                          (admin_roles.contains(role) || admin_access)
+                          Divider(
+                            color: Theme.of(context).primaryColor,
+                            indent: 20,
+                            endIndent: 20,
+                          ),
+                          profileButton("My Transactions", "/transactions"),
+                          (shop_roles.contains(role) || shop_access)
                               ? Divider(
                                 color: Theme.of(context).primaryColor,
                                 indent: 20,
                                 endIndent: 20,
                               )
                               : SizedBox.shrink(),
-                          (admin_roles.contains(role) || admin_access)
+                          (shop_roles.contains(role) || shop_access)
+                              ? profileButton("Scan Order", "/scan")
+                              : SizedBox.shrink(),
+                          (roles_roles.contains(role) || roles_access)
+                              ? Divider(
+                                color: Theme.of(context).primaryColor,
+                                indent: 20,
+                                endIndent: 20,
+                              )
+                              : SizedBox.shrink(),
+                          (roles_roles.contains(role) || roles_access)
                               ? profileButton("Assign Roles", "/roles")
                               : SizedBox.shrink(),
                         ],

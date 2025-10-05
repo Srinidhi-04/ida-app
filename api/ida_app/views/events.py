@@ -9,7 +9,7 @@ from ida_app.middleware import *
 def add_event(request: HttpRequest):
     check = requires_fields(request.POST, {"name": "str", "date": "str", "timezone": "str", "location": "str", "body": "str", "latitude": "float", "longitude": "float"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     name = request.POST.get("name")
     date = request.POST.get("date")
@@ -49,7 +49,7 @@ def add_event(request: HttpRequest):
 def edit_event(request: HttpRequest):
     check = requires_fields(request.POST, {"event_id": "int", "name": "str", "date": "str", "timezone": "str", "location": "str", "body": "str", "latitude": "float", "longitude": "float"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     event_id = int(request.POST.get("event_id"))
     name = request.POST.get("name")
@@ -112,7 +112,7 @@ def edit_event(request: HttpRequest):
 def delete_event(request: HttpRequest):
     check = requires_fields(request.POST, {"event_id": "int"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     event_id = int(request.POST.get("event_id"))
     try:
@@ -161,7 +161,7 @@ def get_events(request: HttpRequest):
 def toggle_rsvp(request: HttpRequest):
     check = requires_fields(request.POST, {"event_id": "int"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     user: UserCredentials = request.user
     event_id = int(request.POST.get("event_id"))
@@ -201,7 +201,7 @@ def get_rsvp(request: HttpRequest):
 def toggle_notification(request: HttpRequest):
     check = requires_fields(request.POST, {"event_id": "int"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     user: UserCredentials = request.user
     event_id = int(request.POST.get("event_id"))

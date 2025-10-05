@@ -8,7 +8,7 @@ from ida_app.middleware import *
 def send_announcement(request: HttpRequest):
     check = requires_fields(request.POST, {"title": "str", "body": "str"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     title = request.POST.get("title")
     body = request.POST.get("body")
@@ -27,7 +27,7 @@ def send_announcement(request: HttpRequest):
 def add_announcement(request: HttpRequest):
     check = requires_fields(request.POST, {"title": "str", "body": "str"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     title = request.POST.get("title")
     body = request.POST.get("body")
@@ -41,7 +41,7 @@ def add_announcement(request: HttpRequest):
 def update_announcement(request: HttpRequest):
     check = requires_fields(request.POST, {"last_announcement": "int"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     user: UserCredentials = request.user
 

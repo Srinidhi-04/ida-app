@@ -108,6 +108,7 @@ class ShopItems(models.Model):
     name = models.TextField(unique = False, null = False)
     price = models.FloatField(unique = False, null = False)
     image = models.TextField(default = "https://i.imgur.com/Mw85Kfp.png", null = False)
+    inventory = models.IntegerField(default = 0, null = False)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
@@ -134,6 +135,7 @@ class DonationReceipts(models.Model):
     name = models.TextField(unique = False, null = False)
     email = models.TextField(unique = False, null = False)
     amount = models.FloatField(unique = False, null = False)
+    payment_intent = models.TextField(unique = True, null = False)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
 
@@ -142,5 +144,25 @@ class BannerAnnouncements(models.Model):
     announcement_id = models.AutoField(primary_key = True, unique = True, null = False)
     title = models.TextField(unique = False, null = False)
     body = models.TextField(unique = False, null = False)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+
+class UserOrders(models.Model):
+    order_id = models.AutoField(primary_key = True, unique = True, null = False)
+    user = models.ForeignKey(UserCredentials, related_name = "user_orders", on_delete = models.CASCADE, null = False)
+    value = models.FloatField(unique = False, null = False)
+    status = models.TextField(choices = [("Pending", "Pending"), ("Delivered", "Delivered"), ("Cancelled", "Cancelled")], default = "Pending", null = False)
+    payment_intent = models.TextField(unique = True, null = False)
+    created_at = models.DateTimeField(auto_now_add = True)
+    updated_at = models.DateTimeField(auto_now = True)
+
+
+class OrderItems(models.Model):
+    oitem_id = models.AutoField(primary_key = True, unique = True, null = False)
+    order = models.ForeignKey(UserOrders, related_name = "order_items", on_delete = models.CASCADE, null = False)
+    item = models.ForeignKey(ShopItems, related_name = "item_orders", on_delete = models.CASCADE, null = False)
+    quantity = models.IntegerField(unique = False, null = True)
+    subtotal = models.FloatField(unique = False, null = False)
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)

@@ -15,11 +15,11 @@ class ApiService {
     return jsonDecode(response.body);
   }
 
-  static Future<Map> post(String endpoint, {Map<String, String>? body}) async {
+  static Future<Map> post(String endpoint, {Map<String, String>? body, String? jsonBody}) async {
     var response = await http.post(
       Uri.parse(baseUrl + endpoint),
       headers: await headers(),
-      body: body,
+      body: (body != null) ? body : jsonBody,
     );
 
     return jsonDecode(response.body);

@@ -18,7 +18,7 @@ def delete_account(request: HttpRequest):
 def change_settings(request: HttpRequest):
     check = requires_fields(request.POST, {"announcements": "str", "updates": "str", "merch": "str", "status": "str", "mailing": "str", "reminders": "str"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     user: UserCredentials = request.user
     announcements = request.POST.get("announcements") == "yes"
@@ -56,7 +56,7 @@ def get_settings(request: HttpRequest):
 def edit_profile(request: HttpRequest):
     check = requires_fields(request.POST, {"name": "str", "avatar": "int"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     user: UserCredentials = request.user
 
@@ -74,7 +74,7 @@ def edit_profile(request: HttpRequest):
 def edit_role(request: HttpRequest):
     check = requires_fields(request.POST, {"email": "str", "role": "str"})
     if check:
-        return check
+        return JsonResponse(check, status = 400)
 
     email = request.POST.get("email")
     try:

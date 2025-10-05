@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/announcements_service.dart';
@@ -455,7 +456,7 @@ class _HomePageState extends State<HomePage> {
                           children: [
                             Padding(
                               padding: const EdgeInsets.only(bottom: 10),
-                              child: Text(
+                              child: SelectableText(
                                 data[index]["title"],
                                 style: Theme.of(context)
                                     .typography
@@ -464,8 +465,35 @@ class _HomePageState extends State<HomePage> {
                                     .apply(fontWeightDelta: 3),
                               ),
                             ),
-                            Text(
-                              data[index]["body"],
+                            Text.rich(
+                              TextSpan(
+                                children:
+                                    data[index]["body"]
+                                        .split(" ")
+                                        .map(
+                                          (e) =>
+                                              (e.startsWith("https://") ||
+                                                      e.startsWith("www."))
+                                                  ? TextSpan(
+                                                    text: e + " ",
+                                                    style: TextStyle(
+                                                      decoration:
+                                                          TextDecoration
+                                                              .underline,
+                                                    ),
+                                                    recognizer:
+                                                        TapGestureRecognizer()
+                                                          ..onTap = () {
+                                                            launchUrl(
+                                                              Uri.parse(e),
+                                                            );
+                                                          },
+                                                  )
+                                                  : TextSpan(text: e + " "),
+                                        )
+                                        .toList()
+                                        .cast<InlineSpan>(),
+                              ),
                               style: Theme.of(context)
                                   .typography
                                   .black
