@@ -32,12 +32,14 @@ class _ShopPageState extends State<ShopPage> {
   bool cart = false;
   bool initialized = false;
 
-  List<bool> loaded = [false, false, false];
+  List<bool> loaded = [false, false, false, false];
 
   List<String> admin_roles = ["admin"];
   bool admin_access = false;
 
   bool submitted = false;
+
+  String banner = "";
 
   Widget shopItem(
     int index,

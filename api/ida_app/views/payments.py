@@ -168,15 +168,18 @@ def get_orders(request: HttpRequest):
 
 @request_type("GET")
 def get_order(request: HttpRequest):
-    check = requires_fields(request.GET, {"user_id": "int", "order_id": "int"})
+    check = requires_fields(request.GET, {"order_user": "int", "order_id": "int"})
     if check:
         return JsonResponse(check, status = 400)
 
-    user_id = int(request.GET.get("user_id"))
+    order_user = int(request.GET.get("order_user"))
     order_id = int(request.GET.get("order_id"))
 
+    if (request.user.user_id != order_user and request.user.role not in ["admin"]):
+        return JsonResponse({"error": "Insufficient permissions"}, status = 400)
+
     try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+        user: UserCredentials = UserCredentials.objects.get(user_id = order_user)
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
     

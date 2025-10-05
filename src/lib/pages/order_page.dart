@@ -146,7 +146,8 @@ class _OrderPageState extends State<OrderPage> {
   Future<void> getOrder() async {
     Map info = await PaymentsService.getOrder(
       params: {
-        "user_id": order_user.toString(),
+        "user_id": user_id.toString(),
+        "order_user": order_user.toString(),
         "order_id": order_id.toString(),
       },
     );
