@@ -234,7 +234,7 @@ class _ItemPageState extends State<ItemPage> {
                                       Icons.unfold_more_outlined,
                                       color: Theme.of(context).primaryColor,
                                     ),
-                                    hintText: "Change Inventory",
+                                    hintText: "Adjust Inventory",
                                     errorText: errors[3],
                                   ),
                                   cursorColor: Theme.of(context).primaryColor,
@@ -271,7 +271,7 @@ class _ItemPageState extends State<ItemPage> {
                                     FocusScope.of(context).unfocus();
 
                                     if (change == null)
-                                      errors[3] = "Enter a number to change";
+                                      errors[3] = "Enter a number to adjust";
                                     else
                                       errors[3] = null;
 
@@ -347,6 +347,7 @@ class _ItemPageState extends State<ItemPage> {
 
                                       setState(() {
                                         change_controller.text = "";
+                                        change = null;
                                         inventory_controller.text =
                                             info["inventory"].toString();
                                       });
@@ -360,7 +361,7 @@ class _ItemPageState extends State<ItemPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(5.0),
                                     child: Text(
-                                      "Change",
+                                      "Adjust",
                                       style: Theme.of(context)
                                           .typography
                                           .white
