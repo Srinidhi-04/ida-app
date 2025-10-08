@@ -139,7 +139,7 @@ def log_order(request: HttpRequest):
 
                 try:
                     item = ShopItems.objects.get(item_id = x["item_id"])
-                    receipt.append({"name": item.name, "quantity": x["quantity"], "price": item.price, "image": item.image, "amount": x["amount"]})
+                    receipt.append({"name": item.name, "quantity": x["quantity"], "price": item.price, "amount": x["amount"]})
                 except:
                     raise Exception("An item with that item ID does not exist")
                 
@@ -190,7 +190,7 @@ def get_order(request: HttpRequest):
     
     return JsonResponse({"data": {"order_id": order.order_id, "status": order.status, "amount": order.value, "date": order.created_at, "items": list(order.order_items.annotate(name = F("item__name"), price = F("item__price"), image = F("item__image")).values("name", "price", "image", "quantity", "subtotal"))}})
 
-@requires_roles(["admin"])
+@requires_roles(["admin", "merch"])
 @request_type("POST")
 def change_status(request: HttpRequest):
     check = requires_fields(request.POST, {"order_user": "int", "order_id": "int", "status": "str"})
@@ -207,7 +207,7 @@ def change_status(request: HttpRequest):
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
     
     try:
-        order: UserOrders = UserOrders.objects.get(order_id = order_id, user = user)
+        order: UserOrders = UserOrders.objects.prefetch_related("order_items__item").get(order_id = order_id, user = user)
     except:
         return JsonResponse({"error": "Invalid order ID and user ID combination"}, status = 400)
     
@@ -216,6 +216,14 @@ def change_status(request: HttpRequest):
 
     if status == "Cancelled":
         refund = stripe.Refund.create(payment_intent = order.payment_intent)
+
+        receipt = []
+        for item in order.order_items.all():
+            shop_item: ShopItems = item.item
+            receipt.append({"name": shop_item.name, "quantity": item.quantity, "price": shop_item.price, "amount": item.subtotal})
+        
+        send_refund(user.name, user.email, order.value, receipt)
+
         return JsonResponse({"message": "Order cancelled and refunded", "refund_id": refund.id})
     
     return JsonResponse({"message": "Order status changed successfully"})

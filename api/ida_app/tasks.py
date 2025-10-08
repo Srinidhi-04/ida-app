@@ -198,7 +198,7 @@ def send_question(name: str, email: str, question: str):
 
     print("Question mail sent successfully")
 
-def send_order(name: str, email: str, total: float, order: dict):
+def send_order(name: str, email: str, total: float, order: list):
     rows = ""
     for x in order:
         rows += f'''
@@ -252,3 +252,58 @@ def send_order(name: str, email: str, total: float, order: dict):
         session.sendmail("illinidadsassociation@gmail.com", [email, "communications@illinidads.com"], message.as_string())
 
     print("Order mail sent successfully")
+
+def send_refund(name: str, email: str, total: float, order: list):
+    rows = ""
+    for x in order:
+        rows += f'''
+        <tr>
+            <td>{x["name"]}</td>
+            <td>{x["quantity"]}</td>
+            <td>${x["price"]:.2f}</td>
+            <td>${x["amount"]:.2f}</td>
+        </tr>'''
+
+    text = f"""
+<html>
+<body>
+    <p>
+    Hi {name}!
+    <br><br>
+    Your refund has been processed successfully! Here is the order that was refunded:
+    <br>
+    <table border="1" cellpadding="10" cellspacing="0" style="border-collapse: collapse; width:100%; max-width:500px; text-align:center; vertical-align:middle;">
+	    <tr>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Amount</th>
+        </tr>
+{rows}
+	    <tr>
+            <td></td>
+            <td></td>
+            <td><b>Total</b></td>
+            <td>${total:.2f}</td>
+        </tr>
+    </table>
+    <br><br>
+    This email was sent automatically, do not reply to it.
+    </p>
+    <br>
+    <img src="https://i.imgur.com/0FHQKN4.png" alt="ida-logo">
+</body>
+</html>
+"""
+    
+    message = MIMEText(text, "html")
+    message["Subject"] = "Illini Dads Association Refund Confirmation"
+    message["From"] = "illinidadsassociation@gmail.com"
+    message["To"] = email
+
+    with smtplib.SMTP("smtp.gmail.com", 587) as session:
+        session.starttls()
+        session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
+        session.sendmail("illinidadsassociation@gmail.com", [email, "communications@illinidads.com"], message.as_string())
+
+    print("Refund mail sent successfully")

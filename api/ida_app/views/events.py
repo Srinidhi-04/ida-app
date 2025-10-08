@@ -4,7 +4,7 @@ from ida_app.tasks import *
 from ida_app.models import *
 from ida_app.middleware import *
 
-@requires_roles(["admin"])
+@requires_roles(["admin", "events"])
 @request_type("POST")
 def add_event(request: HttpRequest):
     check = requires_fields(request.POST, {"name": "str", "date": "str", "timezone": "str", "location": "str", "body": "str", "latitude": "float", "longitude": "float"})
@@ -44,7 +44,7 @@ def add_event(request: HttpRequest):
 
     return JsonResponse({"message": "Event successfully added", "event_id": event.event_id})
 
-@requires_roles(["admin"])
+@requires_roles(["admin", "events"])
 @request_type("POST")
 def edit_event(request: HttpRequest):
     check = requires_fields(request.POST, {"event_id": "int", "name": "str", "date": "str", "timezone": "str", "location": "str", "body": "str", "latitude": "float", "longitude": "float"})
@@ -107,7 +107,7 @@ def edit_event(request: HttpRequest):
 
     return JsonResponse({"message": "Event successfully edited", "event_id": event.event_id})
 
-@requires_roles(["admin"])
+@requires_roles(["admin", "events"])
 @request_type("POST")
 def delete_event(request: HttpRequest):
     check = requires_fields(request.POST, {"event_id": "int"})

@@ -3,7 +3,7 @@ from ida_app.tasks import *
 from ida_app.models import *
 from ida_app.middleware import *
 
-@requires_roles(["admin"])
+@requires_roles(["admin", "comms"])
 @request_type("POST")
 def send_announcement(request: HttpRequest):
     check = requires_fields(request.POST, {"title": "str", "body": "str"})
@@ -22,7 +22,7 @@ def send_announcement(request: HttpRequest):
 
     return JsonResponse({"message": "Announcement sent successfully"})
 
-@requires_roles(["admin"])
+@requires_roles(["admin", "comms"])
 @request_type("POST")
 def add_announcement(request: HttpRequest):
     check = requires_fields(request.POST, {"title": "str", "body": "str"})

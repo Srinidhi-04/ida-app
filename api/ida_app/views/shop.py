@@ -5,7 +5,7 @@ from django.db.models.functions import Least
 from ida_app.models import *
 from ida_app.middleware import *
 
-@requires_roles(["admin"])
+@requires_roles(["admin", "merch"])
 @request_type("POST")
 def add_item(request: HttpRequest):
     check = requires_fields(request.POST, {"name": "str", "price": "float", "inventory": "int"})
@@ -27,7 +27,7 @@ def add_item(request: HttpRequest):
 
     return JsonResponse({"message": "Item successfully added", "item_id": item.item_id})
 
-@requires_roles(["admin"])
+@requires_roles(["admin", "merch"])
 @request_type("POST")
 def edit_item(request: HttpRequest):
     check = requires_fields(request.POST, {"item_id": "int", "name": "str", "price": "float", "inventory": "int"})
@@ -62,7 +62,7 @@ def edit_item(request: HttpRequest):
 
     return JsonResponse({"message": "Item successfully edited", "item_id": item.item_id})
 
-@requires_roles(["admin"])
+@requires_roles(["admin", "merch"])
 @request_type("POST")
 def change_inventory(request: HttpRequest):
     check = requires_fields(request.POST, {"item_id": "int", "quantity": "int"})
@@ -102,7 +102,7 @@ def get_items(request: HttpRequest):
 
     return JsonResponse({"data": items})
 
-@requires_roles(["admin"])
+@requires_roles(["admin", "merch"])
 @request_type("POST")
 def delete_item(request: HttpRequest):
     check = requires_fields(request.POST, {"item_id": "int"})
