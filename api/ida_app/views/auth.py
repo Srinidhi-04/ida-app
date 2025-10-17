@@ -142,7 +142,7 @@ async def login(request: HttpRequest):
     email = request.POST.get("email")
     password = request.POST.get("password")
 
-    user: UserCredentials = await sync_to_async(lambda: authenticate(request, email = email, password = password))()
+    user: UserCredentials = await sync_to_async(authenticate)(request, email = email, password = password)
 
     if user and user.signup_code:
         while True:

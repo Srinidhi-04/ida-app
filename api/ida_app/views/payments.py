@@ -19,11 +19,11 @@ async def create_intent(amount: float):
     if amount < 50:
         return {"error": "Amount must be at least $0.5"}
 
-    payment_intent = await sync_to_async(lambda: stripe.PaymentIntent.create(
+    payment_intent = await sync_to_async(stripe.PaymentIntent.create)(
         amount = amount,
         currency = "usd",
         payment_method_types = ["card"]
-    ))()
+    )
 
     return {"message": "Stripe payment sheet successfully created", "payment_intent": payment_intent.client_secret, "payment_id": payment_intent.id, "publishable_key": STRIPE_PUBLISH}
 
@@ -50,7 +50,7 @@ async def start_order(request: HttpRequest):
     cart = body.get("cart")
 
     try:
-        async with sync_to_async(lambda: transaction.atomic())():
+        async with sync_to_async(transaction.atomic)():
             for x in cart:
                 item_check = requires_fields(x, {"item_id": "int", "quantity": "int"})
                 if item_check:
@@ -165,7 +165,7 @@ async def get_orders(request: HttpRequest):
 
     user = request.user
     
-    return JsonResponse({"data": await sync_to_async(lambda: list(UserOrders.objects.filter(user = user).values("order_id", "value", "status", "created_at").order_by("created_at")))()})
+    return JsonResponse({"data": await sync_to_async(list)(UserOrders.objects.filter(user = user).values("order_id", "value", "status", "created_at").order_by("created_at"))})
 
 @request_type("GET")
 async def get_order(request: HttpRequest):
@@ -189,7 +189,7 @@ async def get_order(request: HttpRequest):
     except:
         return JsonResponse({"error": "Invalid order ID and user ID combination"}, status = 400)
     
-    return JsonResponse({"data": {"order_id": order.order_id, "status": order.status, "amount": order.value, "date": order.created_at, "items": await sync_to_async(lambda: list(order.order_items.annotate(name = F("item__name"), price = F("item__price"), image = F("item__image")).values("name", "price", "image", "quantity", "subtotal")))()}})
+    return JsonResponse({"data": {"order_id": order.order_id, "status": order.status, "amount": order.value, "date": order.created_at, "items": await sync_to_async(list)(order.order_items.annotate(name = F("item__name"), price = F("item__price"), image = F("item__image")).values("name", "price", "image", "quantity", "subtotal"))}})
 
 @requires_roles(["admin", "merch"])
 @request_type("POST")
@@ -216,10 +216,10 @@ async def change_status(request: HttpRequest):
     await order.asave()
 
     if status == "Cancelled":
-        refund = await sync_to_async(lambda: stripe.Refund.create(payment_intent = order.payment_intent))()
+        refund = await sync_to_async(stripe.Refund.create)(payment_intent = order.payment_intent)
 
         receipt = []
-        order_items = await sync_to_async(lambda: OrderItems.objects.filter(order = order))()
+        order_items = await sync_to_async(OrderItems.objects.filter(order = order).all)()
         for item in order_items:
             shop_item: ShopItems = item.item
             receipt.append({"name": shop_item.name, "quantity": item.quantity, "price": shop_item.price, "amount": item.subtotal})
@@ -260,4 +260,4 @@ async def get_donations(request: HttpRequest):
 
     user = request.user
     
-    return JsonResponse({"data": await sync_to_async(lambda: list(DonationReceipts.objects.filter(user = user).values("record_id", "name", "email", "amount", "created_at").order_by("created_at")))()})
+    return JsonResponse({"data": await sync_to_async(list)(DonationReceipts.objects.filter(user = user).values("record_id", "name", "email", "amount", "created_at").order_by("created_at"))})

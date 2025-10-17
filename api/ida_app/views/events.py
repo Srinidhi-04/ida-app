@@ -144,14 +144,14 @@ async def get_events(request: HttpRequest):
     await Events.objects.filter(date__lte = datetime.datetime.now(tz = datetime.timezone.utc)).aupdate(completed = True)
     
     if not completed:
-        events = sync_to_async(lambda: list(Events.objects.order_by("date").values()))()
+        events = sync_to_async(list)(Events.objects.order_by("date").values())
     else:
         events = Events.objects.filter(completed = completed == "yes").order_by("date")
         if completed != "yes" and essential:
             events = events.filter(essential = essential == "yes").order_by("date")
-        events = sync_to_async(lambda: list(events.values()))()
+        events = sync_to_async(list)(events.values())
     
-    events, rsvp = await asyncio.gather(events, sync_to_async(lambda: list(EventRsvp.objects.filter(user = user).values("event_id")))())
+    events, rsvp = await asyncio.gather(events, sync_to_async(list)(EventRsvp.objects.filter(user = user).values("event_id")))
     rsvp_ids = {x["event_id"] for x in rsvp}
 
     for i in range(len(events)):
@@ -187,7 +187,7 @@ async def get_rsvp(request: HttpRequest):
 
     await Events.objects.filter(date__lte = datetime.datetime.now(tz = datetime.timezone.utc)).aupdate(completed = True)
 
-    all_events, rsvp = await asyncio.gather(sync_to_async(lambda: list(Events.objects.values()))(), sync_to_async(lambda: list(EventRsvp.objects.filter(user = user).values("event_id")))())
+    all_events, rsvp = await asyncio.gather(sync_to_async(list)(Events.objects.values()), sync_to_async(list)(EventRsvp.objects.filter(user = user).values("event_id")))
 
     rsvp_ids = {x["event_id"] for x in rsvp}
 
@@ -224,6 +224,6 @@ async def toggle_notification(request: HttpRequest):
 async def get_notifications(request: HttpRequest):
     user: UserCredentials = request.user
 
-    notifs = await sync_to_async(lambda: list(user.user_notifications.values("event_id")))()
+    notifs = await sync_to_async(list)(user.user_notifications.values("event_id"))
     
     return JsonResponse({"data": [x["event_id"] for x in notifs]})

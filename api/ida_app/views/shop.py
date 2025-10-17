@@ -44,7 +44,7 @@ async def edit_item(request: HttpRequest):
         image = "https://i.imgur.com/Mw85Kfp.png"
 
     try:
-        async with sync_to_async(lambda: transaction.atomic())():
+        async with sync_to_async(transaction.atomic)():
             try:
                 item = await ShopItems.objects.select_for_update().aget(item_id = item_id)
             except:
@@ -74,7 +74,7 @@ async def change_inventory(request: HttpRequest):
     quantity = int(request.POST.get("quantity"))
     
     try:
-        async with sync_to_async(lambda: transaction.atomic())():
+        async with sync_to_async(transaction.atomic)():
             try:
                 item = await ShopItems.objects.select_for_update().aget(item_id = item_id)
             except:
@@ -99,7 +99,7 @@ async def change_inventory(request: HttpRequest):
 
 @request_type("GET")
 async def get_items(request: HttpRequest):
-    items = await sync_to_async(lambda: list(ShopItems.objects.values().order_by("item_id")))()
+    items = await sync_to_async(list)(ShopItems.objects.values().order_by("item_id"))
 
     return JsonResponse({"data": items})
 
@@ -162,7 +162,7 @@ async def edit_cart(request: HttpRequest):
 async def get_cart(request: HttpRequest):
     user: UserCredentials = request.user
 
-    cart = await sync_to_async(lambda: UserCarts.objects.filter(user = user).select_related("item").all())()
+    cart = await sync_to_async(UserCarts.objects.filter(user = user).select_related("item").all)()
     cart_data = []
     for x in cart:
         if x.quantity > x.item.inventory:
