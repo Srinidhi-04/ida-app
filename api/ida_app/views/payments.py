@@ -1,4 +1,5 @@
 import stripe
+from asgiref.sync import sync_to_async
 from django.http import HttpRequest, JsonResponse
 from django.db import transaction
 from django.db.models import F
@@ -13,34 +14,34 @@ import os
 
 STRIPE_PUBLISH = os.getenv("STRIPE_PUBLISH_LIVE")
 
-def create_intent(amount: float):
+async def create_intent(amount: float):
     amount = int(amount * 100)
     if amount < 50:
         return {"error": "Amount must be at least $0.5"}
 
-    payment_intent = stripe.PaymentIntent.create(
+    payment_intent = await sync_to_async(lambda: stripe.PaymentIntent.create(
         amount = amount,
         currency = "usd",
         payment_method_types = ["card"]
-    )
+    ))()
 
     return {"message": "Stripe payment sheet successfully created", "payment_intent": payment_intent.client_secret, "payment_id": payment_intent.id, "publishable_key": STRIPE_PUBLISH}
 
 @request_type("POST")
-def stripe_payment(request: HttpRequest):
+async def stripe_payment(request: HttpRequest):
     check = requires_fields(request.POST, {"amount": "float"})
     if check:
         return JsonResponse(check, status = 400)
 
-    intent = create_intent(float(request.POST.get("amount")))
+    intent = await create_intent(float(request.POST.get("amount")))
     if "error" in intent:
         return JsonResponse(intent, status = 400)
     
     return JsonResponse(intent)
 
 @request_type("POST")
-def start_order(request: HttpRequest):
-    body = json.loads(request.body)
+async def start_order(request: HttpRequest):
+    body: dict = json.loads(request.body)
 
     check = requires_fields(body, {"cart": "list", "amount": "float"})
     if check:
@@ -49,14 +50,14 @@ def start_order(request: HttpRequest):
     cart = body.get("cart")
 
     try:
-        with transaction.atomic():
+        async with sync_to_async(lambda: transaction.atomic())():
             for x in cart:
                 item_check = requires_fields(x, {"item_id": "int", "quantity": "int"})
                 if item_check:
                     raise Exception(item_check["error"])
 
                 try:
-                    item = ShopItems.objects.select_for_update().get(item_id = x["item_id"])
+                    item = await ShopItems.objects.select_for_update().aget(item_id = x["item_id"])
                 except:
                     raise Exception("An item with that item ID does not exist")
                 
@@ -64,20 +65,20 @@ def start_order(request: HttpRequest):
                     raise Exception("Not enough items in inventory")
                 
                 item.inventory -= x["quantity"]
-                item.save()
+                await item.asave()
                 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status = 400)
 
-    intent = create_intent(float(body.get("amount")))
+    intent = await create_intent(float(body.get("amount")))
     if "error" in intent:
         return JsonResponse(intent, status = 400)
     
     return JsonResponse(intent)
 
 @request_type("POST")
-def cancel_order(request: HttpRequest):
-    body = json.loads(request.body)
+async def cancel_order(request: HttpRequest):
+    body: dict = json.loads(request.body)
 
     check = requires_fields(body, {"cart": "list"})
     if check:
@@ -93,12 +94,12 @@ def cancel_order(request: HttpRequest):
                     raise Exception(item_check["error"])
 
                 try:
-                    item = ShopItems.objects.get(item_id = x["item_id"])
+                    item = await ShopItems.objects.aget(item_id = x["item_id"])
                 except:
                     return JsonResponse({"error": "An item with that item ID does not exist"}, status = 400)
                 
                 item.inventory += x["quantity"]
-                item.save()
+                await item.asave()
                 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status = 400)
@@ -106,8 +107,8 @@ def cancel_order(request: HttpRequest):
     return JsonResponse({"message": "Order cancelled successfully"})
 
 @request_type("POST")
-def log_order(request: HttpRequest):
-    body = json.loads(request.body)
+async def log_order(request: HttpRequest):
+    body: dict = json.loads(request.body)
 
     check = requires_fields(body, {"value": "float", "payment_intent": "str", "cart": "list"})
     if check:
@@ -122,12 +123,12 @@ def log_order(request: HttpRequest):
         with transaction.atomic():
             try:
                 order = UserOrders(user = user, value = value, payment_intent = payment_intent)
-                order.save()
+                await order.asave()
             except:
                 raise Exception("An unknown error occurred with the database")
             
             try:
-                user.user_carts.all().delete()
+                await UserCarts.objects.filter(user = user).adelete()
             except:
                 raise Exception("An unknown error occurred with the database")
 
@@ -138,36 +139,36 @@ def log_order(request: HttpRequest):
                     raise Exception(item_check["error"])
 
                 try:
-                    item = ShopItems.objects.get(item_id = x["item_id"])
+                    item = await ShopItems.objects.aget(item_id = x["item_id"])
                     receipt.append({"name": item.name, "quantity": x["quantity"], "price": item.price, "amount": x["amount"]})
                 except:
                     raise Exception("An item with that item ID does not exist")
                 
                 try:
                     order_item = OrderItems(order = order, item = item, quantity = x["quantity"], subtotal = x["amount"])
-                    order_item.save()
+                    await order_item.asave()
                 except:
                     raise Exception("An unknown error occurred with the database")
                 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status = 400)
 
-    send_order(user.name, user.email, value, receipt)
+    await send_order(user.name, user.email, value, receipt)
 
     return JsonResponse({"message": "Order placed successfully", "order_id": order.order_id, "date": order.created_at, "receipt": receipt, "status": order.status, "amount": order.value})
 
 @request_type("GET")
-def get_orders(request: HttpRequest):
+async def get_orders(request: HttpRequest):
     check = requires_fields(request.GET, {"user_id": "int"})
     if check:
         return JsonResponse(check, status = 400)
 
     user = request.user
     
-    return JsonResponse({"data": list(user.user_orders.values("order_id", "value", "status", "created_at").order_by("created_at"))})
+    return JsonResponse({"data": await sync_to_async(lambda: list(UserOrders.objects.filter(user = user).values("order_id", "value", "status", "created_at").order_by("created_at")))()})
 
 @request_type("GET")
-def get_order(request: HttpRequest):
+async def get_order(request: HttpRequest):
     check = requires_fields(request.GET, {"order_user": "int", "order_id": "int"})
     if check:
         return JsonResponse(check, status = 400)
@@ -179,20 +180,20 @@ def get_order(request: HttpRequest):
         return JsonResponse({"error": "Insufficient permissions"}, status = 400)
 
     try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = order_user)
+        user: UserCredentials = await UserCredentials.objects.prefetch_related("user_orders__order_items").aget(user_id = order_user)
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
     
     try:
-        order: UserOrders = UserOrders.objects.get(order_id = order_id, user = user)
+        order: UserOrders = await user.user_orders.aget(order_id = order_id)
     except:
         return JsonResponse({"error": "Invalid order ID and user ID combination"}, status = 400)
     
-    return JsonResponse({"data": {"order_id": order.order_id, "status": order.status, "amount": order.value, "date": order.created_at, "items": list(order.order_items.annotate(name = F("item__name"), price = F("item__price"), image = F("item__image")).values("name", "price", "image", "quantity", "subtotal"))}})
+    return JsonResponse({"data": {"order_id": order.order_id, "status": order.status, "amount": order.value, "date": order.created_at, "items": await sync_to_async(lambda: list(order.order_items.annotate(name = F("item__name"), price = F("item__price"), image = F("item__image")).values("name", "price", "image", "quantity", "subtotal")))()}})
 
 @requires_roles(["admin", "merch"])
 @request_type("POST")
-def change_status(request: HttpRequest):
+async def change_status(request: HttpRequest):
     check = requires_fields(request.POST, {"order_user": "int", "order_id": "int", "status": "str"})
     if check:
         return JsonResponse(check, status = 400)
@@ -202,34 +203,35 @@ def change_status(request: HttpRequest):
     status = request.POST.get("status")
 
     try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = order_user)
+        user: UserCredentials = await UserCredentials.objects.aget(user_id = order_user)
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
     
     try:
-        order: UserOrders = UserOrders.objects.prefetch_related("order_items__item").get(order_id = order_id, user = user)
+        order: UserOrders = await UserOrders.objects.prefetch_related("order_items__item").aget(order_id = order_id, user = user)
     except:
         return JsonResponse({"error": "Invalid order ID and user ID combination"}, status = 400)
     
     order.status = status
-    order.save()
+    await order.asave()
 
     if status == "Cancelled":
-        refund = stripe.Refund.create(payment_intent = order.payment_intent)
+        refund = await sync_to_async(lambda: stripe.Refund.create(payment_intent = order.payment_intent))()
 
         receipt = []
-        for item in order.order_items.all():
+        order_items = await sync_to_async(lambda: OrderItems.objects.filter(order = order))()
+        for item in order_items:
             shop_item: ShopItems = item.item
             receipt.append({"name": shop_item.name, "quantity": item.quantity, "price": shop_item.price, "amount": item.subtotal})
         
-        send_refund(user.name, user.email, order.value, receipt)
+        await send_refund(user.name, user.email, order.value, receipt)
 
         return JsonResponse({"message": "Order cancelled and refunded", "refund_id": refund.id})
     
     return JsonResponse({"message": "Order status changed successfully"})
 
 @request_type("POST")
-def log_donation(request: HttpRequest):
+async def log_donation(request: HttpRequest):
     check = requires_fields(request.POST, {"name": "str", "email": "str", "amount": "float", "payment_intent": "str"})
     if check:
         return JsonResponse(check, status = 400)
@@ -242,20 +244,20 @@ def log_donation(request: HttpRequest):
 
     try:
         receipt: DonationReceipts = DonationReceipts(user = user, name = name, email = email, amount = amount, payment_intent = payment_intent)
-        receipt.save()
+        await receipt.asave()
 
-        send_donation(name, email, amount)
+        await send_donation(name, email, amount)
     except:
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
 
     return JsonResponse({"message": "Donation successfully logged"})
 
 @request_type("GET")
-def get_donations(request: HttpRequest):
+async def get_donations(request: HttpRequest):
     check = requires_fields(request.GET, {"user_id": "int"})
     if check:
         return JsonResponse(check, status = 400)
 
     user = request.user
     
-    return JsonResponse({"data": list(user.user_donations.values("record_id", "name", "email", "amount", "created_at").order_by("created_at"))})
+    return JsonResponse({"data": await sync_to_async(lambda: list(DonationReceipts.objects.filter(user = user).values("record_id", "name", "email", "amount", "created_at").order_by("created_at")))()})

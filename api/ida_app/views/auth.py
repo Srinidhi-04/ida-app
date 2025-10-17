@@ -2,6 +2,7 @@ import uuid
 import datetime
 import random as rd
 from hashlib import sha256
+from asgiref.sync import sync_to_async
 from django.http import HttpRequest, JsonResponse
 from django.contrib.auth import authenticate
 from ida_app.tasks import *
@@ -10,7 +11,7 @@ from ida_app.middleware import *
 
 @auth_exempt
 @request_type("POST")
-def signup(request: HttpRequest):
+async def signup(request: HttpRequest):
     check = requires_fields(request.POST, {"email": "str", "name": "str", "password": "str"})
     if check:
         return JsonResponse(check, status = 400)
@@ -21,19 +22,19 @@ def signup(request: HttpRequest):
     mailing = request.POST.get("mailing") == "yes"
 
     try:
-        user: UserCredentials = UserCredentials.objects.create_user(email = email, name = name, password = password, avatar = rd.randint(1, 10), mailing = mailing)
+        user: UserCredentials = await UserCredentials.objects.create_user(email = email, name = name, password = password, avatar = rd.randint(1, 10), mailing = mailing)
     except Exception:
         return JsonResponse({"error": "A user with that email already exists"}, status = 400)
 
-    send_verification_code(user.name, user.signup_code, user.email)
+    await send_verification_code(user.name, user.signup_code, user.email)
     if mailing:
-        send_subscriber(user.name, user.email, mailing)
+        await send_subscriber(user.name, user.email, mailing)
 
     return JsonResponse({"message": "User successfully signed up", "user_id": user.user_id, "email": user.email})
 
 @auth_exempt
 @request_type("POST")
-def verify_code(request: HttpRequest):
+async def verify_code(request: HttpRequest):
     check = requires_fields(request.POST, {"user_id": "int", "code": "int"})
     if check:
         return JsonResponse(check, status = 400)
@@ -42,7 +43,7 @@ def verify_code(request: HttpRequest):
     code = int(request.POST.get("code"))
 
     try:
-        user: UserCredentials = UserCredentials.objects.get(user_id = user_id)
+        user: UserCredentials = await UserCredentials.objects.aget(user_id = user_id)
     except:
         return JsonResponse({"error": "A user with that user ID does not exist"}, status = 400)
 
@@ -53,19 +54,19 @@ def verify_code(request: HttpRequest):
 
     uid = uuid.uuid4().hex
     token = UserTokens(user = user, token = sha256(uid.encode()).hexdigest(), expires_at = (datetime.datetime.now(tz = datetime.timezone.utc) + datetime.timedelta(days = 30)))
-    token.save()
+    await token.asave()
 
     user.last_login = datetime.datetime.now(tz = datetime.timezone.utc)
-    user.save()
+    await user.asave()
 
     settings = UserSettings(user = user, announcements = True, updates = True, merch = True, status = True, reminders = "2 hours before")
-    settings.save()
+    await settings.asave()
 
     return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": uid})
 
 @auth_exempt
 @request_type("POST")
-def send_code(request: HttpRequest):
+async def send_code(request: HttpRequest):
     check = requires_fields(request.POST, {"email": "str"})
     if check:
         return JsonResponse(check, status = 400)
@@ -74,14 +75,14 @@ def send_code(request: HttpRequest):
     forgot = request.POST.get("forgot") == "yes"
     
     try:
-        user: UserCredentials = UserCredentials.objects.get(email = email)
+        user: UserCredentials = await UserCredentials.objects.aget(email = email)
     except:
         return JsonResponse({"error": "A user with that email does not exist"}, status = 400)
 
     while True:
         code = rd.randint(100000, 999999)
         try:
-            UserCredentials.objects.get(signup_code = code)
+            await UserCredentials.objects.aget(signup_code = code)
         except:
             break
     
@@ -90,15 +91,15 @@ def send_code(request: HttpRequest):
     else:
         user.forgot_code = code
 
-    user.save()
+    await user.asave()
 
-    send_verification_code(user.name, code, user.email)
+    await send_verification_code(user.name, code, user.email)
 
     return JsonResponse({"message": "Code successfully resent", "user_id": user.user_id, "email": user.email})
 
 @auth_exempt
 @request_type("POST")
-def change_password(request: HttpRequest):
+async def change_password(request: HttpRequest):
     check = requires_fields(request.POST, {"email": "str", "password": "str", "code": "int"})
     if check:
         return JsonResponse(check, status = 400)
@@ -108,7 +109,7 @@ def change_password(request: HttpRequest):
     code = int(request.POST.get("code"))
 
     try:
-        user: UserCredentials = UserCredentials.objects.get(email = email)
+        user: UserCredentials = await UserCredentials.objects.aget(email = email)
     except:
         return JsonResponse({"error": "A user with that email does not exist"}, status = 400)
     
@@ -118,14 +119,14 @@ def change_password(request: HttpRequest):
     user.forgot_code = None
     user.set_password(password)
 
-    user.user_tokens.update(expires_at = datetime.datetime.now(tz = datetime.timezone.utc))
+    await user.user_tokens.aupdate(expires_at = datetime.datetime.now(tz = datetime.timezone.utc))
 
     uid = uuid.uuid4().hex
     token = UserTokens(user = user, token = sha256(uid.encode()).hexdigest(), expires_at = (datetime.datetime.now(tz = datetime.timezone.utc) + datetime.timedelta(days = 30)))
-    token.save()
+    await token.asave()
 
     user.last_login = datetime.datetime.now(tz = datetime.timezone.utc)
-    user.save()
+    await user.asave()
 
     settings: UserSettings = user.user_settings
 
@@ -133,7 +134,7 @@ def change_password(request: HttpRequest):
 
 @auth_exempt
 @request_type("POST")
-def login(request: HttpRequest):
+async def login(request: HttpRequest):
     check = requires_fields(request.POST, {"email": "str", "password": "str"})
     if check:
         return JsonResponse(check, status = 400)
@@ -141,39 +142,39 @@ def login(request: HttpRequest):
     email = request.POST.get("email")
     password = request.POST.get("password")
 
-    user: UserCredentials = authenticate(request, email = email, password = password)
+    user: UserCredentials = await sync_to_async(lambda: authenticate(request, email = email, password = password))()
 
     if user and user.signup_code:
         while True:
             code = rd.randint(100000, 999999)
             try:
-                UserCredentials.objects.get(signup_code = code)
+                await UserCredentials.objects.aget(signup_code = code)
             except:
                 break
         
         user.signup_code = code
-        user.save()
+        await user.asave()
 
-        send_verification_code(user.name, user.signup_code, user.email)
+        await send_verification_code(user.name, user.signup_code, user.email)
 
         return JsonResponse({"message": "Code successfully resent", "user_id": user.user_id, "email": user.email})
 
     if user:
         uid = uuid.uuid4().hex
         token = UserTokens(user = user, token = sha256(uid.encode()).hexdigest(), expires_at = (datetime.datetime.now(tz = datetime.timezone.utc) + datetime.timedelta(days = 30)))
-        token.save()
+        await token.asave()
 
         user.last_login = datetime.datetime.now(tz = datetime.timezone.utc)
-        user.save()
+        await user.asave()
 
-        settings: UserSettings = user.user_settings
+        settings: UserSettings = await UserSettings.objects.aget(user = user)
 
         return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": uid})
     
     return JsonResponse({"error": "Email or password is incorrect"}, status = 400)
 
 @request_type("GET")
-def get_permissions(request: HttpRequest):
+async def get_permissions(request: HttpRequest):
     check = requires_fields(request.GET, {"category": "str"})
     if check:
         return JsonResponse(check, status = 400)

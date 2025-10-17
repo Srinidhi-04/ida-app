@@ -1,9 +1,10 @@
 from django.db import models
+import asyncio
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import random as rd
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, name, password, **kwargs):
+    async def create_user(self, email, name, password, **kwargs):
         if not email:
             raise ValueError("'email' field is required")
         if not name:
@@ -11,13 +12,12 @@ class UserManager(BaseUserManager):
         if not password:
             raise ValueError("'password' field is required")
 
-        email = self.normalize_email(email)
-        email.lower()
+        email = self.normalize_email(email).lower()
 
         while True:
             code = rd.randint(100000, 999999)
             try:
-                UserCredentials.objects.get(signup_code = code)
+                await UserCredentials.objects.aget(signup_code = code)
             except:
                 break
 
@@ -25,7 +25,7 @@ class UserManager(BaseUserManager):
         user.set_password(password)
 
         try:
-            user.save(using = self._db)
+            await user.asave(using = self._db)
         except:
             raise Exception("A user with that email already exists")
 
@@ -34,11 +34,20 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, name, password, **kwargs):
         kwargs.setdefault("role", "admin")
         kwargs.setdefault("is_superuser", True)
-        return self.create_user(email, name, password, **kwargs)
-    
-    def create_admin(self, email, name, password, **kwargs):
+
+        try:
+            loop = asyncio.get_running_loop()
+        except:
+            loop = None
+        
+        if loop and loop.is_running():
+            return loop.run_until_complete(self.create_user(email, name, password, **kwargs))
+        
+        return asyncio.run(self.create_user(email, name, password, **kwargs))
+
+    async def create_admin(self, email, name, password, **kwargs):
         kwargs.setdefault("role", "admin")
-        return self.create_user(email, name, password, **kwargs)
+        return await self.create_user(email, name, password, **kwargs)
 
 
 class UserCredentials(AbstractBaseUser, PermissionsMixin):
