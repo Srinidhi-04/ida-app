@@ -1,1 +1,1 @@
-web: uvicorn api.asgi:app --chdir api --host=0.0.0.0 --port=${PORT:-8000} --workers 1
+web: uvicorn api.asgi:app --app-dir api --host 0.0.0.0 --port ${PORT:-8000} --workers 1
