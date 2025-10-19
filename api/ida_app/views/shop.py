@@ -43,23 +43,30 @@ async def edit_item(request: HttpRequest):
     if not image or image == "":
         image = "https://i.imgur.com/Mw85Kfp.png"
 
-    try:
-        async with sync_to_async(transaction.atomic)():
-            try:
-                item = await ShopItems.objects.select_for_update().aget(item_id = item_id)
-            except:
-                raise Exception("An item with that item ID does not exist")
+    def async_transaction():
+        try:
+            with transaction.atomic():
+                try:
+                    item = ShopItems.objects.select_for_update().get(item_id = item_id)
+                except:
+                    raise Exception("An item with that item ID does not exist")
 
-            item.name = name
-            item.price = price
-            item.image = image
-            item.inventory = inventory
-            await item.asave()
+                item.name = name
+                item.price = price
+                item.image = image
+                item.inventory = inventory
+                item.save()
 
-            await UserCarts.objects.filter(item = item).aupdate(quantity = Least(F("quantity"), inventory))
-    
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status = 400)
+                UserCarts.objects.filter(item = item).update(quantity = Least(F("quantity"), inventory))
+
+                return item
+        
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status = 400)
+
+    item = await sync_to_async(async_transaction)()
+    if isinstance(item, JsonResponse):
+        return item
 
     return JsonResponse({"message": "Item successfully edited", "item_id": item.item_id})
 
@@ -73,27 +80,34 @@ async def change_inventory(request: HttpRequest):
     item_id = int(request.POST.get("item_id"))
     quantity = int(request.POST.get("quantity"))
     
-    try:
-        async with sync_to_async(transaction.atomic)():
-            try:
-                item = await ShopItems.objects.select_for_update().aget(item_id = item_id)
-            except:
-                raise Exception("An item with that item ID does not exist")
-            
-            if item.inventory + quantity < 0:
-                ex = Exception("Not enough items in inventory to reduce")
-                ex.inventory = item.inventory
-                raise ex
-            
-            item.inventory += quantity
-            await item.asave()
+    def async_transaction():
+        try:
+            with transaction.atomic():
+                try:
+                    item = ShopItems.objects.select_for_update().get(item_id = item_id)
+                except:
+                    raise Exception("An item with that item ID does not exist")
                 
-    except Exception as e:
-        err = {"error": str(e)}
-        if hasattr(e, "inventory"):
-            err["inventory"] = e.inventory
+                if item.inventory + quantity < 0:
+                    ex = Exception("Not enough items in inventory to reduce")
+                    ex.inventory = item.inventory
+                    raise ex
+                
+                item.inventory += quantity
+                item.save()
 
-        return JsonResponse(err, status = 400)
+                return item
+                    
+        except Exception as e:
+            err = {"error": str(e)}
+            if hasattr(e, "inventory"):
+                err["inventory"] = e.inventory
+
+            return JsonResponse(err, status = 400)
+    
+    item = await sync_to_async(async_transaction)()
+    if isinstance(item, JsonResponse):
+        return item
     
     return JsonResponse({"message": "Inventory changed successfully", "inventory": item.inventory})
 
@@ -162,7 +176,7 @@ async def edit_cart(request: HttpRequest):
 async def get_cart(request: HttpRequest):
     user: UserCredentials = request.user
 
-    cart = await sync_to_async(UserCarts.objects.filter(user = user).select_related("item").all)()
+    cart = await sync_to_async(list)(UserCarts.objects.filter(user = user).select_related("item"))
     cart_data = []
     for x in cart:
         if x.quantity > x.item.inventory:

@@ -31,10 +31,10 @@ async def send_topic_notification(topic: str, title: str, body: str):
     response = await asyncio.to_thread(lambda: messaging.send(message))
     print(f"Successfully sent message to topic '{topic}': {response}")
 
-def schedule_topic_notification(topic: str, title: str, body: str, run_time: datetime.datetime):
-    def send_notif(topic, title, body):
-        asyncio.run(send_topic_notification(topic, title, body))
+def send_notif(topic, title, body):
+    asyncio.run(send_topic_notification(topic, title, body))
 
+def schedule_topic_notification(topic: str, title: str, body: str, run_time: datetime.datetime):
     job_id = f"notif_{topic}"
     scheduler.add_job(
         send_notif,

@@ -49,26 +49,31 @@ async def start_order(request: HttpRequest):
 
     cart = body.get("cart")
 
-    try:
-        async with sync_to_async(transaction.atomic)():
-            for x in cart:
-                item_check = requires_fields(x, {"item_id": "int", "quantity": "int"})
-                if item_check:
-                    raise Exception(item_check["error"])
+    def async_transaction():
+        try:
+            with transaction.atomic():
+                for x in cart:
+                    item_check = requires_fields(x, {"item_id": "int", "quantity": "int"})
+                    if item_check:
+                        raise Exception(item_check["error"])
 
-                try:
-                    item = await ShopItems.objects.select_for_update().aget(item_id = x["item_id"])
-                except:
-                    raise Exception("An item with that item ID does not exist")
-                
-                if item.inventory < x["quantity"]:
-                    raise Exception("Not enough items in inventory")
-                
-                item.inventory -= x["quantity"]
-                await item.asave()
-                
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status = 400)
+                    try:
+                        item = ShopItems.objects.select_for_update().get(item_id = x["item_id"])
+                    except:
+                        raise Exception("An item with that item ID does not exist")
+                    
+                    if item.inventory < x["quantity"]:
+                        raise Exception("Not enough items in inventory")
+                    
+                    item.inventory -= x["quantity"]
+                    item.save()
+                    
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status = 400)
+    
+    error = await sync_to_async(async_transaction)()
+    if isinstance(error, JsonResponse):
+        return error
 
     intent = await create_intent(float(body.get("amount")))
     if "error" in intent:
@@ -86,23 +91,26 @@ async def cancel_order(request: HttpRequest):
 
     cart = body.get("cart")
 
-    try:
-        with transaction.atomic():
-            for x in cart:
-                item_check = requires_fields(x, {"item_id": "int", "quantity": "int"})
-                if item_check:
-                    raise Exception(item_check["error"])
+    def async_transaction():
+        try:
+            with transaction.atomic():
+                for x in cart:
+                    item_check = requires_fields(x, {"item_id": "int", "quantity": "int"})
+                    if item_check:
+                        raise Exception(item_check["error"])
 
-                try:
-                    item = await ShopItems.objects.aget(item_id = x["item_id"])
-                except:
-                    return JsonResponse({"error": "An item with that item ID does not exist"}, status = 400)
-                
-                item.inventory += x["quantity"]
-                await item.asave()
-                
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status = 400)
+                    try:
+                        item = ShopItems.objects.get(item_id = x["item_id"])
+                    except:
+                        return JsonResponse({"error": "An item with that item ID does not exist"}, status = 400)
+                    
+                    item.inventory += x["quantity"]
+                    item.save()
+                    
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status = 400)
+    
+    await sync_to_async(async_transaction)()
 
     return JsonResponse({"message": "Order cancelled successfully"})
 
@@ -119,39 +127,48 @@ async def log_order(request: HttpRequest):
     cart = body.get("cart")
     payment_intent = body.get("payment_intent")
 
-    try:
-        with transaction.atomic():
-            try:
-                order = UserOrders(user = user, value = value, payment_intent = payment_intent)
-                await order.asave()
-            except:
-                raise Exception("An unknown error occurred with the database")
-            
-            try:
-                await UserCarts.objects.filter(user = user).adelete()
-            except:
-                raise Exception("An unknown error occurred with the database")
-
-            receipt = []
-            for x in cart:
-                item_check = requires_fields(x, {"item_id": "int", "quantity": "int", "amount": "float"})
-                if item_check:
-                    raise Exception(item_check["error"])
-
+    def async_transaction():
+        try:
+            with transaction.atomic():
                 try:
-                    item = await ShopItems.objects.aget(item_id = x["item_id"])
-                    receipt.append({"name": item.name, "quantity": x["quantity"], "price": item.price, "amount": x["amount"]})
-                except:
-                    raise Exception("An item with that item ID does not exist")
-                
-                try:
-                    order_item = OrderItems(order = order, item = item, quantity = x["quantity"], subtotal = x["amount"])
-                    await order_item.asave()
+                    order = UserOrders(user = user, value = value, payment_intent = payment_intent)
+                    order.save()
                 except:
                     raise Exception("An unknown error occurred with the database")
                 
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status = 400)
+                try:
+                    UserCarts.objects.filter(user = user).delete()
+                except:
+                    raise Exception("An unknown error occurred with the database")
+
+                receipt = []
+                for x in cart:
+                    item_check = requires_fields(x, {"item_id": "int", "quantity": "int", "amount": "float"})
+                    if item_check:
+                        raise Exception(item_check["error"])
+
+                    try:
+                        item = ShopItems.objects.get(item_id = x["item_id"])
+                        receipt.append({"name": item.name, "quantity": x["quantity"], "price": item.price, "amount": x["amount"]})
+                    except:
+                        raise Exception("An item with that item ID does not exist")
+                    
+                    try:
+                        order_item = OrderItems(order = order, item = item, quantity = x["quantity"], subtotal = x["amount"])
+                        order_item.save()
+                    except:
+                        raise Exception("An unknown error occurred with the database")
+                    
+                    return receipt, order
+                    
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status = 400)
+    
+    ret = await sync_to_async(async_transaction)()
+    if isinstance(ret, JsonResponse):
+        return ret
+    
+    receipt, order = ret
 
     await send_order(user.name, user.email, value, receipt)
 
@@ -219,7 +236,7 @@ async def change_status(request: HttpRequest):
         refund = await sync_to_async(stripe.Refund.create)(payment_intent = order.payment_intent)
 
         receipt = []
-        order_items = await sync_to_async(OrderItems.objects.filter(order = order).all)()
+        order_items = await sync_to_async(list)(OrderItems.objects.filter(order = order))
         for item in order_items:
             shop_item: ShopItems = item.item
             receipt.append({"name": shop_item.name, "quantity": item.quantity, "price": shop_item.price, "amount": item.subtotal})

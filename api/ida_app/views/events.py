@@ -39,10 +39,10 @@ async def add_event(request: HttpRequest):
     except:
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
     
-    schedule_topic_notification(topic=f"ida-event-{event.event_id}", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=event_date)
-    schedule_topic_notification(topic=f"ida-event-{event.event_id}-0", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(minutes=30)))
-    schedule_topic_notification(topic=f"ida-event-{event.event_id}-1", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(hours=2)))
-    schedule_topic_notification(topic=f"ida-event-{event.event_id}-2", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(hours=6)))
+    await asyncio.to_thread(lambda: schedule_topic_notification(topic=f"ida-event-{event.event_id}", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=event_date))
+    await asyncio.to_thread(lambda: schedule_topic_notification(topic=f"ida-event-{event.event_id}-0", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(minutes=30))))
+    await asyncio.to_thread(lambda: schedule_topic_notification(topic=f"ida-event-{event.event_id}-1", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(hours=2))))
+    await asyncio.to_thread(lambda: schedule_topic_notification(topic=f"ida-event-{event.event_id}-2", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(hours=6))))
 
     return JsonResponse({"message": "Event successfully added", "event_id": event.event_id})
 
@@ -80,10 +80,10 @@ async def edit_event(request: HttpRequest):
     except:
         return JsonResponse({"error": "An event with that event ID does not exist"}, status = 400)
     
-    delete_topic_notification(topic=f"ida-event-{event.event_id}")
-    delete_topic_notification(topic=f"ida-event-{event.event_id}-0")
-    delete_topic_notification(topic=f"ida-event-{event.event_id}-1")
-    delete_topic_notification(topic=f"ida-event-{event.event_id}-2")
+    await asyncio.to_thread(lambda: delete_topic_notification(topic=f"ida-event-{event.event_id}"))
+    await asyncio.to_thread(lambda: delete_topic_notification(topic=f"ida-event-{event.event_id}-0"))
+    await asyncio.to_thread(lambda: delete_topic_notification(topic=f"ida-event-{event.event_id}-1"))
+    await asyncio.to_thread(lambda: delete_topic_notification(topic=f"ida-event-{event.event_id}-2"))
 
     event.name = name
     event.date = event_date
@@ -102,10 +102,10 @@ async def edit_event(request: HttpRequest):
 
     await event.asave()
     
-    schedule_topic_notification(topic=f"ida-event-{event.event_id}", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=event_date)
-    schedule_topic_notification(topic=f"ida-event-{event.event_id}-0", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(minutes=30)))
-    schedule_topic_notification(topic=f"ida-event-{event.event_id}-1", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(hours=2)))
-    schedule_topic_notification(topic=f"ida-event-{event.event_id}-2", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(hours=6)))
+    await asyncio.to_thread(lambda: schedule_topic_notification(topic=f"ida-event-{event.event_id}", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=event_date))
+    await asyncio.to_thread(lambda: schedule_topic_notification(topic=f"ida-event-{event.event_id}-0", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(minutes=30))))
+    await asyncio.to_thread(lambda: schedule_topic_notification(topic=f"ida-event-{event.event_id}-1", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(hours=2))))
+    await asyncio.to_thread(lambda: schedule_topic_notification(topic=f"ida-event-{event.event_id}-2", title="Event starting soon!", body=f"{name} is starting soon at {location} at {event_date.strftime("%I:%M")} {"AM" if event_date.hour < 12 else "PM"} on {event_date.strftime("%m/%d/%Y")}", run_time=(event_date-datetime.timedelta(hours=6))))
 
     return JsonResponse({"message": "Event successfully edited", "event_id": event.event_id})
 
@@ -122,10 +122,10 @@ async def delete_event(request: HttpRequest):
     except:
         return JsonResponse({"error": "An event with that event ID does not exist"}, status = 400)
     
-    delete_topic_notification(topic=f"ida-event-{event.event_id}")
-    delete_topic_notification(topic=f"ida-event-{event.event_id}-0")
-    delete_topic_notification(topic=f"ida-event-{event.event_id}-1")
-    delete_topic_notification(topic=f"ida-event-{event.event_id}-2")
+    await asyncio.to_thread(lambda: delete_topic_notification(topic=f"ida-event-{event.event_id}"))
+    await asyncio.to_thread(lambda: delete_topic_notification(topic=f"ida-event-{event.event_id}-0"))
+    await asyncio.to_thread(lambda: delete_topic_notification(topic=f"ida-event-{event.event_id}-1"))
+    await asyncio.to_thread(lambda: delete_topic_notification(topic=f"ida-event-{event.event_id}-2"))
 
     try:
         await event.adelete()

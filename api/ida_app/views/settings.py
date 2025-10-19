@@ -29,7 +29,7 @@ async def change_settings(request: HttpRequest):
     mailing = request.POST.get("mailing") == "yes"
     reminders = request.POST.get("reminders")
 
-    settings: UserSettings = user.user_settings
+    settings: UserSettings = await UserSettings.objects.aget(user = user)
     settings.announcements = announcements
     settings.updates = updates
     settings.merch = merch
@@ -96,6 +96,6 @@ async def get_roles(request: HttpRequest):
     total_users = await UserCredentials.objects.acount()
     
     emails = await sync_to_async(list)(UserCredentials.objects.values("email", "role"))
-    roles = list(set([x["role"] for x in emails]))()
+    roles = list(set([x["role"] for x in emails]))
 
     return JsonResponse({"data": {"total_users": total_users, "emails": emails, "roles": roles}})

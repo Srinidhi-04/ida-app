@@ -61,9 +61,9 @@ class AuthMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
     
-    async def __call__(self, request: HttpRequest):
+    def __call__(self, request: HttpRequest):
         request.user = None
-        return await self.get_response(request)
+        return self.get_response(request)
 
     async def process_view(self, request: HttpRequest, view_func, view_args, view_kwargs):
         method = getattr(view_func, "type", "GET")
@@ -75,8 +75,6 @@ class AuthMiddleware:
 
         if getattr(view_func, "auth_exempt", False):
             return None
-        
-        body: dict = await asyncio.to_thread(lambda: json.loads(request.body))
 
         try:
             if request.method == "GET":
@@ -86,6 +84,7 @@ class AuthMiddleware:
                 if user_id:
                     user_id = int(user_id)
                 else:
+                    body: dict = await asyncio.to_thread(lambda: json.loads(request.body))
                     user_id = int(body.get("user_id"))
         except:
             return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
