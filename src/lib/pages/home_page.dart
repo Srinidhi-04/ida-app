@@ -375,9 +375,9 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> getAnnouncements() async {
+  Future<void> getAnnouncements({bool force = false}) async {
     Map info = await AnnouncementsService.getAnnouncements(
-      params: {"user_id": user_id.toString()},
+      params: {"user_id": user_id.toString(), "force": force ? "yes" : "no"},
     );
 
     if (info.containsKey("error") &&
@@ -620,7 +620,17 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Image(image: AssetImage("assets/logo.png"), height: 40),
-        actions: [CartButton(quantity: quantity, callback: () => getCart())],
+        actions: [
+          IconButton(
+            onPressed: () => getAnnouncements(force: true),
+            icon: Icon(
+              Icons.notifications_outlined,
+              color: Theme.of(context).primaryColorDark,
+              size: 32,
+            ),
+          ),
+          CartButton(quantity: quantity, callback: () => getCart()),
+        ],
         centerTitle: true,
       ),
       body: RefreshIndicator(
