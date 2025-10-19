@@ -224,6 +224,6 @@ async def toggle_notification(request: HttpRequest):
 async def get_notifications(request: HttpRequest):
     user: UserCredentials = request.user
 
-    notifs = await sync_to_async(list)(user.user_notifications.values("event_id"))
+    notifs = await sync_to_async(list)(UserNotifications.objects.filter(user = user).values("event_id"))
     
     return JsonResponse({"data": [x["event_id"] for x in notifs]})

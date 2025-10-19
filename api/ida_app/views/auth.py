@@ -128,7 +128,7 @@ async def change_password(request: HttpRequest):
     user.last_login = datetime.datetime.now(tz = datetime.timezone.utc)
     await user.asave()
 
-    settings: UserSettings = user.user_settings
+    settings: UserSettings = await UserSettings.objects.aget(user = user)
 
     return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": uid})
 
