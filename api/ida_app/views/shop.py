@@ -5,6 +5,7 @@ from django.db.models import F
 from django.db.models.functions import Least
 from ida_app.models import *
 from ida_app.middleware import *
+from ida_app.tasks import *
 
 @requires_roles(["admin", "merch"])
 @request_type("POST")
@@ -25,6 +26,8 @@ async def add_item(request: HttpRequest):
         await item.asave()
     except:
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
+    
+    await send_topic_notification("ida-app-merch", "New merch released!", "Check out the shop page to see the new merch up for grabs!")
 
     return JsonResponse({"message": "Item successfully added", "item_id": item.item_id})
 

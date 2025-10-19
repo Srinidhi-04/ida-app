@@ -288,6 +288,16 @@ class _NotificationsPageState extends State<NotificationsPage> {
                               );
                             }
 
+                            if (notifs["merch"]) {
+                              NotificationsManager.subscribeTopic(
+                                "ida-app-merch",
+                              );
+                            } else {
+                              NotificationsManager.unsubscribeTopic(
+                                "ida-app-merch",
+                              );
+                            }
+
                             if (alert != original_alert) {
                               SecureStorage.writeOne("reminders", alert);
 

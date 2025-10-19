@@ -14,11 +14,15 @@ class NotificationsManager {
     int user_id,
     String reminders,
     bool announcements,
+    bool merch,
   ) async {
     try {
       FirebaseMessaging.instance.subscribeToTopic("ida-app-default");
       if (announcements) {
         FirebaseMessaging.instance.subscribeToTopic("ida-app-announcements");
+      }
+      if (merch) {
+        FirebaseMessaging.instance.subscribeToTopic("ida-app-merch");
       }
 
       Map info = await EventsService.getNotifications(params: {

@@ -79,7 +79,6 @@ class _LoginPageState extends State<LoginPage> {
       "avatar": info["avatar"].toString(),
       "role": info["role"].toString(),
       "reminders": info["reminders"].toString(),
-      "announcements": info["announcements"].toString(),
       "token": info["token"].toString(),
     });
 
@@ -87,6 +86,7 @@ class _LoginPageState extends State<LoginPage> {
       info["user_id"],
       info["reminders"],
       info["announcements"],
+      info["merch"],
     );
 
     Navigator.popAndPushNamed(context, "/home");

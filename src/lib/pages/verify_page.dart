@@ -65,7 +65,6 @@ class _VerifyPageState extends State<VerifyPage> {
       "avatar": info["avatar"].toString(),
       "role": info["role"].toString(),
       "reminders": info["reminders"].toString(),
-      "announcements": info["announcements"].toString(),
       "token": info["token"].toString(),
     });
     NotificationsManager.subscribeTopic("ida-app-announcements");

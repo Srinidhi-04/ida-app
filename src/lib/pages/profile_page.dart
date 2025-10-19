@@ -22,7 +22,6 @@ class _ProfilePageState extends State<ProfilePage> {
   late int avatar;
   late String email;
   late String reminders;
-  late bool announcements;
 
   List<bool> loaded = [false, false];
   bool submitted = false;
@@ -392,7 +391,6 @@ class _ProfilePageState extends State<ProfilePage> {
       avatar = int.parse(info["avatar"]!);
       role = info["role"]!;
       reminders = info["reminders"]!;
-      announcements = bool.parse(info["announcements"]!);
     });
     await Future.wait([getEvents(), getPermissions()]);
   }

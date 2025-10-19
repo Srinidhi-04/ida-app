@@ -62,7 +62,7 @@ async def verify_code(request: HttpRequest):
     settings = UserSettings(user = user, announcements = True, updates = True, merch = True, status = True, reminders = "2 hours before")
     await settings.asave()
 
-    return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": uid})
+    return JsonResponse({"message": "Code successfully verified", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "merch": settings.merch, "token": uid})
 
 @auth_exempt
 @request_type("POST")
@@ -130,7 +130,7 @@ async def change_password(request: HttpRequest):
 
     settings: UserSettings = await UserSettings.objects.aget(user = user)
 
-    return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": uid})
+    return JsonResponse({"message": "Password successfully reset", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "merch": settings.merch, "token": uid})
 
 @auth_exempt
 @request_type("POST")
@@ -169,7 +169,7 @@ async def login(request: HttpRequest):
 
         settings: UserSettings = await UserSettings.objects.aget(user = user)
 
-        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "token": uid})
+        return JsonResponse({"message": "User successfully logged in", "user_id": user.user_id, "email": user.email, "name": user.name, "avatar": user.avatar, "role": user.role, "reminders": settings.reminders, "announcements": settings.announcements, "merch": settings.merch, "token": uid})
     
     return JsonResponse({"error": "Email or password is incorrect"}, status = 400)
 
