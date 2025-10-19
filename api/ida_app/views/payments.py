@@ -149,7 +149,7 @@ async def log_order(request: HttpRequest):
 
                     try:
                         item = ShopItems.objects.get(item_id = x["item_id"])
-                        receipt.append({"name": item.name, "quantity": x["quantity"], "price": item.price, "amount": x["amount"]})
+                        receipt.append({"name": item.name, "quantity": x["quantity"], "price": item.price, "amount": x["amount"], "image": item.image})
                     except:
                         raise Exception("An item with that item ID does not exist")
                     
@@ -236,7 +236,7 @@ async def change_status(request: HttpRequest):
         refund = await sync_to_async(stripe.Refund.create)(payment_intent = order.payment_intent)
 
         receipt = []
-        order_items = await sync_to_async(list)(OrderItems.objects.filter(order = order))
+        order_items = await sync_to_async(list)(OrderItems.objects.filter(order = order).select_related("item"))
         for item in order_items:
             shop_item: ShopItems = item.item
             receipt.append({"name": shop_item.name, "quantity": item.quantity, "price": shop_item.price, "amount": item.subtotal})
