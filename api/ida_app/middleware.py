@@ -1,6 +1,7 @@
 import datetime
 from hashlib import sha256
 import json
+import asyncio
 from django.http import HttpRequest, JsonResponse, QueryDict
 from ida_app.models import UserCredentials, UserTokens
 
@@ -64,7 +65,7 @@ class AuthMiddleware:
         request.user = None
         return self.get_response(request)
 
-    def process_view(self, request: HttpRequest, view_func, view_args, view_kwargs):
+    async def process_view(self, request: HttpRequest, view_func, view_args, view_kwargs):
         method = getattr(view_func, "type", "GET")
         if request.method != method:
             return JsonResponse({"error": f"This endpoint can only be accessed via {method}"}, status = 400)
@@ -74,7 +75,7 @@ class AuthMiddleware:
 
         if getattr(view_func, "auth_exempt", False):
             return None
-        
+
         try:
             if request.method == "GET":
                 user_id = int(request.GET.get("user_id"))
@@ -83,7 +84,8 @@ class AuthMiddleware:
                 if user_id:
                     user_id = int(user_id)
                 else:
-                    user_id = int(json.loads(request.body).get("user_id"))
+                    body: dict = await asyncio.to_thread(lambda: json.loads(request.body))
+                    user_id = int(body.get("user_id"))
         except:
             return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
 
@@ -95,8 +97,8 @@ class AuthMiddleware:
         token = token[7:]
 
         try:
-            user: UserCredentials = UserCredentials.objects.prefetch_related("user_tokens").get(user_id = user_id)
-            token_record: UserTokens = user.user_tokens.get(token = sha256(token.encode()).hexdigest())
+            user: UserCredentials = await UserCredentials.objects.prefetch_related("user_tokens").aget(user_id = user_id)
+            token_record: UserTokens = await user.user_tokens.aget(token = sha256(token.encode()).hexdigest())
 
             if token_record.expires_at <= datetime.datetime.now(tz = datetime.timezone.utc):
                 return JsonResponse({"error": "Invalid authorization token"}, status = 400)

@@ -1239,7 +1239,7 @@ class _ShopPageState extends State<ShopPage> {
                           quantity = {};
                         });
 
-                        Navigator.of(context).popAndPushNamed(
+                        await Navigator.of(context).popAndPushNamed(
                           "/order",
                           arguments: {
                             "user_id": user_id,

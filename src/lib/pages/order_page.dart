@@ -225,7 +225,6 @@ class _OrderPageState extends State<OrderPage> {
       admin_roles = info["data"]["roles"].cast<String>();
       admin_access = info["data"]["access"];
       role = info["data"]["role"];
-      loaded = true;
     });
   }
 
@@ -322,6 +321,7 @@ class _OrderPageState extends State<OrderPage> {
             color: Theme.of(context).primaryColorDark,
           ),
         ),
+        centerTitle: false,
       ),
       body: RefreshIndicator(
         onRefresh: () async {

@@ -1,6 +1,7 @@
 from email.mime.text import MIMEText
 import smtplib
 from firebase_admin import messaging
+import asyncio
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore
 import datetime
@@ -18,7 +19,7 @@ def start_scheduler():
     scheduler.start()
     print("Scheduler started successfully")
 
-def send_topic_notification(topic: str, title: str, body: str):
+async def send_topic_notification(topic: str, title: str, body: str):
     message = messaging.Message(
         notification=messaging.Notification(
             title=title,
@@ -27,13 +28,16 @@ def send_topic_notification(topic: str, title: str, body: str):
         topic=topic
     )
     
-    response = messaging.send(message)
+    response = await asyncio.to_thread(lambda: messaging.send(message))
     print(f"Successfully sent message to topic '{topic}': {response}")
+
+def send_notif(topic, title, body):
+    asyncio.run(send_topic_notification(topic, title, body))
 
 def schedule_topic_notification(topic: str, title: str, body: str, run_time: datetime.datetime):
     job_id = f"notif_{topic}"
     scheduler.add_job(
-        send_topic_notification,
+        send_notif,
         'date',
         run_date=run_time,
         args=[topic, title, body],
@@ -58,7 +62,13 @@ def delete_topic_notification(topic: str):
     if not scheduler.running:
         start_scheduler()
 
-def send_verification_code(name: str, code: int, email: str):
+def send_mail(recipients: list, message: str):
+    with smtplib.SMTP("smtp.gmail.com", 587) as session:
+        session.starttls()
+        session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
+        session.sendmail("illinidadsassociation@gmail.com", recipients, message)
+
+async def send_verification_code(name: str, code: int, email: str):
     text = f"""
 <html>
 <body>
@@ -80,14 +90,11 @@ def send_verification_code(name: str, code: int, email: str):
     message["From"] = "illinidadsassociation@gmail.com"
     message["To"] = email
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as session:
-        session.starttls()
-        session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
-        session.sendmail("illinidadsassociation@gmail.com", email, message.as_string())
+    await asyncio.to_thread(lambda: send_mail([email], message.as_string()))
 
     print("Verification code sent successfully")
 
-def send_subscriber(name: str, email: str, subscribe: bool):
+async def send_subscriber(name: str, email: str, subscribe: bool):
     if subscribe:
         text = f"""
 <html>
@@ -127,14 +134,11 @@ def send_subscriber(name: str, email: str, subscribe: bool):
     message["From"] = "illinidadsassociation@gmail.com"
     message["To"] = "communications@illinidads.com"
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as session:
-        session.starttls()
-        session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
-        session.sendmail("illinidadsassociation@gmail.com", "communications@illinidads.com", message.as_string())
+    await asyncio.to_thread(lambda: send_mail(["communications@illinidads.com"], message.as_string()))
 
     print("Subscriber mail sent successfully")
 
-def send_donation(name: str, email: str, amount: float):
+async def send_donation(name: str, email: str, amount: float):
     text = f"""
 <html>
 <body>
@@ -162,14 +166,11 @@ def send_donation(name: str, email: str, amount: float):
     message["From"] = "illinidadsassociation@gmail.com"
     message["To"] = email
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as session:
-        session.starttls()
-        session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
-        session.sendmail("illinidadsassociation@gmail.com", [email, "communications@illinidads.com"], message.as_string())
+    await asyncio.to_thread(lambda: send_mail([email, "communications@illinidads.com"], message.as_string()))
 
     print("Donation mail sent successfully")
 
-def send_question(name: str, email: str, question: str):
+async def send_question(name: str, email: str, question: str):
     text = f"""
 <html>
 <body>
@@ -191,14 +192,11 @@ def send_question(name: str, email: str, question: str):
     message["From"] = "illinidadsassociation@gmail.com"
     message["To"] = "communications@illinidads.com"
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as session:
-        session.starttls()
-        session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
-        session.sendmail("illinidadsassociation@gmail.com", ["communications@illinidads.com", email], message.as_string())
+    await asyncio.to_thread(lambda: send_mail(["communications@illinidads.com", email], message.as_string()))
 
     print("Question mail sent successfully")
 
-def send_order(name: str, email: str, total: float, order: list):
+async def send_order(name: str, email: str, total: float, order: list):
     rows = ""
     for x in order:
         rows += f'''
@@ -246,14 +244,11 @@ def send_order(name: str, email: str, total: float, order: list):
     message["From"] = "illinidadsassociation@gmail.com"
     message["To"] = email
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as session:
-        session.starttls()
-        session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
-        session.sendmail("illinidadsassociation@gmail.com", [email, "communications@illinidads.com"], message.as_string())
+    await asyncio.to_thread(lambda: send_mail([email, "communications@illinidads.com"], message.as_string()))
 
     print("Order mail sent successfully")
 
-def send_refund(name: str, email: str, total: float, order: list):
+async def send_refund(name: str, email: str, total: float, order: list):
     rows = ""
     for x in order:
         rows += f'''
@@ -301,9 +296,6 @@ def send_refund(name: str, email: str, total: float, order: list):
     message["From"] = "illinidadsassociation@gmail.com"
     message["To"] = email
 
-    with smtplib.SMTP("smtp.gmail.com", 587) as session:
-        session.starttls()
-        session.login("illinidadsassociation@gmail.com", GMAIL_PASSWORD)
-        session.sendmail("illinidadsassociation@gmail.com", [email, "communications@illinidads.com"], message.as_string())
+    await asyncio.to_thread(lambda: send_mail([email, "communications@illinidads.com"], message.as_string()))
 
     print("Refund mail sent successfully")

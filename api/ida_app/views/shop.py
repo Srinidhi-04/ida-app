@@ -1,4 +1,5 @@
 from django.http import HttpRequest, JsonResponse
+from asgiref.sync import sync_to_async
 from django.db import transaction
 from django.db.models import F
 from django.db.models.functions import Least
@@ -7,7 +8,7 @@ from ida_app.middleware import *
 
 @requires_roles(["admin", "merch"])
 @request_type("POST")
-def add_item(request: HttpRequest):
+async def add_item(request: HttpRequest):
     check = requires_fields(request.POST, {"name": "str", "price": "float", "inventory": "int"})
     if check:
         return JsonResponse(check, status = 400)
@@ -21,7 +22,7 @@ def add_item(request: HttpRequest):
     
     try:
         item = ShopItems(name = name, price = price, image = image, inventory = inventory)
-        item.save()
+        await item.asave()
     except:
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
 
@@ -29,7 +30,7 @@ def add_item(request: HttpRequest):
 
 @requires_roles(["admin", "merch"])
 @request_type("POST")
-def edit_item(request: HttpRequest):
+async def edit_item(request: HttpRequest):
     check = requires_fields(request.POST, {"item_id": "int", "name": "str", "price": "float", "inventory": "int"})
     if check:
         return JsonResponse(check, status = 400)
@@ -42,29 +43,36 @@ def edit_item(request: HttpRequest):
     if not image or image == "":
         image = "https://i.imgur.com/Mw85Kfp.png"
 
-    try:
-        with transaction.atomic():
-            try:
-                item = ShopItems.objects.select_for_update().get(item_id = item_id)
-            except:
-                raise Exception("An item with that item ID does not exist")
+    def async_transaction():
+        try:
+            with transaction.atomic():
+                try:
+                    item = ShopItems.objects.select_for_update().get(item_id = item_id)
+                except:
+                    raise Exception("An item with that item ID does not exist")
 
-            item.name = name
-            item.price = price
-            item.image = image
-            item.inventory = inventory
-            item.save()
+                item.name = name
+                item.price = price
+                item.image = image
+                item.inventory = inventory
+                item.save()
 
-            item.item_carts.update(quantity = Least(F("quantity"), inventory))
-    
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status = 400)
+                UserCarts.objects.filter(item = item).update(quantity = Least(F("quantity"), inventory))
+
+                return item
+        
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status = 400)
+
+    item = await sync_to_async(async_transaction)()
+    if isinstance(item, JsonResponse):
+        return item
 
     return JsonResponse({"message": "Item successfully edited", "item_id": item.item_id})
 
 @requires_roles(["admin", "merch"])
 @request_type("POST")
-def change_inventory(request: HttpRequest):
+async def change_inventory(request: HttpRequest):
     check = requires_fields(request.POST, {"item_id": "int", "quantity": "int"})
     if check:
         return JsonResponse(check, status = 400)
@@ -72,39 +80,46 @@ def change_inventory(request: HttpRequest):
     item_id = int(request.POST.get("item_id"))
     quantity = int(request.POST.get("quantity"))
     
-    try:
-        with transaction.atomic():
-            try:
-                item = ShopItems.objects.select_for_update().get(item_id = item_id)
-            except:
-                raise Exception("An item with that item ID does not exist")
-            
-            if item.inventory + quantity < 0:
-                ex = Exception("Not enough items in inventory to reduce")
-                ex.inventory = item.inventory
-                raise ex
-            
-            item.inventory += quantity
-            item.save()
+    def async_transaction():
+        try:
+            with transaction.atomic():
+                try:
+                    item = ShopItems.objects.select_for_update().get(item_id = item_id)
+                except:
+                    raise Exception("An item with that item ID does not exist")
                 
-    except Exception as e:
-        err = {"error": str(e)}
-        if hasattr(e, "inventory"):
-            err["inventory"] = e.inventory
+                if item.inventory + quantity < 0:
+                    ex = Exception("Not enough items in inventory to reduce")
+                    ex.inventory = item.inventory
+                    raise ex
+                
+                item.inventory += quantity
+                item.save()
 
-        return JsonResponse(err, status = 400)
+                return item
+                    
+        except Exception as e:
+            err = {"error": str(e)}
+            if hasattr(e, "inventory"):
+                err["inventory"] = e.inventory
+
+            return JsonResponse(err, status = 400)
+    
+    item = await sync_to_async(async_transaction)()
+    if isinstance(item, JsonResponse):
+        return item
     
     return JsonResponse({"message": "Inventory changed successfully", "inventory": item.inventory})
 
 @request_type("GET")
-def get_items(request: HttpRequest):
-    items = list(ShopItems.objects.values().order_by("item_id"))
+async def get_items(request: HttpRequest):
+    items = await sync_to_async(list)(ShopItems.objects.values().order_by("item_id"))
 
     return JsonResponse({"data": items})
 
 @requires_roles(["admin", "merch"])
 @request_type("POST")
-def delete_item(request: HttpRequest):
+async def delete_item(request: HttpRequest):
     check = requires_fields(request.POST, {"item_id": "int"})
     if check:
         return JsonResponse(check, status = 400)
@@ -112,19 +127,19 @@ def delete_item(request: HttpRequest):
     item_id = int(request.POST.get("item_id"))
 
     try:
-        item = ShopItems.objects.get(item_id = item_id)
+        item = await ShopItems.objects.aget(item_id = item_id)
     except:
         return JsonResponse({"error": "An item with that item ID does not exist"}, status = 400)
 
     try:
-        item.delete()
+        await item.adelete()
     except:
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
 
     return JsonResponse({"message": "Item deleted successfully"})
 
 @request_type("POST")
-def edit_cart(request: HttpRequest):
+async def edit_cart(request: HttpRequest):
     check = requires_fields(request.POST, {"item_id": "int", "quantity": "int"})
     if check:
         return JsonResponse(check, status = 400)
@@ -134,7 +149,7 @@ def edit_cart(request: HttpRequest):
     quantity = int(request.POST.get("quantity"))
 
     try:
-        item = ShopItems.objects.get(item_id = item_id)
+        item = await ShopItems.objects.aget(item_id = item_id)
     except:
         return JsonResponse({"error": "An item with that item ID does not exist"}, status = 400)
 
@@ -142,34 +157,34 @@ def edit_cart(request: HttpRequest):
         return JsonResponse({"error": "Not enough items in inventory"}, status = 400)
 
     try:
-        cart_item: UserCarts = user.user_carts.get(item = item)
+        cart_item: UserCarts = await UserCarts.objects.filter(user = user, item = item).aget()
         cart_item.quantity = quantity
     except:
         cart_item = UserCarts(user = user, item = item, quantity = quantity)
     
     try:
         if cart_item.quantity == 0:
-            cart_item.delete()
+            await cart_item.adelete()
         else:
-            cart_item.save()
+            await cart_item.asave()
     except:
         return JsonResponse({"error": "An unknown error occurred with the database"}, status = 400)
 
     return JsonResponse({"message": "Cart successfully edited"})
 
 @request_type("GET")
-def get_cart(request: HttpRequest):
+async def get_cart(request: HttpRequest):
     user: UserCredentials = request.user
 
-    cart = user.user_carts.all().select_related("item")
+    cart = await sync_to_async(list)(UserCarts.objects.filter(user = user).select_related("item"))
     cart_data = []
     for x in cart:
         if x.quantity > x.item.inventory:
             if x.item.inventory > 0:
                 x.quantity = x.item.inventory
-                x.save()
+                await x.asave()
             else:
-                x.delete()
+                await x.adelete()
         
         if x.quantity > 0:
             cart_data.append({"item_id": x.item.item_id, "quantity": x.quantity})
@@ -177,5 +192,5 @@ def get_cart(request: HttpRequest):
     return JsonResponse({"data": cart_data})
 
 @request_type("GET")
-def get_banner(request: HttpRequest):
+async def get_banner(request: HttpRequest):
     return JsonResponse({"message": "Order your Dads Weekend apparel now! Purchase your merch here: https://pogo.undergroundshirts.com/collections/illini-dads-weekend-2025"})

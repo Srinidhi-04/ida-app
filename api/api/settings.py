@@ -48,7 +48,11 @@ FIREBASE_KEY = os.getenv("FIREBASE_KEY")
 cred = firebase_admin.credentials.Certificate(json.loads(base64.b64decode(FIREBASE_KEY).decode()))
 firebase_admin.initialize_app(cred)
 
-STRIPE_SECRET = os.getenv("STRIPE_SECRET_LIVE")
+if not DEBUG:
+    STRIPE_SECRET = os.getenv("STRIPE_SECRET_LIVE")
+else:
+    STRIPE_SECRET = os.getenv("STRIPE_SECRET_TEST")
+    
 stripe.api_key = STRIPE_SECRET
 
 # Production security

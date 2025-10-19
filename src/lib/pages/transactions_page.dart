@@ -424,6 +424,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
             color: Theme.of(context).primaryColorDark,
           ),
         ),
+        centerTitle: false,
       ),
       body: RefreshIndicator(
         onRefresh: () async {

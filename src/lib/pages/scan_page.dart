@@ -137,6 +137,7 @@ class _ScanPageState extends State<ScanPage> {
             color: Theme.of(context).primaryColorDark,
           ),
         ),
+        centerTitle: false,
       ),
       body: Stack(
         children: [

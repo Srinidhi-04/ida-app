@@ -6,12 +6,12 @@ from ida_app.middleware import *
 APP_VERSION = 13.1
 
 @auth_exempt
-def index(request: HttpRequest):
+async def index(request: HttpRequest):
     return HttpResponse("API is up and running")
 
 @auth_exempt
 @request_type("GET")
-def check_update(request: HttpRequest):    
+async def check_update(request: HttpRequest):    
     check = requires_fields(request.GET, {"version": "float"})
     if check:
         return JsonResponse(check, status = 400)
@@ -27,7 +27,7 @@ def check_update(request: HttpRequest):
     return JsonResponse({"message": "Updated"})
 
 @request_type("POST")
-def send_query(request: HttpRequest):
+async def send_query(request: HttpRequest):
     check = requires_fields(request.POST, {"query": "str"})
     if check:
         return JsonResponse(check, status = 400)
@@ -36,6 +36,6 @@ def send_query(request: HttpRequest):
 
     query = request.POST.get("query")
 
-    send_question(user.name, user.email, query)
+    await send_question(user.name, user.email, query)
 
     return JsonResponse({"message": "Query sent successfully"})
