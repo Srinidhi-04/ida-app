@@ -321,6 +321,7 @@ class _OrderPageState extends State<OrderPage> {
             color: Theme.of(context).primaryColorDark,
           ),
         ),
+        centerTitle: false,
       ),
       body: RefreshIndicator(
         onRefresh: () async {
