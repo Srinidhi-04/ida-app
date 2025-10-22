@@ -12,7 +12,12 @@ import os
 
 # load_dotenv()
 
-STRIPE_PUBLISH = os.getenv("STRIPE_PUBLISH_LIVE")
+DEBUG = False
+
+if not DEBUG:
+    STRIPE_PUBLISH = os.getenv("STRIPE_PUBLISH_LIVE")
+else:
+    STRIPE_PUBLISH = os.getenv("STRIPE_PUBLISH_TEST")
 
 async def create_intent(amount: float):
     amount = int(amount * 100)
