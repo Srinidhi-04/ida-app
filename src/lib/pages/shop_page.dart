@@ -1216,11 +1216,6 @@ class _ShopPageState extends State<ShopPage> {
                           return;
                         }
 
-                        setState(() {
-                          submitted = false;
-                          quantity = {};
-                        });
-
                         await Navigator.of(context).popAndPushNamed(
                           "/order",
                           arguments: {
