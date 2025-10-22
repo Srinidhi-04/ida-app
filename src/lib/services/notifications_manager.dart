@@ -50,8 +50,8 @@ class NotificationsManager {
 
   static Future<void> unsubscribeAllNotifications() async {
     try {
-      await FirebaseMessaging.instance.deleteToken();
       await MiscService.deleteToken();
+      await FirebaseMessaging.instance.deleteToken();
     } catch (e, stack) {
       await FirebaseCrashlytics.instance.recordError(
         e,

@@ -39,7 +39,7 @@ async def send_user_notification(user_id: int, tokens: list[UserTokens], title: 
             if isinstance(r.exception, messaging.UnregisteredError):
                 await tokens[i].adelete()
 
-    print(f"Successfully sent message to user '{user_id}': {response.responses}")
+    print(f"Successfully sent message to user '{user_id}'")
 
 async def send_topic_notification(topic: str, title: str, body: str):
     message = messaging.Message(
@@ -51,7 +51,7 @@ async def send_topic_notification(topic: str, title: str, body: str):
     )
     
     response = await messaging.send_each_async([message])
-    print(f"Successfully sent message to topic '{topic}': {response.responses}")
+    print(f"Successfully sent message to topic '{topic}'")
 
 def send_notif(topic, title, body):
     asyncio.run(send_topic_notification(topic, title, body))

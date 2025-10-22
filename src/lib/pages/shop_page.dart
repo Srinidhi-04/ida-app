@@ -66,9 +66,7 @@ class _ShopPageState extends State<ShopPage> {
                 });
 
                 Map info = await ShopService.deleteItem(
-                  body: {
-                    "item_id": item_id.toString(),
-                  },
+                  body: {"item_id": item_id.toString()},
                 );
 
                 if (info.containsKey("error") &&
@@ -129,9 +127,7 @@ class _ShopPageState extends State<ShopPage> {
                   });
 
                   Map info = await ShopService.deleteItem(
-                    body: {
-                      "item_id": item_id.toString(),
-                    },
+                    body: {"item_id": item_id.toString()},
                   );
 
                   if (info.containsKey("error") &&
@@ -702,9 +698,7 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   Future<void> getPermissions() async {
-    Map info = await AuthService.getPermissions(
-      params: {"category": "shop"},
-    );
+    Map info = await AuthService.getPermissions(params: {"category": "shop"});
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -993,27 +987,30 @@ class _ShopPageState extends State<ShopPage> {
                                   ),
                                 ),
                               ),
-                              Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children:
-                                    items
-                                        .map(
-                                          (e) =>
-                                              (!cart ||
-                                                      quantity.containsKey(
-                                                        e["item_id"],
-                                                      ))
-                                                  ? shopItem(
-                                                    items.indexOf(e),
-                                                    e["item_id"],
-                                                    e["name"],
-                                                    e["price"],
-                                                    e["inventory"],
-                                                    e["image"],
-                                                  )
-                                                  : SizedBox.shrink(),
-                                        )
-                                        .toList(),
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 50.0),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children:
+                                      items
+                                          .map(
+                                            (e) =>
+                                                (!cart ||
+                                                        quantity.containsKey(
+                                                          e["item_id"],
+                                                        ))
+                                                    ? shopItem(
+                                                      items.indexOf(e),
+                                                      e["item_id"],
+                                                      e["name"],
+                                                      e["price"],
+                                                      e["inventory"],
+                                                      e["image"],
+                                                    )
+                                                    : SizedBox.shrink(),
+                                          )
+                                          .toList(),
+                                ),
                               ),
                             ],
                           ),
@@ -1234,9 +1231,7 @@ class _ShopPageState extends State<ShopPage> {
                         });
 
                         await PaymentsService.cancelOrder(
-                          jsonBody: jsonEncode({
-                            "cart": order_list,
-                          }),
+                          jsonBody: jsonEncode({"cart": order_list}),
                         );
                       }
 

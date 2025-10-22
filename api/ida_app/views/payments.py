@@ -164,7 +164,7 @@ async def log_order(request: HttpRequest):
                     except:
                         raise Exception("An unknown error occurred with the database")
                     
-                    return receipt, order
+                return receipt, order
                     
         except Exception as e:
             return JsonResponse({"error": str(e)}, status = 400)

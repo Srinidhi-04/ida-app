@@ -375,9 +375,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                   submitted = true;
                                 });
 
-                                await SettingsService.deleteAccount();
-
                                 await NotificationsManager.unsubscribeAllNotifications();
+                                await SettingsService.deleteAccount();
                                 await SecureStorage.delete();
                                 await Navigator.of(
                                   context,
