@@ -60,8 +60,8 @@ async def get_announcements(request: HttpRequest):
     last_announcement = user.last_announcement
     force = request.GET.get("force") == "yes"
     if not force:
-        announcements = await sync_to_async(list)(BannerAnnouncements.objects.filter(announcement_id__gt = last_announcement).values())
+        announcements = await sync_to_async(list)(BannerAnnouncements.objects.filter(announcement_id__gt = last_announcement).order_by("-created_at").values())
     else:
-        announcements = await sync_to_async(list)(BannerAnnouncements.objects.values())
+        announcements = await sync_to_async(list)(BannerAnnouncements.objects.order_by("-created_at").values())
 
     return JsonResponse({"data": announcements})
