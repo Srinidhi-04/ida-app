@@ -16,7 +16,6 @@ class ScanPage extends StatefulWidget {
 }
 
 class _ScanPageState extends State<ScanPage> {
-  late int user_id;
   late String role;
 
   List<String> admin_roles = ["admin", "merch"];
@@ -33,7 +32,7 @@ class _ScanPageState extends State<ScanPage> {
 
   Future<void> getPermissions() async {
     Map info = await AuthService.getPermissions(
-      params: {"category": "shop", "user_id": user_id.toString()},
+      params: {"category": "shop"},
     );
 
     if (info.containsKey("error") &&
@@ -94,7 +93,6 @@ class _ScanPageState extends State<ScanPage> {
       return;
     }
     setState(() {
-      user_id = int.parse(info["user_id"]!);
       role = info["role"]!;
     });
     await getPermissions();

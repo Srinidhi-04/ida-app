@@ -13,8 +13,6 @@ class HelpPage extends StatefulWidget {
 }
 
 class _HelpPageState extends State<HelpPage> {
-  late int user_id;
-
   String query = "";
   TextEditingController controller = TextEditingController();
 
@@ -38,9 +36,6 @@ class _HelpPageState extends State<HelpPage> {
       await Navigator.popAndPushNamed(context, "/login");
       return;
     }
-    setState(() {
-      user_id = int.parse(info["user_id"]!);
-    });
   }
 
   @override
@@ -125,7 +120,6 @@ class _HelpPageState extends State<HelpPage> {
 
                             Map info = await MiscService.sendQuery(
                               body: {
-                                "user_id": user_id.toString(),
                                 "query": query,
                               },
                             );

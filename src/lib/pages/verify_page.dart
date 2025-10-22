@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:src/services/auth_service.dart';
+import 'package:src/services/misc_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/submit_overlay.dart';
@@ -32,7 +33,6 @@ class VerifyPage extends StatefulWidget {
 }
 
 class _VerifyPageState extends State<VerifyPage> {
-  late int user_id;
   late String email;
   String code = "";
   String error = "";
@@ -45,7 +45,6 @@ class _VerifyPageState extends State<VerifyPage> {
     });
 
     Map info = await AuthService.verifyCode(body: {
-      "user_id": user_id.toString(),
       "code": code,
     });
 
@@ -68,6 +67,8 @@ class _VerifyPageState extends State<VerifyPage> {
       "token": info["token"].toString(),
     });
     NotificationsManager.subscribeTopic("ida-app-announcements");
+    NotificationsManager.subscribeTopic("ida-app-merch");
+    MiscService.refreshToken();
     Navigator.popAndPushNamed(context, "/home");
 
     return true;
@@ -91,7 +92,6 @@ class _VerifyPageState extends State<VerifyPage> {
       return;
     }
     setState(() {
-      user_id = int.parse(info["user_id"]!);
       email = info["email"]!;
       top_text = "We've sent a verification code to ${email}.";
     });

@@ -20,7 +20,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late int user_id;
   late String role;
 
   List<String> months = [
@@ -237,7 +236,7 @@ class _HomePageState extends State<HomePage> {
     });
 
     Map info = await EventsService.getEvents(
-      params: {"completed": "no", "user_id": user_id.toString()},
+      params: {"completed": "no"},
     );
 
     if (info.containsKey("error") &&
@@ -293,9 +292,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> getCart() async {
-    Map info = await ShopService.getCart(
-      params: {"user_id": user_id.toString()},
-    );
+    Map info = await ShopService.getCart();
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -337,7 +334,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> getPermissions() async {
     Map info = await AuthService.getPermissions(
-      params: {"category": "announcements", "user_id": user_id.toString()},
+      params: {"category": "announcements"},
     );
 
     if (info.containsKey("error") &&
@@ -377,7 +374,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> getAnnouncements({bool force = false}) async {
     Map info = await AnnouncementsService.getAnnouncements(
-      params: {"user_id": user_id.toString(), "force": force ? "yes" : "no"},
+      params: {"force": force ? "yes" : "no"},
     );
 
     if (info.containsKey("error") &&
@@ -532,7 +529,6 @@ class _HomePageState extends State<HomePage> {
       ).then((_) async {
         Map info = await AnnouncementsService.updateAnnouncement(
           body: {
-            "user_id": user_id.toString(),
             "last_announcement": last_announcement.toString(),
           },
         );
@@ -585,7 +581,6 @@ class _HomePageState extends State<HomePage> {
     }
 
     setState(() {
-      user_id = int.parse(info["user_id"]!);
       role = info["role"]!;
       loaded = true;
     });

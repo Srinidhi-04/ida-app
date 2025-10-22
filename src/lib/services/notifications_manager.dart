@@ -1,6 +1,7 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:src/services/events_service.dart';
+import 'package:src/services/misc_service.dart';
 
 class NotificationsManager {
   static const alerts = [
@@ -25,9 +26,7 @@ class NotificationsManager {
         FirebaseMessaging.instance.subscribeToTopic("ida-app-merch");
       }
 
-      Map info = await EventsService.getNotifications(params: {
-        "user_id": user_id.toString(),
-      });
+      Map info = await EventsService.getNotifications();
 
       List notifs = info["data"];
 
@@ -52,6 +51,7 @@ class NotificationsManager {
   static Future<void> unsubscribeAllNotifications() async {
     try {
       await FirebaseMessaging.instance.deleteToken();
+      await MiscService.deleteToken();
     } catch (e, stack) {
       await FirebaseCrashlytics.instance.recordError(
         e,
@@ -69,7 +69,6 @@ class NotificationsManager {
   ) async {
     try {
       EventsService.toggleNotification(body: {
-        "user_id": user_id.toString(),
         "event_id": event_id.toString(),
       });
 
@@ -100,7 +99,6 @@ class NotificationsManager {
   ) async {
     try {
       EventsService.toggleNotification(body: {
-        "user_id": user_id.toString(),
         "event_id": event_id.toString(),
       });
 
@@ -164,9 +162,7 @@ class NotificationsManager {
     String new_interval,
   ) async {
     try {
-      Map info = await EventsService.getNotifications(params: {
-        "user_id": user_id.toString(),
-      });
+      Map info = await EventsService.getNotifications();
 
       List notifs = info["data"];
 

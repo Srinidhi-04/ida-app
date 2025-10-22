@@ -12,8 +12,6 @@ class AnnouncementPage extends StatefulWidget {
 }
 
 class _AnnouncementPageState extends State<AnnouncementPage> {
-  late int user_id;
-
   bool submitted = false;
   String title = "";
   String body = "";
@@ -39,10 +37,6 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
       await Navigator.popAndPushNamed(context, "/login");
       return;
     }
-
-    setState(() {
-      user_id = int.parse(info["user_id"]!);
-    });
   }
 
   @override
@@ -192,7 +186,6 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                               info =
                                   await AnnouncementsService.sendAnnouncement(
                                     body: {
-                                      "user_id": user_id.toString(),
                                       "title": title,
                                       "body": body,
                                       "everyone": (everyone) ? "yes" : "no",
@@ -201,7 +194,6 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                             } else {
                               info = await AnnouncementsService.addAnnouncement(
                                 body: {
-                                  "user_id": user_id.toString(),
                                   "title": title,
                                   "body": body,
                                 },

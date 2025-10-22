@@ -15,7 +15,6 @@ class DonatePage extends StatefulWidget {
 }
 
 class _DonatePageState extends State<DonatePage> {
-  late int user_id;
   late String name;
   late String email;
 
@@ -50,7 +49,6 @@ class _DonatePageState extends State<DonatePage> {
     }
 
     setState(() {
-      user_id = int.parse(info["user_id"]!);
       name = info["name"]!;
       email = info["email"]!;
       name_controller.text = name;
@@ -319,7 +317,6 @@ class _DonatePageState extends State<DonatePage> {
                                       Map info =
                                           await PaymentsService.stripePayment(
                                             body: {
-                                              "user_id": user_id.toString(),
                                               "amount": amount.toString(),
                                             },
                                           );
@@ -415,7 +412,6 @@ class _DonatePageState extends State<DonatePage> {
                                         Map info =
                                             await PaymentsService.logDonation(
                                               body: {
-                                                "user_id": user_id.toString(),
                                                 "name": name,
                                                 "email": email,
                                                 "amount": amount.toString(),

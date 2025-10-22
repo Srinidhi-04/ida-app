@@ -17,8 +17,6 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  late int user_id;
-
   bool initialized = false;
 
   LatLng? center;
@@ -261,7 +259,7 @@ class _MapPageState extends State<MapPage> {
 
   Future<void> getEvents() async {
     Map info = await EventsService.getEvents(
-      params: {"completed": "no", "user_id": user_id.toString()},
+      params: {"completed": "no"},
     );
 
     if (info.containsKey("error") &&
@@ -355,9 +353,6 @@ class _MapPageState extends State<MapPage> {
       return;
     }
 
-    setState(() {
-      user_id = int.parse(info["user_id"]!);
-    });
     await getEvents();
   }
 

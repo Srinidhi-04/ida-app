@@ -12,8 +12,6 @@ class ManagePage extends StatefulWidget {
 }
 
 class _ManagePageState extends State<ManagePage> {
-  late int user_id;
-
   int? event_id;
 
   String name = "";
@@ -55,10 +53,6 @@ class _ManagePageState extends State<ManagePage> {
       await Navigator.popAndPushNamed(context, "/login");
       return;
     }
-
-    setState(() {
-      user_id = int.parse(info["user_id"]!);
-    });
   }
 
   @override
@@ -543,7 +537,6 @@ class _ManagePageState extends State<ManagePage> {
                             if (event_id == null) {
                               Map info = await EventsService.addEvent(
                                 body: {
-                                  "user_id": user_id.toString(),
                                   "name": name,
                                   "date": final_date.toString().split(".")[0],
                                   "timezone":
@@ -601,7 +594,6 @@ class _ManagePageState extends State<ManagePage> {
                             } else {
                               Map info = await EventsService.editEvent(
                                 body: {
-                                  "user_id": user_id.toString(),
                                   "event_id": event_id.toString(),
                                   "name": name,
                                   "date": final_date.toString().split(".")[0],

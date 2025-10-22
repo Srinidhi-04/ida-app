@@ -14,7 +14,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  late int user_id;
   late String name;
   late int avatar;
   String original = "";
@@ -66,7 +65,6 @@ class _SettingsPageState extends State<SettingsPage> {
       return;
     }
     setState(() {
-      user_id = int.parse(info["user_id"]!);
       name = info["name"]!;
       avatar = int.parse(info["avatar"]!);
       selected = avatar;
@@ -260,7 +258,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
                               Map info = await SettingsService.editProfile(
                                 body: {
-                                  "user_id": user_id.toString(),
                                   "name": name,
                                   "avatar": selected.toString(),
                                 },
@@ -378,9 +375,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   submitted = true;
                                 });
 
-                                await SettingsService.deleteAccount(body: {
-                                  "user_id": user_id.toString(),
-                                });
+                                await SettingsService.deleteAccount();
 
                                 await NotificationsManager.unsubscribeAllNotifications();
                                 await SecureStorage.delete();

@@ -68,10 +68,13 @@ class _SplashPageState extends State<SplashPage> {
         return;
       }
     }
-    if (info["user_id"] != null && info["reminders"] != null)
+    if (info["user_id"] != null && info["reminders"] != null) {
+      MiscService.refreshToken();
       await Navigator.popAndPushNamed(context, "/home");
-    else
+    }
+    else {
       await Navigator.popAndPushNamed(context, "/login");
+    }
   }
 
   @override

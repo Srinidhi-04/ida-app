@@ -297,9 +297,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
   }
 
   Future<void> getOrders() async {
-    Map info = await PaymentsService.getOrders(
-      params: {"user_id": user_id.toString()},
-    );
+    Map info = await PaymentsService.getOrders();
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -336,9 +334,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
   }
 
   Future<void> getDonations() async {
-    Map info = await PaymentsService.getDonations(
-      params: {"user_id": user_id.toString()},
-    );
+    Map info = await PaymentsService.getDonations();
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||

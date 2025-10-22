@@ -18,7 +18,6 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
-  late int user_id;
   late String role;
   bool loaded = false;
   bool initialized = false;
@@ -56,7 +55,7 @@ class _EventPageState extends State<EventPage> {
 
   Future<void> getPermissions() async {
     Map info = await AuthService.getPermissions(
-      params: {"category": "events", "user_id": user_id.toString()},
+      params: {"category": "events"},
     );
 
     if (info.containsKey("error") &&
@@ -113,7 +112,6 @@ class _EventPageState extends State<EventPage> {
     }
 
     setState(() {
-      user_id = int.parse(info["user_id"]!);
       role = info["role"]!;
       loaded = true;
     });
@@ -243,7 +241,6 @@ class _EventPageState extends State<EventPage> {
                             onTap: () async {
                               Map info = await EventsService.deleteEvent(
                                 body: {
-                                  "user_id": user_id.toString(),
                                   "event_id": event_id.toString(),
                                 },
                               );
@@ -501,7 +498,6 @@ class _EventPageState extends State<EventPage> {
 
                         Map info = await EventsService.toggleRsvp(
                           body: {
-                            "user_id": user_id.toString(),
                             "event_id": event_id.toString(),
                           },
                         );
@@ -570,7 +566,6 @@ class _EventPageState extends State<EventPage> {
 
                               Map info = await EventsService.toggleRsvp(
                                 body: {
-                                  "user_id": user_id.toString(),
                                   "event_id": event_id.toString(),
                                 },
                               );

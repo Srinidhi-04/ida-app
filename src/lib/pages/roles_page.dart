@@ -14,7 +14,6 @@ class RolesPage extends StatefulWidget {
 }
 
 class _RolesPageState extends State<RolesPage> {
-  late int user_id;
   late String email;
   String original = "";
   String role = "";
@@ -30,9 +29,7 @@ class _RolesPageState extends State<RolesPage> {
   bool submitted = false;
 
   Future<void> getRoles() async {
-    Map info = await SettingsService.getRoles(
-      params: {"user_id": user_id.toString()},
-    );
+    Map info = await SettingsService.getRoles();
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -147,7 +144,6 @@ class _RolesPageState extends State<RolesPage> {
       return;
     }
     setState(() {
-      user_id = int.parse(info["user_id"]!);
       email = info["email"]!;
     });
     await getRoles();
@@ -444,7 +440,6 @@ class _RolesPageState extends State<RolesPage> {
 
                                 Map info = await SettingsService.editRole(
                                   body: {
-                                    "user_id": user_id.toString(),
                                     "email": controller.text,
                                     "role": role,
                                   },

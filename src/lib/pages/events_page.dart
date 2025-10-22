@@ -125,7 +125,6 @@ class _EventsPageState extends State<EventsPage> {
 
                 Map info = await EventsService.deleteEvent(
                   body: {
-                    "user_id": user_id.toString(),
                     "event_id": event_id.toString(),
                   },
                 );
@@ -200,7 +199,6 @@ class _EventsPageState extends State<EventsPage> {
 
                   Map info = await EventsService.deleteEvent(
                     body: {
-                      "user_id": user_id.toString(),
                       "event_id": event_id.toString(),
                     },
                   );
@@ -461,9 +459,7 @@ class _EventsPageState extends State<EventsPage> {
   }
 
   Future<void> getEvents() async {
-    Map info = await EventsService.getEvents(
-      params: {"user_id": user_id.toString()},
-    );
+    Map info = await EventsService.getEvents();
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -519,9 +515,7 @@ class _EventsPageState extends State<EventsPage> {
   }
 
   Future<void> getNotifications() async {
-    Map info = await EventsService.getNotifications(
-      params: {"user_id": user_id.toString()},
-    );
+    Map info = await EventsService.getNotifications();
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -557,7 +551,7 @@ class _EventsPageState extends State<EventsPage> {
 
   Future<void> getPermissions() async {
     Map info = await AuthService.getPermissions(
-      params: {"category": "events", "user_id": user_id.toString()},
+      params: {"category": "events"},
     );
 
     if (info.containsKey("error") &&

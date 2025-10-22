@@ -17,7 +17,6 @@ class OrderPage extends StatefulWidget {
 }
 
 class _OrderPageState extends State<OrderPage> {
-  late int user_id;
   late String role;
 
   bool initialized = false;
@@ -146,7 +145,6 @@ class _OrderPageState extends State<OrderPage> {
   Future<void> getOrder() async {
     Map info = await PaymentsService.getOrder(
       params: {
-        "user_id": user_id.toString(),
         "order_user": order_user.toString(),
         "order_id": order_id.toString(),
       },
@@ -190,7 +188,7 @@ class _OrderPageState extends State<OrderPage> {
 
   Future<void> getPermissions() async {
     Map info = await AuthService.getPermissions(
-      params: {"category": "shop", "user_id": user_id.toString()},
+      params: {"category": "shop"},
     );
 
     if (info.containsKey("error") &&
@@ -247,7 +245,6 @@ class _OrderPageState extends State<OrderPage> {
     }
 
     setState(() {
-      user_id = int.parse(info["user_id"]!);
       role = info["role"]!;
     });
     if (!ordered || reload)
@@ -469,7 +466,6 @@ class _OrderPageState extends State<OrderPage> {
                                         Map info =
                                             await PaymentsService.changeStatus(
                                               body: {
-                                                "user_id": user_id.toString(),
                                                 "order_user":
                                                     order_user.toString(),
                                                 "order_id": order_id.toString(),
@@ -536,7 +532,6 @@ class _OrderPageState extends State<OrderPage> {
                                     Map info =
                                         await PaymentsService.changeStatus(
                                           body: {
-                                            "user_id": user_id.toString(),
                                             "order_user": order_user.toString(),
                                             "order_id": order_id.toString(),
                                             "status": status!,

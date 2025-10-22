@@ -68,9 +68,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   }
 
   Future<void> getSettings() async {
-    Map info = await SettingsService.getSettings(
-      params: {"user_id": user_id.toString()},
-    );
+    Map info = await SettingsService.getSettings();
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -231,7 +229,6 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
                             Map info = await SettingsService.changeSettings(
                               body: {
-                                "user_id": user_id.toString(),
                                 "announcements":
                                     (notifs["announcements"]) ? "yes" : "no",
                                 "updates": (notifs["updates"]) ? "yes" : "no",

@@ -67,7 +67,6 @@ class _ShopPageState extends State<ShopPage> {
 
                 Map info = await ShopService.deleteItem(
                   body: {
-                    "user_id": user_id.toString(),
                     "item_id": item_id.toString(),
                   },
                 );
@@ -131,7 +130,6 @@ class _ShopPageState extends State<ShopPage> {
 
                   Map info = await ShopService.deleteItem(
                     body: {
-                      "user_id": user_id.toString(),
                       "item_id": item_id.toString(),
                     },
                   );
@@ -252,8 +250,6 @@ class _ShopPageState extends State<ShopPage> {
                                                 Map info =
                                                     await ShopService.editCart(
                                                       body: {
-                                                        "user_id":
-                                                            user_id.toString(),
                                                         "item_id":
                                                             item_id.toString(),
                                                         "quantity": "1",
@@ -377,9 +373,6 @@ class _ShopPageState extends State<ShopPage> {
                                                       Map
                                                       info = await ShopService.editCart(
                                                         body: {
-                                                          "user_id":
-                                                              user_id
-                                                                  .toString(),
                                                           "item_id":
                                                               item_id
                                                                   .toString(),
@@ -481,9 +474,6 @@ class _ShopPageState extends State<ShopPage> {
                                                               Map
                                                               info = await ShopService.editCart(
                                                                 body: {
-                                                                  "user_id":
-                                                                      user_id
-                                                                          .toString(),
                                                                   "item_id":
                                                                       item_id
                                                                           .toString(),
@@ -633,9 +623,7 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   Future<void> getItems() async {
-    Map info = await ShopService.getItems(
-      params: {"user_id": user_id.toString()},
-    );
+    Map info = await ShopService.getItems();
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -672,9 +660,7 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   Future<void> getCart() async {
-    Map info = await ShopService.getCart(
-      params: {"user_id": user_id.toString()},
-    );
+    Map info = await ShopService.getCart();
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -717,7 +703,7 @@ class _ShopPageState extends State<ShopPage> {
 
   Future<void> getPermissions() async {
     Map info = await AuthService.getPermissions(
-      params: {"category": "shop", "user_id": user_id.toString()},
+      params: {"category": "shop"},
     );
 
     if (info.containsKey("error") &&
@@ -757,9 +743,7 @@ class _ShopPageState extends State<ShopPage> {
   }
 
   Future<void> getBanner() async {
-    Map info = await ShopService.getBanner(
-      params: {"user_id": user_id.toString()},
-    );
+    Map info = await ShopService.getBanner();
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -1073,7 +1057,6 @@ class _ShopPageState extends State<ShopPage> {
 
                       Map info = await PaymentsService.startOrder(
                         jsonBody: jsonEncode({
-                          "user_id": user_id,
                           "amount": cart_total,
                           "cart": order_list,
                         }),
@@ -1193,7 +1176,6 @@ class _ShopPageState extends State<ShopPage> {
 
                         Map info = await PaymentsService.logOrder(
                           jsonBody: jsonEncode({
-                            "user_id": user_id,
                             "value": cart_total,
                             "cart": order_list,
                             "payment_intent": payment_id,
@@ -1258,7 +1240,6 @@ class _ShopPageState extends State<ShopPage> {
 
                         await PaymentsService.cancelOrder(
                           jsonBody: jsonEncode({
-                            "user_id": user_id,
                             "cart": order_list,
                           }),
                         );

@@ -16,7 +16,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  late int user_id;
   late String role;
   late String name;
   late int avatar;
@@ -241,9 +240,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> getEvents() async {
-    Map info = await EventsService.getRsvp(
-      params: {"user_id": user_id.toString()},
-    );
+    Map info = await EventsService.getRsvp();
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -300,10 +297,10 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> getPermissions() async {
     List<Map> info = await Future.wait([
       AuthService.getPermissions(
-        params: {"category": "roles", "user_id": user_id.toString()},
+        params: {"category": "roles"},
       ),
       AuthService.getPermissions(
-        params: {"category": "shop", "user_id": user_id.toString()},
+        params: {"category": "shop"},
       ),
     ]);
 
@@ -385,7 +382,6 @@ class _ProfilePageState extends State<ProfilePage> {
       return;
     }
     setState(() {
-      user_id = int.parse(info["user_id"]!);
       email = info["email"]!;
       name = info["name"]!;
       avatar = int.parse(info["avatar"]!);

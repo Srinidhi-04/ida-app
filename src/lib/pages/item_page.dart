@@ -12,8 +12,6 @@ class ItemPage extends StatefulWidget {
 }
 
 class _ItemPageState extends State<ItemPage> {
-  late int user_id;
-
   int? item_id;
 
   String name = "";
@@ -49,10 +47,6 @@ class _ItemPageState extends State<ItemPage> {
       await Navigator.popAndPushNamed(context, "/login");
       return;
     }
-
-    setState(() {
-      user_id = int.parse(info["user_id"]!);
-    });
   }
 
   @override
@@ -283,7 +277,6 @@ class _ItemPageState extends State<ItemPage> {
                                       Map info =
                                           await ShopService.changeInventory(
                                             body: {
-                                              "user_id": user_id.toString(),
                                               "item_id": item_id.toString(),
                                               "quantity": change.toString(),
                                             },
@@ -438,7 +431,6 @@ class _ItemPageState extends State<ItemPage> {
                             if (item_id == null) {
                               Map info = await ShopService.addItem(
                                 body: {
-                                  "user_id": user_id.toString(),
                                   "name": name,
                                   "price": price.toString(),
                                   "image": image,
@@ -486,7 +478,6 @@ class _ItemPageState extends State<ItemPage> {
                             } else {
                               Map info = await ShopService.editItem(
                                 body: {
-                                  "user_id": user_id.toString(),
                                   "item_id": item_id.toString(),
                                   "name": name,
                                   "price": price.toString(),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:src/services/auth_service.dart';
+import 'package:src/services/misc_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/submit_overlay.dart';
@@ -88,6 +89,8 @@ class _LoginPageState extends State<LoginPage> {
       info["announcements"],
       info["merch"],
     );
+
+    MiscService.refreshToken();
 
     Navigator.popAndPushNamed(context, "/home");
 
