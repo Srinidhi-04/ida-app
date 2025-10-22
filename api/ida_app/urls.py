@@ -52,4 +52,6 @@ urlpatterns = [
     path("start-order", start_order),
     path("cancel-order", cancel_order),
     path("get-banner", get_banner),
+    path("refresh-token", refresh_token),
+    path("delete-token", delete_token)
 ]

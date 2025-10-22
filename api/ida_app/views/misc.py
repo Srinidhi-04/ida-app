@@ -39,3 +39,39 @@ async def send_query(request: HttpRequest):
     await send_question(user.name, user.email, query)
 
     return JsonResponse({"message": "Query sent successfully"})
+
+@request_type("POST")
+async def refresh_token(request: HttpRequest):
+    check = requires_fields(request.POST, {"token": "str"})
+    if check:
+        return JsonResponse(check, status = 400)
+
+    user: UserCredentials = request.user
+
+    token = request.POST.get("token")
+
+    try:
+        await user.user_tokens.aget(token = token, type = "fcm")
+    except:
+        token_obj = UserTokens(user = user, token = token, type = "fcm")
+        await token_obj.asave()
+
+    return JsonResponse({"message": "FCM token refreshed successfully"})
+
+@request_type("POST")
+async def delete_token(request: HttpRequest):
+    check = requires_fields(request.POST, {"token": "str"})
+    if check:
+        return JsonResponse(check, status = 400)
+
+    user: UserCredentials = request.user
+
+    token = request.POST.get("token")
+
+    try:
+        token_obj: UserTokens = await user.user_tokens.aget(token = token, type = "fcm")
+        await token_obj.adelete()
+    except:
+        return JsonResponse({"message": "FCM token does not exist"}, status = 400)
+
+    return JsonResponse({"message": "FCM token deleted successfully"})
