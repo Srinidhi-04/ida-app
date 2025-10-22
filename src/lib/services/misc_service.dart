@@ -13,9 +13,7 @@ class MiscService {
   }
 
   static Future<Map> refreshToken({Map<String, String>? body}) async {
-    if (body == null) {
-      body = {};
-    }
+    body ??= {};
 
     final token = await fcm.getToken();
     body["token"] = token!;
@@ -24,9 +22,7 @@ class MiscService {
   }
 
   static Future<Map> deleteToken({Map<String, String>? body}) async {
-    if (body == null) {
-      body = {};
-    }
+    body ??= {};
 
     final token = await fcm.getToken();
     body["token"] = token!;

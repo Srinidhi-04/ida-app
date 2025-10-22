@@ -71,7 +71,7 @@ class UserCredentials(AbstractBaseUser, PermissionsMixin):
 class UserTokens(models.Model):
     token_id = models.AutoField(primary_key = True, unique = True, null = False)
     user = models.ForeignKey(UserCredentials, related_name = "user_tokens", on_delete = models.CASCADE, null = False)
-    token = models.CharField(max_length = 64, unique = True, null = False)
+    token = models.CharField(max_length = 512, unique = True, null = False)
     expires_at = models.DateTimeField(unique = False, null = True)
     type = models.TextField(choices = [("auth", "auth"), ("fcm", "fcm")], default = "auth", null = False)
     created_at = models.DateTimeField(auto_now_add = True)
