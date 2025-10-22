@@ -239,7 +239,7 @@ async def change_status(request: HttpRequest):
     elif status == "Delivered":
         await send_user_notification(user.user_id, tokens, "Order delivered!", f"Order #{order.order_id} has been delivered successfully!")
     else:
-        refund = await sync_to_async(stripe.Refund.create)(payment_intent = order.payment_intent)
+        refund = await asyncio.to_thread(lambda: stripe.Refund.create(payment_intent = order.payment_intent))
         await send_user_notification(user.user_id, tokens, "Order cancelled", f"Order #{order.order_id} has been cancelled and refunded  successfully")
 
         receipt = []
