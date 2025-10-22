@@ -232,6 +232,9 @@ async def change_status(request: HttpRequest):
     order.status = status
     await order.asave()
 
+    tokens = await sync_to_async(list)(UserTokens.objects.filter(user = user, type = "fcm"))
+    await send_user_notification(user.user_id, tokens, "Order status changed", f"The order status for order #{order.order_id} has been changed to {status}")
+
     if status == "Cancelled":
         refund = await sync_to_async(stripe.Refund.create)(payment_intent = order.payment_intent)
 

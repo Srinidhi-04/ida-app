@@ -4,6 +4,7 @@ from firebase_admin import messaging
 import asyncio
 from apscheduler.schedulers.background import BackgroundScheduler
 from django_apscheduler.jobstores import DjangoJobStore
+from ida_app.models import UserTokens
 import datetime
 import os
 # from dotenv import load_dotenv
@@ -19,6 +20,27 @@ def start_scheduler():
     scheduler.start()
     print("Scheduler started successfully")
 
+async def send_user_notification(user_id: int, tokens: list[UserTokens], title: str, body: str):
+    messages = []
+    for token in tokens:
+        messages.append(
+            message = messaging.Message(
+                notification=messaging.Notification(
+                    title=title,
+                    body=body
+                ),
+                token=token.token
+            )
+        )
+
+    response = await messaging.send_each_async(messages)
+    for i, r in enumerate(response.responses):
+        if not r.success:
+            if isinstance(r.exception, messaging.UnregisteredError):
+                await tokens[i].adelete()
+
+    print(f"Successfully sent message to user '{user_id}': {response.responses}")
+
 async def send_topic_notification(topic: str, title: str, body: str):
     message = messaging.Message(
         notification=messaging.Notification(
@@ -28,8 +50,8 @@ async def send_topic_notification(topic: str, title: str, body: str):
         topic=topic
     )
     
-    response = await asyncio.to_thread(lambda: messaging.send(message))
-    print(f"Successfully sent message to topic '{topic}': {response}")
+    response = await messaging.send_each_async([message])
+    print(f"Successfully sent message to topic '{topic}': {response.responses}")
 
 def send_notif(topic, title, body):
     asyncio.run(send_topic_notification(topic, title, body))
