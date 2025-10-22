@@ -98,7 +98,7 @@ class AuthMiddleware:
 
         try:
             user: UserCredentials = await UserCredentials.objects.prefetch_related("user_tokens").aget(user_id = user_id)
-            token_record: UserTokens = await user.user_tokens.aget(token = sha256(token.encode()).hexdigest())
+            token_record: UserTokens = await user.user_tokens.aget(token = sha256(token.encode()).hexdigest(), type = "auth")
 
             if token_record.expires_at <= datetime.datetime.now(tz = datetime.timezone.utc):
                 return JsonResponse({"error": "Invalid authorization token"}, status = 400)

@@ -53,7 +53,7 @@ async def verify_code(request: HttpRequest):
     user.signup_code = None
 
     uid = uuid.uuid4().hex
-    token = UserTokens(user = user, token = sha256(uid.encode()).hexdigest(), expires_at = (datetime.datetime.now(tz = datetime.timezone.utc) + datetime.timedelta(days = 30)))
+    token = UserTokens(user = user, token = sha256(uid.encode()).hexdigest(), expires_at = (datetime.datetime.now(tz = datetime.timezone.utc) + datetime.timedelta(days = 30)), type = "auth")
     await token.asave()
 
     user.last_login = datetime.datetime.now(tz = datetime.timezone.utc)
@@ -119,10 +119,10 @@ async def change_password(request: HttpRequest):
     user.forgot_code = None
     user.set_password(password)
 
-    await user.user_tokens.aupdate(expires_at = datetime.datetime.now(tz = datetime.timezone.utc))
+    await user.user_tokens.filter(type = "auth").aupdate(expires_at = datetime.datetime.now(tz = datetime.timezone.utc))
 
     uid = uuid.uuid4().hex
-    token = UserTokens(user = user, token = sha256(uid.encode()).hexdigest(), expires_at = (datetime.datetime.now(tz = datetime.timezone.utc) + datetime.timedelta(days = 30)))
+    token = UserTokens(user = user, token = sha256(uid.encode()).hexdigest(), expires_at = (datetime.datetime.now(tz = datetime.timezone.utc) + datetime.timedelta(days = 30)), type = "auth")
     await token.asave()
 
     user.last_login = datetime.datetime.now(tz = datetime.timezone.utc)
@@ -161,7 +161,7 @@ async def login(request: HttpRequest):
 
     if user:
         uid = uuid.uuid4().hex
-        token = UserTokens(user = user, token = sha256(uid.encode()).hexdigest(), expires_at = (datetime.datetime.now(tz = datetime.timezone.utc) + datetime.timedelta(days = 30)))
+        token = UserTokens(user = user, token = sha256(uid.encode()).hexdigest(), expires_at = (datetime.datetime.now(tz = datetime.timezone.utc) + datetime.timedelta(days = 30)), type = "auth")
         await token.asave()
 
         user.last_login = datetime.datetime.now(tz = datetime.timezone.utc)
