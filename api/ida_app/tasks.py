@@ -24,7 +24,7 @@ async def send_user_notification(user_id: int, tokens: list[UserTokens], title: 
     messages = []
     for token in tokens:
         messages.append(
-            message = messaging.Message(
+            messaging.Message(
                 notification=messaging.Notification(
                     title=title,
                     body=body
