@@ -241,13 +241,15 @@ async def change_status(request: HttpRequest):
 
     tokens = await sync_to_async(list)(UserTokens.objects.filter(user = user, type = "fcm"))
 
-    if status == "Pending":
+    settings: UserSettings = await UserSettings.objects.aget(user = user)
+    if status == "Pending" and settings.status:
         await send_user_notification(user.user_id, tokens, "Order status changed", f"The order status for order #{order.order_id} has been changed to 'Pending'")
-    elif status == "Delivered":
+    elif status == "Delivered" and settings.status:
         await send_user_notification(user.user_id, tokens, "Order delivered!", f"Order #{order.order_id} has been delivered successfully!")
     else:
         refund = await asyncio.to_thread(lambda: stripe.Refund.create(payment_intent = order.payment_intent))
-        await send_user_notification(user.user_id, tokens, "Order cancelled", f"Order #{order.order_id} has been cancelled and refunded successfully")
+        if settings.status:
+            await send_user_notification(user.user_id, tokens, "Order cancelled", f"Order #{order.order_id} has been cancelled and refunded successfully")
 
         receipt = []
         order_items = await sync_to_async(list)(OrderItems.objects.filter(order = order).select_related("item"))
