@@ -406,10 +406,18 @@ class _HomePageState extends State<HomePage> {
 
     setState(() {
       announcements = info["data"]["announcements"];
-      last_announcement = announcements.map((e) => e["announcement_id"] as int).reduce(max);
+      last_announcement = max(
+        announcements.map((e) => e["announcement_id"] as int).reduce(max),
+        info["data"]["last_announcement"],
+      );
     });
 
-    List new_announcements = announcements.where((e) => e["announcement_id"] > info["data"]["last_announcement"]).toList();
+    List new_announcements =
+        announcements
+            .where(
+              (e) => e["announcement_id"] > info["data"]["last_announcement"],
+            )
+            .toList();
     if (new_announcements.isNotEmpty) {
       showAnnouncements(new_announcements);
     }
@@ -436,78 +444,97 @@ class _HomePageState extends State<HomePage> {
               content: Container(
                 height: MediaQuery.of(context).size.height * 0.2,
                 width: double.maxFinite,
-                child: PageView.builder(
-                  controller: dialog_controller,
-                  itemCount: notifs.length,
-                  onPageChanged:
-                      (value) => setDialogState(() {
-                        page = value + 1;
-                      }),
-                  itemBuilder: (BuildContext pageContext, int index) {
-                    return SingleChildScrollView(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: SelectableText(
-                              notifs[index]["title"],
-                              style: Theme.of(context)
-                                  .typography
-                                  .black
-                                  .labelLarge!
-                                  .apply(fontWeightDelta: 3),
-                            ),
+                child:
+                    (notifs.isEmpty)
+                        ? Center(
+                          child: Text(
+                            "No announcements",
+                            style:
+                                Theme.of(
+                                  context,
+                                ).typography.black.headlineMedium,
                           ),
-                          Text.rich(
-                            TextSpan(
-                              children:
-                                  notifs[index]["body"]
-                                      .split(" ")
-                                      .map(
-                                        (e) =>
-                                            (e.startsWith("https://") ||
-                                                    e.startsWith("www."))
-                                                ? TextSpan(
-                                                  text: e + " ",
-                                                  style: TextStyle(
-                                                    decoration:
-                                                        TextDecoration
-                                                            .underline,
-                                                  ),
-                                                  recognizer:
-                                                      TapGestureRecognizer()
-                                                        ..onTap = () {
-                                                          launchUrl(
-                                                            Uri.parse(e),
-                                                          );
-                                                        },
-                                                )
-                                                : TextSpan(text: e + " "),
-                                      )
-                                      .toList()
-                                      .cast<InlineSpan>(),
-                            ),
-                            style: Theme.of(context)
-                                .typography
-                                .black
-                                .bodyMedium!
-                                .apply(fontSizeDelta: 2),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                        )
+                        : PageView.builder(
+                          controller: dialog_controller,
+                          itemCount: notifs.length,
+                          onPageChanged:
+                              (value) => setDialogState(() {
+                                page = value + 1;
+                              }),
+                          itemBuilder: (BuildContext pageContext, int index) {
+                            return SingleChildScrollView(
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.only(bottom: 10),
+                                    child: SelectableText(
+                                      notifs[index]["title"],
+                                      style: Theme.of(context)
+                                          .typography
+                                          .black
+                                          .labelLarge!
+                                          .apply(fontWeightDelta: 3),
+                                    ),
+                                  ),
+                                  Text.rich(
+                                    TextSpan(
+                                      children:
+                                          notifs[index]["body"]
+                                              .split(" ")
+                                              .map(
+                                                (e) =>
+                                                    (e.startsWith("https://") ||
+                                                            e.startsWith(
+                                                              "www.",
+                                                            ))
+                                                        ? TextSpan(
+                                                          text: e + " ",
+                                                          style: TextStyle(
+                                                            decoration:
+                                                                TextDecoration
+                                                                    .underline,
+                                                          ),
+                                                          recognizer:
+                                                              TapGestureRecognizer()
+                                                                ..onTap = () {
+                                                                  launchUrl(
+                                                                    Uri.parse(
+                                                                      e,
+                                                                    ),
+                                                                  );
+                                                                },
+                                                        )
+                                                        : TextSpan(
+                                                          text: e + " ",
+                                                        ),
+                                              )
+                                              .toList()
+                                              .cast<InlineSpan>(),
+                                    ),
+                                    style: Theme.of(context)
+                                        .typography
+                                        .black
+                                        .bodyMedium!
+                                        .apply(fontSizeDelta: 2),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
               ),
               actions: [
-                Text(
-                  "${page} of ${notifs.length}",
-                  style: Theme.of(
-                    context,
-                  ).typography.black.labelMedium!.apply(fontSizeDelta: 2),
-                ),
+                (notifs.isNotEmpty)
+                    ? Text(
+                      "${page} of ${notifs.length}",
+                      style: Theme.of(
+                        context,
+                      ).typography.black.labelMedium!.apply(fontSizeDelta: 2),
+                    )
+                    : SizedBox.shrink(),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(dialogContext);
