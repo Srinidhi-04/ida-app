@@ -33,7 +33,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  final app_version = 13.1;
+  final app_version = 14;
   bool update = false;
 
   Future<void> checkUpdate() async {
