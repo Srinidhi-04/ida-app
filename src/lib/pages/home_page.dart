@@ -235,9 +235,7 @@ class _HomePageState extends State<HomePage> {
       if (loadingEvents == null) loadingEvents = true;
     });
 
-    Map info = await EventsService.getEvents(
-      params: {"completed": "no"},
-    );
+    Map info = await EventsService.getEvents(params: {"completed": "no"});
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -528,9 +526,7 @@ class _HomePageState extends State<HomePage> {
         },
       ).then((_) async {
         Map info = await AnnouncementsService.updateAnnouncement(
-          body: {
-            "last_announcement": last_announcement.toString(),
-          },
+          body: {"last_announcement": last_announcement.toString()},
         );
 
         if (info.containsKey("error") &&

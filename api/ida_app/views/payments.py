@@ -19,6 +19,8 @@ if not DEBUG:
 else:
     STRIPE_PUBLISH = os.getenv("STRIPE_PUBLISH_TEST")
 
+merch_roles = ["admin", "merch"]
+
 async def create_intent(amount: float):
     amount = int(amount * 100)
     if amount < 50:
@@ -198,7 +200,7 @@ async def get_order(request: HttpRequest):
     order_user = int(request.GET.get("order_user"))
     order_id = int(request.GET.get("order_id"))
 
-    if (request.user.user_id != order_user and request.user.role not in ["admin"]):
+    if (request.user.user_id != order_user and request.user.role not in merch_roles):
         return JsonResponse({"error": "Insufficient permissions"}, status = 400)
 
     try:

@@ -20,7 +20,7 @@ class _OrderPageState extends State<OrderPage> {
   late String role;
 
   bool initialized = false;
-  bool loaded = false;
+  List<bool> loaded = [false, false];
   bool ordered = false;
   bool reload = false;
 
@@ -183,6 +183,7 @@ class _OrderPageState extends State<OrderPage> {
       amount = info["data"]["amount"];
       date = DateTime.parse(info["data"]["date"]).toLocal();
       qr_time = DateTime.now();
+      loaded[0] = true;
     });
   }
 
@@ -223,6 +224,7 @@ class _OrderPageState extends State<OrderPage> {
       admin_roles = info["data"]["roles"].cast<String>();
       admin_access = info["data"]["access"];
       role = info["data"]["role"];
+      loaded[1] = true;
     });
   }
 
@@ -251,9 +253,6 @@ class _OrderPageState extends State<OrderPage> {
       await Future.wait([getOrder(), getPermissions()]);
     else
       await getPermissions();
-    setState(() {
-      loaded = true;
-    });
   }
 
   @override
@@ -279,6 +278,7 @@ class _OrderPageState extends State<OrderPage> {
           if (args.containsKey("receipt")) {
             receipt = args["receipt"];
             ordered = true;
+            loaded[0] = true;
           }
         });
       }
@@ -300,7 +300,7 @@ class _OrderPageState extends State<OrderPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (!loaded)
+    if (loaded.contains(false))
       return Scaffold(
         body: Center(
           child: LoadingAnimationWidget.inkDrop(

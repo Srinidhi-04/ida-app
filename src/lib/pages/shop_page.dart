@@ -851,7 +851,7 @@ class _ShopPageState extends State<ShopPage> {
                 (cart)
                     ? []
                     : [
-                      CartButton(quantity: quantity, callback: () => getCart()),
+                      CartButton(quantity: quantity, callback: () => checkLogin()),
                     ],
           ),
           body:
@@ -988,7 +988,7 @@ class _ShopPageState extends State<ShopPage> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.only(bottom: 50.0),
+                                padding: EdgeInsets.only(bottom: ((admin_roles.contains(role) || admin_access) && !cart) ? 50.0 : 0),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children:
