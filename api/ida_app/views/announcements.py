@@ -57,11 +57,6 @@ async def update_announcement(request: HttpRequest):
 async def get_announcements(request: HttpRequest):
     user: UserCredentials = request.user
 
-    last_announcement = user.last_announcement
-    force = request.GET.get("force") == "yes"
-    if not force:
-        announcements = await sync_to_async(list)(BannerAnnouncements.objects.filter(announcement_id__gt = last_announcement).order_by("-created_at").values())
-    else:
-        announcements = await sync_to_async(list)(BannerAnnouncements.objects.order_by("-created_at").values())
+    announcements = await sync_to_async(list)(BannerAnnouncements.objects.order_by("-created_at").values())
 
-    return JsonResponse({"data": announcements})
+    return JsonResponse({"data": {"announcements": announcements, "last_announcement": user.last_announcement}})

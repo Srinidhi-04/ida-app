@@ -4,6 +4,7 @@ import "package:src/services/auth_service.dart";
 import "package:src/services/notifications_manager.dart";
 import "package:src/services/secure_storage.dart";
 import "package:src/services/shop_service.dart";
+import "package:src/widgets/navigation.dart";
 import "package:src/widgets/submit_overlay.dart";
 
 class ItemPage extends StatefulWidget {
@@ -616,6 +617,7 @@ class _ItemPageState extends State<ItemPage> {
               ),
             ),
           ),
+          bottomNavigationBar: Navigation(selected: 3),
         ),
         SubmitOverlay(submitted: submitted),
       ],

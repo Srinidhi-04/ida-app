@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -43,6 +45,9 @@ class _HomePageState extends State<HomePage> {
 
   bool loaded = false;
   bool? loadingEvents;
+
+  List announcements = [];
+  int last_announcement = 0;
 
   PageController dialog_controller = PageController();
 
@@ -370,10 +375,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> getAnnouncements({bool force = false}) async {
-    Map info = await AnnouncementsService.getAnnouncements(
-      params: {"force": force ? "yes" : "no"},
-    );
+  Future<void> getAnnouncements() async {
+    Map info = await AnnouncementsService.getAnnouncements();
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -401,161 +404,157 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    List data = info["data"];
+    setState(() {
+      announcements = info["data"]["announcements"];
+      last_announcement = announcements.map((e) => e["announcement_id"] as int).reduce(max);
+    });
 
-    Map<int, List> announcements = {};
-    int last_announcement = 0;
-    for (var announcement in data) {
-      announcements[announcement["announcement_id"]] = [
-        announcement["title"],
-        announcement["body"],
-      ];
-      if (announcement["announcement_id"] > last_announcement) {
-        last_announcement = announcement["announcement_id"];
-      }
+    List new_announcements = announcements.where((e) => e["announcement_id"] > info["data"]["last_announcement"]).toList();
+    if (new_announcements.isNotEmpty) {
+      showAnnouncements(new_announcements);
     }
+  }
 
-    if (data.isNotEmpty) {
-      showDialog(
-        context: context,
-        builder: (dialogContext) {
-          int page = 1;
+  void showAnnouncements(List notifs) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        int page = 1;
 
-          return StatefulBuilder(
-            builder: (stateContext, setDialogState) {
-              return AlertDialog(
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                actionsAlignment: MainAxisAlignment.spaceBetween,
-                title: Text(
-                  "Announcements",
-                  style: Theme.of(context).typography.black.headlineMedium,
-                ),
-                content: Container(
-                  height: MediaQuery.of(context).size.height * 0.2,
-                  width: double.maxFinite,
-                  child: PageView.builder(
-                    controller: dialog_controller,
-                    itemCount: data.length,
-                    onPageChanged:
-                        (value) => setDialogState(() {
-                          page = value + 1;
-                        }),
-                    itemBuilder: (BuildContext pageContext, int index) {
-                      return SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 10),
-                              child: SelectableText(
-                                data[index]["title"],
-                                style: Theme.of(context)
-                                    .typography
-                                    .black
-                                    .labelLarge!
-                                    .apply(fontWeightDelta: 3),
-                              ),
-                            ),
-                            Text.rich(
-                              TextSpan(
-                                children:
-                                    data[index]["body"]
-                                        .split(" ")
-                                        .map(
-                                          (e) =>
-                                              (e.startsWith("https://") ||
-                                                      e.startsWith("www."))
-                                                  ? TextSpan(
-                                                    text: e + " ",
-                                                    style: TextStyle(
-                                                      decoration:
-                                                          TextDecoration
-                                                              .underline,
-                                                    ),
-                                                    recognizer:
-                                                        TapGestureRecognizer()
-                                                          ..onTap = () {
-                                                            launchUrl(
-                                                              Uri.parse(e),
-                                                            );
-                                                          },
-                                                  )
-                                                  : TextSpan(text: e + " "),
-                                        )
-                                        .toList()
-                                        .cast<InlineSpan>(),
-                              ),
+        return StatefulBuilder(
+          builder: (stateContext, setDialogState) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              actionsAlignment: MainAxisAlignment.spaceBetween,
+              title: Text(
+                "Announcements",
+                style: Theme.of(context).typography.black.headlineMedium,
+              ),
+              content: Container(
+                height: MediaQuery.of(context).size.height * 0.2,
+                width: double.maxFinite,
+                child: PageView.builder(
+                  controller: dialog_controller,
+                  itemCount: notifs.length,
+                  onPageChanged:
+                      (value) => setDialogState(() {
+                        page = value + 1;
+                      }),
+                  itemBuilder: (BuildContext pageContext, int index) {
+                    return SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: SelectableText(
+                              notifs[index]["title"],
                               style: Theme.of(context)
                                   .typography
                                   .black
-                                  .bodyMedium!
-                                  .apply(fontSizeDelta: 2),
+                                  .labelLarge!
+                                  .apply(fontWeightDelta: 3),
                             ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
+                          ),
+                          Text.rich(
+                            TextSpan(
+                              children:
+                                  notifs[index]["body"]
+                                      .split(" ")
+                                      .map(
+                                        (e) =>
+                                            (e.startsWith("https://") ||
+                                                    e.startsWith("www."))
+                                                ? TextSpan(
+                                                  text: e + " ",
+                                                  style: TextStyle(
+                                                    decoration:
+                                                        TextDecoration
+                                                            .underline,
+                                                  ),
+                                                  recognizer:
+                                                      TapGestureRecognizer()
+                                                        ..onTap = () {
+                                                          launchUrl(
+                                                            Uri.parse(e),
+                                                          );
+                                                        },
+                                                )
+                                                : TextSpan(text: e + " "),
+                                      )
+                                      .toList()
+                                      .cast<InlineSpan>(),
+                            ),
+                            style: Theme.of(context)
+                                .typography
+                                .black
+                                .bodyMedium!
+                                .apply(fontSizeDelta: 2),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 ),
-                actions: [
-                  Text(
-                    "${page} of ${data.length}",
+              ),
+              actions: [
+                Text(
+                  "${page} of ${notifs.length}",
+                  style: Theme.of(
+                    context,
+                  ).typography.black.labelMedium!.apply(fontSizeDelta: 2),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                  },
+                  child: Text(
+                    "Close",
                     style: Theme.of(
                       context,
                     ).typography.black.labelMedium!.apply(fontSizeDelta: 2),
                   ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(dialogContext);
-                    },
-                    child: Text(
-                      "Close",
-                      style: Theme.of(
-                        context,
-                      ).typography.black.labelMedium!.apply(fontSizeDelta: 2),
-                    ),
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      ).then((_) async {
-        Map info = await AnnouncementsService.updateAnnouncement(
-          body: {"last_announcement": last_announcement.toString()},
-        );
-
-        if (info.containsKey("error") &&
-            (info["error"] == "Invalid authorization token" ||
-                info["error"] == "A user with that user ID does not exist")) {
-          await NotificationsManager.unsubscribeAllNotifications();
-          await SecureStorage.delete();
-          await Navigator.of(
-            context,
-          ).pushNamedAndRemoveUntil("/login", (route) => false);
-          return;
-        } else if (info.containsKey("error")) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                info["error"],
-                style: Theme.of(context).typography.white.bodyMedium!.apply(
-                  color: Theme.of(context).primaryColorLight,
                 ),
+              ],
+            );
+          },
+        );
+      },
+    ).then((_) async {
+      Map info = await AnnouncementsService.updateAnnouncement(
+        body: {"last_announcement": last_announcement.toString()},
+      );
+
+      if (info.containsKey("error") &&
+          (info["error"] == "Invalid authorization token" ||
+              info["error"] == "A user with that user ID does not exist")) {
+        await NotificationsManager.unsubscribeAllNotifications();
+        await SecureStorage.delete();
+        await Navigator.of(
+          context,
+        ).pushNamedAndRemoveUntil("/login", (route) => false);
+        return;
+      } else if (info.containsKey("error")) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              info["error"],
+              style: Theme.of(context).typography.white.bodyMedium!.apply(
+                color: Theme.of(context).primaryColorLight,
               ),
-              backgroundColor: Theme.of(context).primaryColorDark,
-              showCloseIcon: true,
-              closeIconColor: Theme.of(context).primaryColorLight,
             ),
-          );
-          return;
-        }
-      });
-    }
+            backgroundColor: Theme.of(context).primaryColorDark,
+            showCloseIcon: true,
+            closeIconColor: Theme.of(context).primaryColorLight,
+          ),
+        );
+        return;
+      }
+    });
   }
 
   Future<void> checkLogin() async {
@@ -613,7 +612,7 @@ class _HomePageState extends State<HomePage> {
         title: Image(image: AssetImage("assets/logo.png"), height: 40),
         actions: [
           IconButton(
-            onPressed: () => getAnnouncements(force: true),
+            onPressed: () => showAnnouncements(announcements),
             icon: Icon(
               Icons.notifications_outlined,
               color: Theme.of(context).primaryColorDark,

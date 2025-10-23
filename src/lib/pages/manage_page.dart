@@ -4,6 +4,7 @@ import "package:src/services/auth_service.dart";
 import "package:src/services/events_service.dart";
 import "package:src/services/notifications_manager.dart";
 import "package:src/services/secure_storage.dart";
+import "package:src/widgets/navigation.dart";
 import "package:src/widgets/submit_overlay.dart";
 
 class ManagePage extends StatefulWidget {
@@ -753,6 +754,7 @@ class _ManagePageState extends State<ManagePage> {
               ),
             ),
           ),
+          bottomNavigationBar: Navigation(selected: 1),
         ),
         SubmitOverlay(submitted: submitted),
       ],

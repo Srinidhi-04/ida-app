@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:src/services/misc_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import "package:src/services/secure_storage.dart";
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class CirclePainter extends CustomPainter {
   Color color;
@@ -70,6 +71,9 @@ class _SplashPageState extends State<SplashPage> {
     }
     if (info["user_id"] != null && info["reminders"] != null) {
       MiscService.refreshToken();
+      FirebaseMessaging.instance.onTokenRefresh.listen((_) {
+        MiscService.refreshToken();
+      });
       await Navigator.popAndPushNamed(context, "/home");
     }
     else {
