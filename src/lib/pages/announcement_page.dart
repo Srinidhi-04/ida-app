@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:src/services/announcements_service.dart';
+import 'package:src/services/auth_service.dart';
 import 'package:src/services/notifications_manager.dart';
 import 'package:src/services/secure_storage.dart';
 import 'package:src/widgets/submit_overlay.dart';
@@ -12,6 +14,11 @@ class AnnouncementPage extends StatefulWidget {
 }
 
 class _AnnouncementPageState extends State<AnnouncementPage> {
+  List<String> admin_roles = ["admin", "comms"];
+  bool admin_access = false;
+
+  bool loaded = false;
+
   bool submitted = false;
   String title = "";
   String body = "";
@@ -19,6 +26,48 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
   bool banner = false;
 
   List<String?> errors = [null, null];
+
+  Future<void> getPermissions() async {
+    Map info = await AuthService.getPermissions(params: {"category": "announcements"});
+
+    if (info.containsKey("error") &&
+        (info["error"] == "Invalid authorization token" ||
+            info["error"] == "A user with that user ID does not exist")) {
+      await NotificationsManager.unsubscribeAllNotifications();
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
+      return;
+    }
+
+    await SecureStorage.writeOne("role", info["data"]["role"]);
+
+    setState(() {
+      admin_roles = info["data"]["roles"].cast<String>();
+      admin_access = info["data"]["access"];
+      loaded = true;
+    });
+
+    if (!admin_roles.contains(info["data"]["role"]) && !admin_access) {
+      Navigator.of(context).pop();
+    }
+  }
 
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
@@ -37,6 +86,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
       await Navigator.popAndPushNamed(context, "/login");
       return;
     }
+    await getPermissions();
   }
 
   @override
@@ -49,6 +99,16 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (!loaded)
+      return Scaffold(
+        body: Center(
+          child: LoadingAnimationWidget.inkDrop(
+            color: Theme.of(context).primaryColorLight,
+            size: 100,
+          ),
+        ),
+      );
+
     return Stack(
       children: [
         Scaffold(
@@ -193,10 +253,7 @@ class _AnnouncementPageState extends State<AnnouncementPage> {
                                   );
                             } else {
                               info = await AnnouncementsService.addAnnouncement(
-                                body: {
-                                  "title": title,
-                                  "body": body,
-                                },
+                                body: {"title": title, "body": body},
                               );
                             }
 

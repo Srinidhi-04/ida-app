@@ -2,6 +2,7 @@ import "package:flutter/material.dart";
 import "package:loading_animation_widget/loading_animation_widget.dart";
 import "package:src/services/notifications_manager.dart";
 import "package:src/services/secure_storage.dart";
+import 'package:src/services/auth_service.dart';
 import "package:src/services/settings_service.dart";
 import "package:src/widgets/navigation.dart";
 import "package:src/widgets/submit_overlay.dart";
@@ -17,8 +18,11 @@ class _RolesPageState extends State<RolesPage> {
   late String email;
   String original = "";
   String role = "";
-  bool loaded = false;
+  List<bool> loaded = [false, false];
   TextEditingController controller = TextEditingController();
+
+  List<String> admin_roles = ["admin"];
+  bool admin_access = false;
 
   late List roles;
   late List emails;
@@ -65,7 +69,7 @@ class _RolesPageState extends State<RolesPage> {
       roles = info["data"]["roles"];
       emails = info["data"]["emails"];
       total_users = info["data"]["total_users"];
-      loaded = true;
+      loaded[0] = true;
     });
   }
 
@@ -126,6 +130,50 @@ class _RolesPageState extends State<RolesPage> {
     );
   }
 
+  Future<void> getPermissions() async {
+    Map info = await AuthService.getPermissions(
+      params: {"category": "roles"},
+    );
+
+    if (info.containsKey("error") &&
+        (info["error"] == "Invalid authorization token" ||
+            info["error"] == "A user with that user ID does not exist")) {
+      await NotificationsManager.unsubscribeAllNotifications();
+      await SecureStorage.delete();
+      await Navigator.of(
+        context,
+      ).pushNamedAndRemoveUntil("/login", (route) => false);
+      return;
+    } else if (info.containsKey("error")) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            info["error"],
+            style: Theme.of(context).typography.white.bodyMedium!.apply(
+              color: Theme.of(context).primaryColorLight,
+            ),
+          ),
+          backgroundColor: Theme.of(context).primaryColorDark,
+          showCloseIcon: true,
+          closeIconColor: Theme.of(context).primaryColorLight,
+        ),
+      );
+      return;
+    }
+
+    await SecureStorage.writeOne("role", info["data"]["role"]);
+
+    setState(() {
+      admin_roles = info["data"]["roles"].cast<String>();
+      admin_access = info["data"]["access"];
+      loaded[1] = true;
+    });
+
+    if (!admin_roles.contains(info["data"]["role"]) && !admin_access) {
+      Navigator.of(context).pop();
+    }
+  }
+
   Future<void> checkLogin() async {
     Map<String, String> info = await SecureStorage.read();
     if (info["last_login"] != null) {
@@ -146,7 +194,7 @@ class _RolesPageState extends State<RolesPage> {
     setState(() {
       email = info["email"]!;
     });
-    await getRoles();
+    await Future.wait([getRoles(), getPermissions()]);
   }
 
   @override
@@ -159,7 +207,7 @@ class _RolesPageState extends State<RolesPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (!loaded)
+    if (loaded.contains(false))
       return Scaffold(
         body: Center(
           child: LoadingAnimationWidget.inkDrop(

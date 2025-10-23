@@ -16,8 +16,6 @@ class ScanPage extends StatefulWidget {
 }
 
 class _ScanPageState extends State<ScanPage> {
-  late String role;
-
   List<String> admin_roles = ["admin", "merch"];
   bool admin_access = false;
 
@@ -66,11 +64,10 @@ class _ScanPageState extends State<ScanPage> {
     setState(() {
       admin_roles = info["data"]["roles"].cast<String>();
       admin_access = info["data"]["access"];
-      role = info["data"]["role"];
       loaded = true;
     });
 
-    if (!admin_roles.contains(role) && !admin_access) {
+    if (!admin_roles.contains(info["data"]["role"]) && !admin_access) {
       Navigator.of(context).pop();
     }
   }
@@ -92,9 +89,6 @@ class _ScanPageState extends State<ScanPage> {
       await Navigator.popAndPushNamed(context, "/login");
       return;
     }
-    setState(() {
-      role = info["role"]!;
-    });
     await getPermissions();
   }
 

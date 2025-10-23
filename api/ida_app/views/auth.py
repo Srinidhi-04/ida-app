@@ -191,5 +191,7 @@ async def get_permissions(request: HttpRequest):
         roles = ["admin", "merch"]
     elif category == "roles":
         roles = ["admin"]
+    else:
+        return JsonResponse({"error": "Invalid permissions category"}, status = 400)
 
     return JsonResponse({"data": {"roles": roles, "access": user.role in roles, "role": user.role}})
