@@ -552,7 +552,6 @@ class _HomePageState extends State<HomePage> {
         );
       },
     ).then((_) async {
-      getAnnouncements();
       Map info = await AnnouncementsService.updateAnnouncement(
         body: {"last_announcement": last_announcement.toString()},
       );
@@ -582,6 +581,8 @@ class _HomePageState extends State<HomePage> {
         );
         return;
       }
+
+      getAnnouncements();
     });
   }
 
