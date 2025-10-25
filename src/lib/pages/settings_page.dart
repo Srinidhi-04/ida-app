@@ -354,6 +354,19 @@ class _SettingsPageState extends State<SettingsPage> {
                                   actions: [
                                     TextButton(
                                       onPressed: () {
+                                        Navigator.of(dialogContext).pop(false);
+                                      },
+                                      child: Text(
+                                        "Cancel",
+                                        style: Theme.of(
+                                          context,
+                                        ).typography.black.labelMedium!.apply(
+                                          fontSizeDelta: 2,
+                                        ),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () {
                                         Navigator.of(dialogContext).pop(true);
                                       },
                                       child: Text(
