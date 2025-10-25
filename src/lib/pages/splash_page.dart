@@ -62,7 +62,7 @@ class _SplashPageState extends State<SplashPage> {
                 child: CupertinoAlertDialog(
                   title: Text("Update Available"),
                   content: Text(
-                    "A new version is available. Please update to continue.",
+                    "Update available! Get the latest version for the best experience",
                   ),
                   actions: [
                     CupertinoDialogAction(
@@ -109,7 +109,7 @@ class _SplashPageState extends State<SplashPage> {
                   style: Theme.of(context).typography.black.headlineMedium,
                 ),
                 content: Text(
-                  "A new version is available. Please update to continue.",
+                  "Update available! Get the latest version for the best experience",
                   style: Theme.of(
                     context,
                   ).typography.black.bodyMedium!.apply(fontSizeDelta: 2),
