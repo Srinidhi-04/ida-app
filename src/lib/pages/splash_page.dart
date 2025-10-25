@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:src/services/misc_service.dart';
@@ -37,7 +38,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  final app_version = 15.2;
+  final app_version = 15.3;
   bool update = false;
 
   Future<void> checkUpdate() async {
@@ -88,7 +89,6 @@ class _SplashPageState extends State<SplashPage> {
               ),
               mode: LaunchMode.externalNonBrowserApplication,
             );
-            return;
           }
           if (info["message"] != "Hard update") {
             checkLogin();
@@ -146,7 +146,6 @@ class _SplashPageState extends State<SplashPage> {
               ),
               mode: LaunchMode.externalNonBrowserApplication,
             );
-            return;
           }
           if (info["message"] != "Hard update") {
             checkLogin();
@@ -206,8 +205,28 @@ class _SplashPageState extends State<SplashPage> {
           child: Center(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 0.7,
-              child: Text(
-                "Please update the app to the latest version to continue",
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(text: "Please update the app to the "),
+                    TextSpan(
+                      text: "latest version",
+                      style: TextStyle(decoration: TextDecoration.underline),
+                      recognizer:
+                          TapGestureRecognizer()
+                            ..onTap = () {
+                              launchUrl(
+                                Uri.parse(
+                                  (Platform.isIOS)
+                                      ? "https://apps.apple.com/us/app/illini-dads/id6749455509"
+                                      : "https://play.google.com/store/apps/details?id=com.ida.src",
+                                ),
+                              );
+                            },
+                    ),
+                    TextSpan(text: " to continue"),
+                  ],
+                ),
                 style: Theme.of(context).typography.black.bodyLarge,
                 textAlign: TextAlign.center,
               ),
