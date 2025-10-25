@@ -3,7 +3,7 @@ from ida_app.tasks import *
 from ida_app.models import *
 from ida_app.middleware import *
 
-APP_VERSION = 15.1
+APP_VERSION = 15.2
 
 @auth_exempt
 async def index(request: HttpRequest):
