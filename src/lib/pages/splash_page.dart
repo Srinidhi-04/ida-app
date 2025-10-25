@@ -38,7 +38,7 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  final app_version = 15.3;
+  final app_version = 15.4;
   bool update = false;
 
   Future<void> checkUpdate() async {
@@ -221,6 +221,7 @@ class _SplashPageState extends State<SplashPage> {
                                       ? "https://apps.apple.com/us/app/illini-dads/id6749455509"
                                       : "https://play.google.com/store/apps/details?id=com.ida.src",
                                 ),
+                                mode: LaunchMode.externalNonBrowserApplication,
                               );
                             },
                     ),
