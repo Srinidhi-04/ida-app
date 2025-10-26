@@ -14,13 +14,13 @@ def requires_fields(body: QueryDict, fields: dict):
         if fields[field] == "int":
             try:
                 int(value)
-            except:
+            except ValueError:
                 return {"error": f"'{field}' field is required as an int"}
         
         if fields[field] == "float":
             try:
                 float(value)
-            except:
+            except ValueError:
                 return {"error": f"'{field}' field is required as a float"}
         
         if fields[field] == "list":
@@ -28,7 +28,7 @@ def requires_fields(body: QueryDict, fields: dict):
                 value = json.loads(value)
                 if not isinstance(value, list):
                     raise Exception(f"'{field}' field is required as a {fields[field]}")
-            except:
+            except json.decoder.JSONDecodeError:
                 if not isinstance(value, list):
                     return {"error": f"'{field}' field is required as a {fields[field]}"}
                 
@@ -37,7 +37,7 @@ def requires_fields(body: QueryDict, fields: dict):
                 value = json.loads(value)
                 if not isinstance(value, dict):
                     raise Exception(f"'{field}' field is required as a {fields[field]}")
-            except:
+            except json.decoder.JSONDecodeError:
                 if not isinstance(value, dict):
                     return {"error": f"'{field}' field is required as a {fields[field]}"}
 
@@ -86,8 +86,10 @@ class AuthMiddleware:
                 else:
                     body: dict = await asyncio.to_thread(lambda: json.loads(request.body))
                     user_id = int(body.get("user_id"))
-        except:
+        except ValueError:
             return JsonResponse({"error": "'user_id' field is required as an int"}, status = 400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status = 400)
 
         token = request.headers.get("authorization")
         if not token:
@@ -111,6 +113,9 @@ class AuthMiddleware:
         
         except UserTokens.DoesNotExist:
             return JsonResponse({"error": "Invalid authorization token"}, status = 400)
+        
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status = 400)
         
         request.user = user
         return None

@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.utils import IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
 import asyncio
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 import random as rd
@@ -18,7 +20,7 @@ class UserManager(BaseUserManager):
             code = rd.randint(100000, 999999)
             try:
                 await UserCredentials.objects.aget(signup_code = code)
-            except:
+            except ObjectDoesNotExist:
                 break
 
         user: UserCredentials = self.model(email = email, name = name, signup_code = code, **kwargs)
@@ -26,7 +28,7 @@ class UserManager(BaseUserManager):
 
         try:
             await user.asave(using = self._db)
-        except:
+        except IntegrityError:
             raise Exception("A user with that email already exists")
 
         return user
@@ -37,7 +39,7 @@ class UserManager(BaseUserManager):
 
         try:
             loop = asyncio.get_running_loop()
-        except:
+        except RuntimeError:
             loop = None
         
         if loop and loop.is_running():

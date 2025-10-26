@@ -7,56 +7,68 @@ from ida_app.middleware import *
 @requires_roles(["admin", "comms"])
 @request_type("POST")
 async def send_announcement(request: HttpRequest):
-    check = requires_fields(request.POST, {"title": "str", "body": "str"})
-    if check:
-        return JsonResponse(check, status = 400)
+    try:
+        check = requires_fields(request.POST, {"title": "str", "body": "str"})
+        if check:
+            return JsonResponse(check, status = 400)
 
-    title = request.POST.get("title")
-    body = request.POST.get("body")
-    everyone = request.POST.get("everyone") == "yes"
+        title = request.POST.get("title")
+        body = request.POST.get("body")
+        everyone = request.POST.get("everyone") == "yes"
 
-    if everyone:
-        await send_topic_notification("ida-app-default", title, body)
+        if everyone:
+            await send_topic_notification("ida-app-default", title, body)
 
-    else:
-        await send_topic_notification("ida-app-announcements", title, body)
+        else:
+            await send_topic_notification("ida-app-announcements", title, body)
 
-    return JsonResponse({"message": "Announcement sent successfully"})
+        return JsonResponse({"message": "Announcement sent successfully"})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status = 400)
 
 @requires_roles(["admin", "comms"])
 @request_type("POST")
 async def add_announcement(request: HttpRequest):
-    check = requires_fields(request.POST, {"title": "str", "body": "str"})
-    if check:
-        return JsonResponse(check, status = 400)
+    try:
+        check = requires_fields(request.POST, {"title": "str", "body": "str"})
+        if check:
+            return JsonResponse(check, status = 400)
 
-    title = request.POST.get("title")
-    body = request.POST.get("body")
+        title = request.POST.get("title")
+        body = request.POST.get("body")
 
-    announcement = BannerAnnouncements(title = title, body = body)
-    await announcement.asave()
+        announcement = BannerAnnouncements(title = title, body = body)
+        await announcement.asave()
 
-    return JsonResponse({"message": "Announcement created successfully"})
+        return JsonResponse({"message": "Announcement created successfully"})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status = 400)
 
 @request_type("POST")
 async def update_announcement(request: HttpRequest):
-    check = requires_fields(request.POST, {"last_announcement": "int"})
-    if check:
-        return JsonResponse(check, status = 400)
+    try:
+        check = requires_fields(request.POST, {"last_announcement": "int"})
+        if check:
+            return JsonResponse(check, status = 400)
 
-    user: UserCredentials = request.user
+        user: UserCredentials = request.user
 
-    last_announcement = int(request.POST.get("last_announcement"))
-    
-    user.last_announcement = last_announcement
-    await user.asave()
+        last_announcement = int(request.POST.get("last_announcement"))
+        
+        user.last_announcement = last_announcement
+        await user.asave()
 
-    return JsonResponse({"message": "Last announcement updated successfully"})
+        return JsonResponse({"message": "Last announcement updated successfully"})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status = 400)
 
 @request_type("GET")
 async def get_announcements(request: HttpRequest):
-    user: UserCredentials = request.user
+    try:
+        user: UserCredentials = request.user
 
-    announcements = await sync_to_async(list)(BannerAnnouncements.objects.order_by("-created_at").values())
+        announcements = await sync_to_async(list)(BannerAnnouncements.objects.order_by("-created_at").values())
 
-    return JsonResponse({"data": {"announcements": announcements, "last_announcement": user.last_announcement}})
+        return JsonResponse({"data": {"announcements": announcements, "last_announcement": user.last_announcement}})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status = 400)

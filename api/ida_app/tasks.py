@@ -3,7 +3,7 @@ import smtplib
 from firebase_admin import messaging
 import asyncio
 from apscheduler.schedulers.background import BackgroundScheduler
-from django_apscheduler.jobstores import DjangoJobStore
+from django_apscheduler.jobstores import DjangoJobStore, JobLookupError
 from ida_app.models import UserTokens
 import datetime
 import os
@@ -78,7 +78,7 @@ def delete_topic_notification(topic: str):
     try:
         scheduler.remove_job(job_id=job_id)
         print(f"Job {job_id} successully deleted")
-    except:
+    except JobLookupError:
         print("Job does not exist")
 
     if not scheduler.running:
