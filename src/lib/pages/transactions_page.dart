@@ -108,7 +108,7 @@ class _TransactionsPageState extends State<TransactionsPage> {
                         Padding(
                           padding: const EdgeInsets.only(top: 5.0),
                           child: Text(
-                            "Total Amount: \$${amount}",
+                            "Total Amount: \$${amount.toStringAsFixed(2)}",
                             style: Theme.of(
                               context,
                             ).typography.white.labelMedium!.apply(

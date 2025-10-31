@@ -24,6 +24,9 @@ def requires_fields(body: QueryDict, fields: dict):
                 return {"error": f"'{field}' field is required as a float"}
         
         if fields[field] == "list":
+            if isinstance(value, list):
+                return
+            
             try:
                 value = json.loads(value)
                 if not isinstance(value, list):
