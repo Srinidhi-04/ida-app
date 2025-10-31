@@ -50,7 +50,7 @@ async def send_topic_notification(topic: str, title: str, body: str):
         topic=topic
     )
     
-    response = await messaging.send_each_async([message])
+    await asyncio.to_thread(lambda: messaging.send(message))
     print(f"Successfully sent message to topic '{topic}'")
 
 def send_notif(topic, title, body):
