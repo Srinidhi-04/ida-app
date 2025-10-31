@@ -303,6 +303,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
                                 original_alert,
                                 alert,
                               );
+
+                              setState(() {
+                                original_alert = alert;
+                              });
                             }
                           },
                           child: Text(
