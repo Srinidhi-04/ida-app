@@ -68,18 +68,14 @@ class NotificationsManager {
     String reminders,
   ) async {
     try {
-      EventsService.toggleNotification(body: {
-        "event_id": event_id.toString(),
-      });
+      EventsService.toggleNotification(body: {"event_id": event_id.toString()});
 
       FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}");
 
-      if (reminders == "30 minutes before") {
-        FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-0");
-      } else if (reminders == "2 hours before") {
-        FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-1");
-      } else if (reminders == "6 hours before") {
-        FirebaseMessaging.instance.subscribeToTopic("ida-event-${event_id}-2");
+      if (reminders != "Off") {
+        FirebaseMessaging.instance.subscribeToTopic(
+          "ida-event-${event_id}-${alerts.indexOf(reminders) - 1}",
+        );
       }
     } catch (e, stack) {
       await FirebaseCrashlytics.instance.recordError(
@@ -98,23 +94,13 @@ class NotificationsManager {
     String reminders,
   ) async {
     try {
-      EventsService.toggleNotification(body: {
-        "event_id": event_id.toString(),
-      });
+      EventsService.toggleNotification(body: {"event_id": event_id.toString()});
 
       FirebaseMessaging.instance.unsubscribeFromTopic("ida-event-${event_id}");
 
-      if (reminders == "30 minutes before") {
+      if (reminders != "Off") {
         FirebaseMessaging.instance.unsubscribeFromTopic(
-          "ida-event-${event_id}-0",
-        );
-      } else if (reminders == "2 hours before") {
-        FirebaseMessaging.instance.unsubscribeFromTopic(
-          "ida-event-${event_id}-1",
-        );
-      } else if (reminders == "6 hours before") {
-        FirebaseMessaging.instance.unsubscribeFromTopic(
-          "ida-event-${event_id}-2",
+          "ida-event-${event_id}-${alerts.indexOf(reminders) - 1}",
         );
       }
     } catch (e, stack) {
