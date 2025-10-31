@@ -163,7 +163,7 @@ async def log_order(request: HttpRequest):
 
                         receipt.append({"name": x["name"], "quantity": x["quantity"], "price": x["price"], "amount": x["amount"], "image": x["image"]})
                         
-                        order_item = OrderItems(order = order, name = x["name"], quantity = x["quantity"], price = x["price"], quantity = x["quantity"], subtotal = x["amount"])
+                        order_item = OrderItems(order = order, name = x["name"], image = x["image"], price = x["price"], quantity = x["quantity"], subtotal = x["amount"])
                         order_item.save()
                         
                     return receipt, order
