@@ -157,17 +157,13 @@ async def log_order(request: HttpRequest):
 
                     receipt = []
                     for x in cart:
-                        item_check = requires_fields(x, {"item_id": "int", "quantity": "int", "amount": "float"})
+                        item_check = requires_fields(x, {"name": "str", "price": "float", "image": "str", "quantity": "int", "amount": "float"})
                         if item_check:
                             raise Exception(item_check["error"])
 
-                        try:
-                            item = ShopItems.objects.get(item_id = x["item_id"])
-                            receipt.append({"name": item.name, "quantity": x["quantity"], "price": item.price, "amount": x["amount"], "image": item.image})
-                        except ObjectDoesNotExist:
-                            raise Exception("An item with that item ID does not exist")
+                        receipt.append({"name": x["name"], "quantity": x["quantity"], "price": x["price"], "amount": x["amount"], "image": x["image"]})
                         
-                        order_item = OrderItems(order = order, item = item, quantity = x["quantity"], subtotal = x["amount"])
+                        order_item = OrderItems(order = order, name = x["name"], quantity = x["quantity"], price = x["price"], quantity = x["quantity"], subtotal = x["amount"])
                         order_item.save()
                         
                     return receipt, order
@@ -223,7 +219,7 @@ async def get_order(request: HttpRequest):
         except ObjectDoesNotExist:
             raise Exception("Invalid order ID and user ID combination")
         
-        return JsonResponse({"data": {"order_id": order.order_id, "status": order.status, "amount": order.value, "date": order.created_at, "items": await sync_to_async(list)(order.order_items.annotate(name = F("item__name"), price = F("item__price"), image = F("item__image")).values("name", "price", "image", "quantity", "subtotal"))}})
+        return JsonResponse({"data": {"order_id": order.order_id, "status": order.status, "amount": order.value, "date": order.created_at, "items": await sync_to_async(list)(order.order_items.values("name", "price", "image", "quantity", "subtotal"))}})
     except Exception as e:
         return JsonResponse({"error": str(e)}, status = 400)
 
@@ -245,7 +241,7 @@ async def change_status(request: HttpRequest):
             raise Exception("A user with that user ID does not exist")
         
         try:
-            order: UserOrders = await UserOrders.objects.prefetch_related("order_items__item").aget(order_id = order_id, user = user)
+            order: UserOrders = await UserOrders.objects.prefetch_related("order_items").aget(order_id = order_id, user = user)
         except ObjectDoesNotExist:
             raise Exception("Invalid order ID and user ID combination")
         
@@ -265,10 +261,9 @@ async def change_status(request: HttpRequest):
                 await send_user_notification(user.user_id, tokens, "Order cancelled", f"Order #{order.order_id} has been cancelled and refunded successfully")
 
             receipt = []
-            order_items = await sync_to_async(list)(OrderItems.objects.filter(order = order).select_related("item"))
+            order_items = await sync_to_async(list)(order.order_items.all())
             for item in order_items:
-                shop_item: ShopItems = item.item
-                receipt.append({"name": shop_item.name, "quantity": item.quantity, "price": shop_item.price, "amount": item.subtotal})
+                receipt.append({"name": item.name, "quantity": item.quantity, "price": item.price, "amount": item.subtotal})
             
             await send_refund(user.name, user.email, order.value, receipt)
 

@@ -851,7 +851,10 @@ class _ShopPageState extends State<ShopPage> {
                 (cart)
                     ? []
                     : [
-                      CartButton(quantity: quantity, callback: () => checkLogin()),
+                      CartButton(
+                        quantity: quantity,
+                        callback: () => checkLogin(),
+                      ),
                     ],
           ),
           body:
@@ -959,59 +962,87 @@ class _ShopPageState extends State<ShopPage> {
                                     ),
                                   )
                                   : SizedBox.shrink(),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(0, 0, 20, 5),
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: "Cart Total: ",
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text:
-                                              "\$${calculateTotal().toStringAsFixed(2)}",
-                                        ),
-                                      ],
+                              (items.length != 0)
+                                  ? Padding(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      0,
+                                      0,
+                                      20,
+                                      5,
                                     ),
-                                    style: Theme.of(
-                                      context,
-                                    ).typography.black.labelMedium!.apply(
-                                      color: Theme.of(context).primaryColorDark,
-                                      fontSizeDelta: 2,
+                                    child: Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: "Cart Total: ",
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            TextSpan(
+                                              text:
+                                                  "\$${calculateTotal().toStringAsFixed(2)}",
+                                            ),
+                                          ],
+                                        ),
+                                        style: Theme.of(
+                                          context,
+                                        ).typography.black.labelMedium!.apply(
+                                          color:
+                                              Theme.of(
+                                                context,
+                                              ).primaryColorDark,
+                                          fontSizeDelta: 2,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  : SizedBox.shrink(),
+                              (items.length == 0)
+                                  ? Center(
+                                    child: Text(
+                                      "Shop is empty",
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).typography.black.headlineLarge,
+                                    ),
+                                  )
+                                  : Padding(
+                                    padding: EdgeInsets.only(
+                                      bottom:
+                                          ((admin_roles.contains(role) ||
+                                                      admin_access) &&
+                                                  !cart)
+                                              ? 50.0
+                                              : 0,
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children:
+                                          items
+                                              .map(
+                                                (e) =>
+                                                    (!cart ||
+                                                            quantity
+                                                                .containsKey(
+                                                                  e["item_id"],
+                                                                ))
+                                                        ? shopItem(
+                                                          items.indexOf(e),
+                                                          e["item_id"],
+                                                          e["name"],
+                                                          e["price"],
+                                                          e["inventory"],
+                                                          e["image"],
+                                                        )
+                                                        : SizedBox.shrink(),
+                                              )
+                                              .toList(),
                                     ),
                                   ),
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.only(bottom: ((admin_roles.contains(role) || admin_access) && !cart) ? 50.0 : 0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children:
-                                      items
-                                          .map(
-                                            (e) =>
-                                                (!cart ||
-                                                        quantity.containsKey(
-                                                          e["item_id"],
-                                                        ))
-                                                    ? shopItem(
-                                                      items.indexOf(e),
-                                                      e["item_id"],
-                                                      e["name"],
-                                                      e["price"],
-                                                      e["inventory"],
-                                                      e["image"],
-                                                    )
-                                                    : SizedBox.shrink(),
-                                          )
-                                          .toList(),
-                                ),
-                              ),
                             ],
                           ),
                         ),
@@ -1045,6 +1076,9 @@ class _ShopPageState extends State<ShopPage> {
                         if (quantity.containsKey(item["item_id"])) {
                           order_list.add({
                             "item_id": item["item_id"],
+                            "name": item["name"],
+                            "price": item["price"],
+                            "image": item["image"],
                             "quantity": quantity[item["item_id"]],
                             "amount":
                                 quantity[item["item_id"]]! * item["price"],
