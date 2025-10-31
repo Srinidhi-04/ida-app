@@ -157,13 +157,19 @@ async def log_order(request: HttpRequest):
 
                     receipt = []
                     for x in cart:
-                        item_check = requires_fields(x, {"name": "str", "price": "float", "image": "str", "quantity": "int", "amount": "float"})
+                        item_check = requires_fields(x, {"item_id": "int", "name": "str", "price": "float", "image": "str", "quantity": "int", "amount": "float"})
                         if item_check:
                             raise Exception(item_check["error"])
+                        
+                        try:
+                            item = ShopItems.objects.get(item_id = x["item_id"])
+                            receipt.append({"name": item.name, "quantity": x["quantity"], "price": item.price, "amount": x["amount"], "image": item.image})
+                        except ObjectDoesNotExist:
+                            raise Exception("An item with that item ID does not exist")
 
                         receipt.append({"name": x["name"], "quantity": x["quantity"], "price": x["price"], "amount": x["amount"], "image": x["image"]})
                         
-                        order_item = OrderItems(order = order, name = x["name"], image = x["image"], price = x["price"], quantity = x["quantity"], subtotal = x["amount"])
+                        order_item = OrderItems(order = order, item = item, name = x["name"], image = x["image"], price = x["price"], quantity = x["quantity"], subtotal = x["amount"])
                         order_item.save()
                         
                     return receipt, order

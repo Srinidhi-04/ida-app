@@ -173,6 +173,7 @@ class UserOrders(models.Model):
 class OrderItems(models.Model):
     oitem_id = models.AutoField(primary_key = True, unique = True, null = False)
     order = models.ForeignKey(UserOrders, related_name = "order_items", on_delete = models.CASCADE, null = False)
+    item = models.ForeignKey(ShopItems, related_name = "item_orders", on_delete = models.SET_NULL, null = True)
     name = models.TextField(unique = False, null = False)
     price = models.FloatField(unique = False, null = False)
     image = models.TextField(default = "https://i.imgur.com/Mw85Kfp.png", null = False)
