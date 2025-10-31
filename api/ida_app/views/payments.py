@@ -163,7 +163,6 @@ async def log_order(request: HttpRequest):
                         
                         try:
                             item = ShopItems.objects.get(item_id = x["item_id"])
-                            receipt.append({"name": item.name, "quantity": x["quantity"], "price": item.price, "amount": x["amount"], "image": item.image})
                         except ObjectDoesNotExist:
                             raise Exception("An item with that item ID does not exist")
 
