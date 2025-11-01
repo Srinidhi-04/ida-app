@@ -155,11 +155,14 @@ async def get_events(request: HttpRequest):
                 events = events.filter(essential = essential == "yes").order_by("date")
             events = sync_to_async(list)(events.values())
         
-        events, rsvp = await asyncio.gather(events, sync_to_async(list)(EventRsvp.objects.filter(user = user).values("event_id")))
+        events, rsvp, notifs = await asyncio.gather(events, sync_to_async(list)(EventRsvp.objects.filter(user = user).values("event_id")), sync_to_async(list)(UserNotifications.objects.filter(user = user).values("event_id")))
+
         rsvp_ids = {x["event_id"] for x in rsvp}
+        notif_ids = {x["event_id"] for x in notifs}
 
         for i in range(len(events)):
             events[i]["rsvp"] = events[i]["event_id"] in rsvp_ids
+            events[i]["notify"] = events[i]["event_id"] in notif_ids
 
         return JsonResponse({"data": events})
     except Exception as e:

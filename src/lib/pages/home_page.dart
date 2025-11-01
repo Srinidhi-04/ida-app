@@ -95,6 +95,7 @@ class _HomePageState extends State<HomePage> {
     bool featured,
     bool rsvp,
     bool past,
+    bool notify
   ) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -125,6 +126,7 @@ class _HomePageState extends State<HomePage> {
                 "longitude": longitude,
                 "featured": featured,
                 "past": past,
+                "notify": notify
               },
             ).then((_) => checkLogin());
           },
@@ -285,6 +287,7 @@ class _HomePageState extends State<HomePage> {
         "featured": event["essential"],
         "rsvp": event["rsvp"],
         "past": event["completed"],
+        "notify": event["notify"]
       });
     }
 
@@ -781,6 +784,7 @@ class _HomePageState extends State<HomePage> {
                                     e["featured"],
                                     e["rsvp"],
                                     e["past"],
+                                    e["notify"]
                                   ),
                                 )
                                 .toList(),

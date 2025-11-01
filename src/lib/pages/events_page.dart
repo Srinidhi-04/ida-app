@@ -266,6 +266,7 @@ class _EventsPageState extends State<EventsPage> {
                     "longitude": coordinates.longitude,
                     "featured": featured,
                     "past": (type == 2),
+                    "notify": notifs.contains(event_id)
                   },
                 ).then((_) => checkLogin());
               },

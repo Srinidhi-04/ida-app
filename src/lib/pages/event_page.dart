@@ -18,11 +18,14 @@ class EventPage extends StatefulWidget {
 }
 
 class _EventPageState extends State<EventPage> {
+  late int user_id;
   late String role;
   bool loaded = false;
   bool initialized = false;
 
   late int event_id;
+  late String reminders;
+  late bool notify;
   late String image;
   late DateTime date;
   late String location;
@@ -53,10 +56,40 @@ class _EventPageState extends State<EventPage> {
   List<String> admin_roles = ["admin", "events"];
   bool admin_access = false;
 
+  Widget notificationButton() {
+    return (!past)
+        ? IconButton(
+          onPressed: () async {
+            setState(() {
+              notify = !notify;
+            });
+
+            if (notify) {
+              NotificationsManager.subscribeNotification(
+                user_id,
+                event_id,
+                reminders,
+              );
+            } else {
+              NotificationsManager.unsubscribeNotification(
+                user_id,
+                event_id,
+                reminders,
+              );
+            }
+          },
+          icon: Icon(
+            (notify) ? Icons.notifications_active : Icons.notification_add,
+          ),
+          color: Colors.white,
+          iconSize: 30,
+          style: ButtonStyle(visualDensity: VisualDensity.compact),
+        )
+        : SizedBox.shrink();
+  }
+
   Future<void> getPermissions() async {
-    Map info = await AuthService.getPermissions(
-      params: {"category": "events"},
-    );
+    Map info = await AuthService.getPermissions(params: {"category": "events"});
 
     if (info.containsKey("error") &&
         (info["error"] == "Invalid authorization token" ||
@@ -112,7 +145,9 @@ class _EventPageState extends State<EventPage> {
     }
 
     setState(() {
+      user_id = int.parse(info["user_id"]!);
       role = info["role"]!;
+      reminders = info["reminders"]!;
       loaded = true;
     });
     await getPermissions();
@@ -137,6 +172,7 @@ class _EventPageState extends State<EventPage> {
         featured = args["featured"];
         rsvp = args["rsvp"];
         past = args["past"];
+        notify = args["notify"];
         initialized = true;
       });
     }
@@ -178,6 +214,7 @@ class _EventPageState extends State<EventPage> {
         actions:
             (admin_roles.contains(role) || admin_access)
                 ? [
+                  notificationButton(),
                   PopupMenuButton(
                     icon: Icon(Icons.more_vert),
                     color: Theme.of(context).primaryColorLight,
@@ -240,9 +277,7 @@ class _EventPageState extends State<EventPage> {
                           PopupMenuItem(
                             onTap: () async {
                               Map info = await EventsService.deleteEvent(
-                                body: {
-                                  "event_id": event_id.toString(),
-                                },
+                                body: {"event_id": event_id.toString()},
                               );
 
                               if (info.containsKey("error") &&
@@ -298,7 +333,7 @@ class _EventPageState extends State<EventPage> {
                         ],
                   ),
                 ]
-                : [],
+                : [notificationButton()],
       ),
       body: Stack(
         alignment: Alignment.bottomCenter,
@@ -497,9 +532,7 @@ class _EventPageState extends State<EventPage> {
                         });
 
                         Map info = await EventsService.toggleRsvp(
-                          body: {
-                            "event_id": event_id.toString(),
-                          },
+                          body: {"event_id": event_id.toString()},
                         );
 
                         if (info.containsKey("error") &&
@@ -565,9 +598,7 @@ class _EventPageState extends State<EventPage> {
                               });
 
                               Map info = await EventsService.toggleRsvp(
-                                body: {
-                                  "event_id": event_id.toString(),
-                                },
+                                body: {"event_id": event_id.toString()},
                               );
 
                               if (info.containsKey("error") &&

@@ -83,6 +83,7 @@ class _ProfilePageState extends State<ProfilePage> {
     bool featured,
     bool rsvp,
     bool past,
+    bool notify
   ) {
     return Container(
       width: MediaQuery.of(context).size.width,
@@ -113,6 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   "longitude": coordinates.longitude,
                   "featured": featured,
                   "past": past,
+                  "notify": notify
                 },
               ).then((_) => checkLogin());
             },
@@ -576,6 +578,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 e["essential"],
                                                 true,
                                                 e["completed"],
+                                                e["notify"]
                                               ),
                                             )
                                             .toList(),
@@ -620,6 +623,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                                 e["essential"],
                                                 true,
                                                 e["completed"],
+                                                e["notify"]
                                               ),
                                             )
                                             .toList(),
