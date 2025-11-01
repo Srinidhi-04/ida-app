@@ -109,7 +109,7 @@ async def get_roles(request: HttpRequest):
         total_users = await UserCredentials.objects.acount()
         
         emails = await sync_to_async(list)(UserCredentials.objects.values("email", "role"))
-        roles = list(set([x["role"] for x in emails]))
+        roles = sorted(list(set([x["role"] for x in emails])))
 
         return JsonResponse({"data": {"total_users": total_users, "emails": emails, "roles": roles}})
     except Exception as e:
