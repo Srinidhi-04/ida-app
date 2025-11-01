@@ -200,13 +200,15 @@ async def get_rsvp(request: HttpRequest):
 
         await Events.objects.filter(date__lte = datetime.datetime.now(tz = datetime.timezone.utc)).aupdate(completed = True)
 
-        all_events, rsvp = await asyncio.gather(sync_to_async(list)(Events.objects.values()), sync_to_async(list)(EventRsvp.objects.filter(user = user).values("event_id")))
+        all_events, rsvp, notifs = await asyncio.gather(sync_to_async(list)(Events.objects.values()), sync_to_async(list)(EventRsvp.objects.filter(user = user).values("event_id")), sync_to_async(list)(UserNotifications.objects.filter(user = user).values("event_id")))
 
         rsvp_ids = {x["event_id"] for x in rsvp}
+        notif_ids = {x["event_id"] for x in notifs}
 
         events = []
         for event in all_events:
             if event["event_id"] in rsvp_ids:
+                event["notify"] = event["event_id"] in notif_ids
                 events.append(event)
 
         return JsonResponse({"data": events})
